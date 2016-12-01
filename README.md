@@ -13,6 +13,11 @@ Run docker containers by using next command:
 ```
 docker-sync-stack start
 ```
+OR
+```
+docker-sync start
+docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d
+```
 ### How install a magento
  - When you run container your environment is ready on http://localhost:8000/
  - Login to container `docker exec -it magento2web bash` and run `m2install.sh -s composer`
