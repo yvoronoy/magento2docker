@@ -5,6 +5,7 @@ OSX ready environment with full speed syncing your code for development.
 ## Pre-requirements
  - [Install Docker](https://docs.docker.com/engine/installation/mac/)
  - [Install Docker Sync](https://github.com/EugenMayer/docker-sync/wiki/1.-Installation)
+ - Copy conf/auth.json.example to conf/auth.json and add your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
 
 ## Usage
 Run docker containers by using next command:
