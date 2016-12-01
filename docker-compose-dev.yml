@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  web:
+    volumes:
+      - appcode-unison-sync:/var/www/html:rw
+
+volumes:
+  appcode-unison-sync:
+    external: true

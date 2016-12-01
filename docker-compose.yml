@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+  web:
+    container_name: magento2web
+    restart: always
+    build: .
+    links:
+      - db
+    volumes:
+      - ./src:/var/www/html
+    ports:
+      - "8000:80"
+  db:
+    container_name: magento2db
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: magento
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_USER: magento
+      MYSQL_PASSWORD: magento

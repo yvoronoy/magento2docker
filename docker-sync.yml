@@ -1,0 +1,9 @@
+options:
+  verbose: true
+syncs:
+  appcode-unison-sync:
+    src: './src'
+    dest: '/var/www/html'
+    sync_strategy: 'unison'
+    sync_userid: 1
+    max_inotify_watches: 100000
