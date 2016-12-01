@@ -19,6 +19,7 @@ ENV APACHE_RUN_GROUP www-data
 ENV APACHE_LOG_DIR /var/log/apache2
 
 COPY ./conf/auth.json /root/.composer/auth.json
+COPY ./conf/.m2install.conf /var/www/.m2install.conf
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN curl -o /usr/local/bin/m2install.sh https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install.sh && chmod +x /usr/local/bin/m2install.sh

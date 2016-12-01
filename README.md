@@ -8,10 +8,19 @@ OSX ready environment with full speed syncing your code for development.
  - Copy conf/auth.json.example to conf/auth.json and add your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
 
 ## Usage
+### How to run containers
 Run docker containers by using next command:
 ```
 docker-sync-stack start
 ```
+### How install a magento
+ - When you run container your environment is ready on http://localhost:8000/
+ - Login to container `docker exec -it magento2web bash` and run `m2install.sh -s composer`
+
+### How deploy dumps
+ - Put dumps to src folder on your host machine
+ - Login to container `docker exec -it magento2web bash` and run `m2install.sh -s composer`
+
 
 ## TODO
  - Add xDebug and provide guide how to setup xDebug on your host machine.
