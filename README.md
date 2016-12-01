@@ -1,5 +1,5 @@
 # Magento2 Docker Environment
-Magento2 Docker Environment based on LAMP stack and Docker Sync by @EugenMayer.
+A very simple Magento2 Docker Environment based on LAMP stack and Docker Sync by @EugenMayer.
 OSX ready environment with full speed syncing your code for development.
 
 ## Pre-requirements
