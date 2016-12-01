@@ -19,7 +19,7 @@ docker-sync-stack start
 
 ### How deploy dumps
  - Put dumps to src folder on your host machine
- - Login to container `docker exec -it magento2web bash` and run `m2install.sh -s composer`
+ - Login to container `docker exec -it magento2web bash` and run `m2install.sh`
 
 
 ## TODO
