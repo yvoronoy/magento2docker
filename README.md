@@ -7,7 +7,9 @@ Mac OSX ready environment with full speed syncing your code for development.
  - [Install Docker Sync](https://github.com/EugenMayer/docker-sync/wiki/1.-Installation) (only for Mac OSX)
  - Copy `conf/auth.json.example` to `conf/auth.json` and add your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
  - For xDebug we have to create ip 10.254.254.254 as an alias on your loopback device 127.0.0.1 (only for Mac OSX)
-```sudo curl -o /Library/LaunchDaemons/osx.docker.loopback.plist https://raw.githubusercontent.com/yvoronoy/magento2docker/XDEBUG_FEATURE/conf/osx.docker.loopback.plist && sudo launchctl load /Library/LaunchDaemons/docker.loopback.plist```
+```
+sudo curl -o /Library/LaunchDaemons/osx.docker.loopback.plist https://raw.githubusercontent.com/yvoronoy/magento2docker/XDEBUG_FEATURE/conf/osx.docker.loopback.plist && sudo launchctl load /Library/LaunchDaemons/docker.loopback.plist
+```
 
 ## Usage
 ### How to run containers
