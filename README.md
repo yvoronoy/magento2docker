@@ -2,6 +2,16 @@
 A very simple Magento2 Docker Environment based on LAMP stack and Docker Sync by @EugenMayer.
 Mac OSX ready environment with full speed syncing your code for development.
 
+## Contents
+
+- [Pre-requirements](#pre-requirements)
+- [Usage](#usage)
+ - [How to run containers](#how-to-run-containers)
+ - [How install a magento](#how-install-magento)
+ - [How deploy magento dumps](#how-deploy-dumps)
+- [TODO](#todo)
+- [Contributing](#contributing)
+
 ## Pre-requirements
  - [Install Docker](https://docs.docker.com/engine/installation/mac/)
  - [Install Docker Sync](https://github.com/EugenMayer/docker-sync/wiki/1.-Installation) (only for Mac OSX)
