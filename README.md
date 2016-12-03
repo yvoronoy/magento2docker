@@ -9,7 +9,7 @@ Mac OSX ready environment with full speed syncing your code for development.
  - [How to run containers](#how-to-run-containers)
  - [How install a magento](#how-install-magento)
  - [How deploy magento dumps](#how-deploy-dumps)
-- [TODO](#todo)
+- [Todo List](#todo-list)
 - [Contributing](#contributing)
 
 ## Pre-requirements
@@ -45,7 +45,7 @@ just run `docker-compose up`
  - Login to container `docker exec -it magento2web bash` and run `m2install.sh`
 
 
-## TODO
+## Todo List
  - [x] Add xDebug and provide guide how to setup xDebug on your host machine.
  - [ ] Add useful tools like: n98-magerun2, m2install.sh, magento-bash-completion.
  - [ ] Setup Cron.
