@@ -47,8 +47,8 @@ just run `docker-compose up`
 
 ## TODO
  - [x] Add xDebug and provide guide how to setup xDebug on your host machine.
- - [] Add useful tools like: n98-magerun2, m2install.sh, magento-bash-completion.
- - [] Setup Cron.
+ - [ ] Add useful tools like: n98-magerun2, m2install.sh, magento-bash-completion.
+ - [ ] Setup Cron.
 
 ## Contributing
 1. Fork this repository.
