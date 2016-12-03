@@ -1,19 +1,28 @@
 # Magento2 Docker Environment
 A very simple Magento2 Docker Environment based on LAMP stack and Docker Sync by @EugenMayer.
-OSX ready environment with full speed syncing your code for development.
+Mac OSX ready environment with full speed syncing your code for development.
 
 ## Pre-requirements
  - [Install Docker](https://docs.docker.com/engine/installation/mac/)
- - [Install Docker Sync](https://github.com/EugenMayer/docker-sync/wiki/1.-Installation)
+ - [Install Docker Sync](https://github.com/EugenMayer/docker-sync/wiki/1.-Installation) (only for Mac OSX)
  - Copy `conf/auth.json.example` to `conf/auth.json` and add your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
  - `sudo curl -o /Library/LaunchDaemons/osx.docker.loopback.plist https://raw.githubusercontent.com/yvoronoy/magento2docker/master/conf/auth.json.example && sudo launchctl load /Library/LaunchDaemons/docker.loopback.plist`
 
 ## Usage
 ### How to run containers
-Run docker containers by using next command:
+Run docker containers on Mac OSX by using next command:
 ```
 docker-sync-stack start
 ```
+OR
+```
+docker-sync start
+docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d
+```
+If you are on Linux
+just run `docker-compose up`
+
+
 ### How install a magento
  - When you run container your environment is ready on http://localhost:8000/
  - Login to container `docker exec -it magento2web bash` and run `m2install.sh -s composer`
