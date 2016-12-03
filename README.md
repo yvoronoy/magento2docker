@@ -6,6 +6,7 @@ OSX ready environment with full speed syncing your code for development.
  - [Install Docker](https://docs.docker.com/engine/installation/mac/)
  - [Install Docker Sync](https://github.com/EugenMayer/docker-sync/wiki/1.-Installation)
  - Copy `conf/auth.json.example` to `conf/auth.json` and add your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
+ - `sudo curl -o /Library/LaunchDaemons/osx.docker.loopback.plist https://raw.githubusercontent.com/yvoronoy/magento2docker/master/conf/auth.json.example && sudo launchctl load /Library/LaunchDaemons/docker.loopback.plist`
 
 ## Usage
 ### How to run containers
