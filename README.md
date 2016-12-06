@@ -37,7 +37,7 @@ just run `docker-compose up`
 
 
 ### How install a magento
- - When you run container your environment is ready on http://localhost:8000/
+ - When you run container your environment is ready on http://127.0.0.1:8000/
  - Login to container `docker exec -it magento2web bash` and run `m2install.sh -s composer`
 
 ### How deploy dumps
