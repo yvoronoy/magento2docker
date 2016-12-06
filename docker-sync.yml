@@ -1,9 +1,11 @@
 options:
   verbose: true
+  confirmbigdel: false
 syncs:
   appcode-unison-sync:
     src: './src'
     dest: '/var/www/html'
     sync_strategy: 'unison'
-    sync_userid: 1
-    max_inotify_watches: 100000
+    max_inotify_watches: 200000
+    sync_args: [ '-prefer newer', '-copyonconflict' ]
+    sync_excludes: [ '.git', '.idea', 'var', 'pub/static', 'pub/media' ]
