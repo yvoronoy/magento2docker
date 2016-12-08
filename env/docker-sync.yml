@@ -3,7 +3,7 @@ options:
   confirmbigdel: false
 syncs:
   appcode-unison-sync:
-    src: './src'
+    src: '../src'
     dest: '/var/www/html'
     sync_strategy: 'unison'
     max_inotify_watches: 200000

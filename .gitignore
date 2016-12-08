@@ -1,2 +1,3 @@
 src/*
 !src/index.php
+env/conf/auth.json

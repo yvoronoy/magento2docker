@@ -18,11 +18,12 @@ Mac OSX ready environment with full speed syncing your code for development.
  - Copy `conf/auth.json.example` to `conf/auth.json` and add your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
  - For xDebug we have to create ip 10.254.254.254 as an alias on your loopback device 127.0.0.1 (only for Mac OSX)
 ```
-sudo curl -o /Library/LaunchDaemons/osx.docker.loopback.plist https://raw.githubusercontent.com/yvoronoy/magento2docker/master/conf/osx.docker.loopback.plist && sudo launchctl load /Library/LaunchDaemons/osx.docker.loopback.plist
+sudo curl -o /Library/LaunchDaemons/osx.docker.loopback.plist https://raw.githubusercontent.com/yvoronoy/magento2docker/master/env/conf/osx.docker.loopback.plist && sudo launchctl load /Library/LaunchDaemons/osx.docker.loopback.plist
 ```
 
 ## Usage
 ### How to run containers
+Commands should be executed from _env_ directory.
 Run docker containers on Mac OSX by using next command:
 ```
 docker-sync-stack start
@@ -38,11 +39,14 @@ just run `docker-compose up`
 
 ### How install a magento
  - When you run container your environment is ready on http://127.0.0.1:8000/
- - Login to container `docker exec -it magento2web bash` and run `m2install.sh -s composer`
+   - Login to container `docker exec -it magento2web bash` 
+   - Run `rm index.php`
+   - Run `m2install.sh -s composer`
 
 ### How deploy dumps
  - Put dumps to src folder on your host machine
- - Login to container `docker exec -it magento2web bash` and run `m2install.sh`
+   - Login to container `docker exec -it magento2web bash` 
+   - Run `m2install.sh`
 
 
 ## Todo List
