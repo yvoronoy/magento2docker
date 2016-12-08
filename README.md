@@ -9,6 +9,7 @@ Mac OSX ready environment with full speed syncing your code for development.
  - [How to run containers](#how-to-run-containers)
  - [How install a magento](#how-install-magento)
  - [How deploy magento dumps](#how-deploy-dumps)
+- [How to Enable xDebug](#how-to-enable-xdebug)
 - [Todo List](#todo-list)
 - [Contributing](#contributing)
 
@@ -16,10 +17,6 @@ Mac OSX ready environment with full speed syncing your code for development.
  - [Install Docker](https://docs.docker.com/engine/installation/mac/)
  - [Install Docker Sync](https://github.com/EugenMayer/docker-sync/wiki/1.-Installation) (only for Mac OSX)
  - Copy `conf/auth.json.example` to `conf/auth.json` and add your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
- - For xDebug we have to create ip 10.254.254.254 as an alias on your loopback device 127.0.0.1 (only for Mac OSX)
-```
-sudo curl -o /Library/LaunchDaemons/osx.docker.loopback.plist https://raw.githubusercontent.com/yvoronoy/magento2docker/master/env/conf/osx.docker.loopback.plist && sudo launchctl load /Library/LaunchDaemons/osx.docker.loopback.plist
-```
 
 ## Usage
 ### How to run containers
@@ -48,6 +45,28 @@ just run `docker-compose up`
    - Login to container `docker exec -it magento2web bash` 
    - Run `m2install.sh`
 
+## How to Enable xDebug
+
+The container already includes PHP xDebug extension. But xDebug is disabled by default because
+it is dramatically decrease performance.
+
+### Pre-requirements
+xDebug configuration is using remote host ip = 10.254.254.254
+You can create loopback alias by using next command: `ifconfig lo0 alias 10.254.254.254`
+
+If you are using Mac OSX you have to create ip 10.254.254.254 as an alias on your loopback device 127.0.0.1
+by using next command:
+```
+sudo curl -o /Library/LaunchDaemons/osx.docker.loopback.plist \
+https://raw.githubusercontent.com/yvoronoy/magento2docker/master/env/conf/osx.docker.loopback.plist \
+&& sudo launchctl load /Library/LaunchDaemons/osx.docker.loopback.plist
+```
+More details you can find here: https://gist.github.com/ralphschindler/535dc5916ccbd06f53c1b0ee5a868c93
+
+### Usage
+ - Login to your container `docker exec -it magento2web bash`
+ - Run command `xdebug-php.sh 1`
+ - Run IDE (PHPStorm) and press button _Start Listening for PHPDebug Connection_
 
 ## Todo List
  - [x] Add xDebug and provide guide how to setup xDebug on your host machine.
