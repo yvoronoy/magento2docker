@@ -10,6 +10,8 @@ Mac OSX ready environment with full speed syncing your code for development.
  - [How install a magento](#how-install-magento)
  - [How deploy magento dumps](#how-deploy-dumps)
 - [How to Enable xDebug](#how-to-enable-xdebug)
+ - [Pre-requirements](#pre-requirements-1)
+ - [Usage](#usage-1)
 - [Todo List](#todo-list)
 - [Contributing](#contributing)
 
@@ -47,14 +49,13 @@ just run `docker-compose up`
 
 ## How to Enable xDebug
 
-The container already includes PHP xDebug extension. But xDebug is disabled by default because
+The container already includes PHP xDebug extension. The xDebug extension is disabled by default because
 it is dramatically decrease performance.
 
 ### Pre-requirements
-xDebug configuration is using remote host ip = 10.254.254.254
-You can create loopback alias by using next command: `ifconfig lo0 alias 10.254.254.254`
+xDebug configuration is using remote host ip = 10.254.254.254.
 
-If you are using Mac OSX you have to create ip 10.254.254.254 as an alias on your loopback device 127.0.0.1
+if you are using Mac OSX you have to create ip 10.254.254.254 as an alias on your loopback device 127.0.0.1
 by using next command:
 ```
 sudo curl -o /Library/LaunchDaemons/osx.docker.loopback.plist \
@@ -62,6 +63,8 @@ https://raw.githubusercontent.com/yvoronoy/magento2docker/master/env/conf/osx.do
 && sudo launchctl load /Library/LaunchDaemons/osx.docker.loopback.plist
 ```
 More details you can find here: https://gist.github.com/ralphschindler/535dc5916ccbd06f53c1b0ee5a868c93
+
+Also you can create loop back alias by using next command: `ifconfig lo0 alias 10.254.254.254` 
 
 ### Usage
  - Login to your container `docker exec -it magento2web bash`
