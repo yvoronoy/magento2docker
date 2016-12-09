@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
         git \
         mysql-client \
         pv \
+        vim \
     && docker-php-ext-install -j$(nproc) iconv mcrypt \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd bcmath pdo pdo_mysql xsl intl zip
@@ -29,8 +30,11 @@ ENV APACHE_PID_FILE /var/run/apache2.pid
 
 COPY ./conf/auth.json /root/.composer/auth.json
 COPY ./conf/.m2install.conf /root/.m2install.conf
-COPY ./misc/xdebug-php.sh /usr/local/bin/xdebug-php.sh && chmod +x /usr/local/bin/xdebug-php.sh
+COPY ./misc/xdebug-php.sh /usr/local/bin/xdebug-php.sh
 
+RUN chmod +x /usr/local/bin/xdebug-php.sh
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN curl -o /usr/local/bin/m2install.sh https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install.sh \
     && chmod +x /usr/local/bin/m2install.sh
+RUN curl -o /usr/local/bin/n98-magerun2 https://files.magerun.net/n98-magerun2.phar \
+    && chmod +x /usr/local/bin/n98-magerun2
