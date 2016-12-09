@@ -6,7 +6,7 @@ Mac OSX ready environment with full speed syncing your code for development.
 
 - [Pre-requirements](#pre-requirements)
 - [Usage](#usage)
- - [How to run containers](#how-to-run-containers)
+ - [Quick Start](#quick-start)
  - [How install a magento](#how-install-magento)
  - [How deploy magento dumps](#how-deploy-dumps)
 - [How to Enable xDebug](#how-to-enable-xdebug)
@@ -21,7 +21,7 @@ Mac OSX ready environment with full speed syncing your code for development.
  - Copy `conf/auth.json.example` to `conf/auth.json` and add your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
 
 ## Usage
-### How to run containers
+### Quick Start
 Commands should be executed from _env_ directory.
 Run docker containers on Mac OSX by using next command:
 ```
@@ -35,6 +35,8 @@ docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d
 If you are on Linux
 just run `docker-compose up`
 
+Your Magento2 Environment is ready and available here: [http://127.0.0.1:8000/](http://127.0.0.1/)
+Then next step you can open container and install Magento, see [How install a magento](#how-install-magento)
 
 ### How install a magento
  - When you run container your environment is ready on http://127.0.0.1:8000/
