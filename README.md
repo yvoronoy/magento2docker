@@ -27,7 +27,7 @@ Run docker containers on Mac OSX by using next command:
 ```
 docker-sync-stack start
 ```
-OR
+OR you can use equivalent commands
 ```
 docker-sync start
 docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d
@@ -35,8 +35,8 @@ docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d
 If you are on Linux
 just run `docker-compose up`
 
-Your Magento2 Environment is ready and available here: [http://127.0.0.1:8000/](http://127.0.0.1/)
-Then next step you can open container and install Magento, see [How install a magento](#how-install-magento)
+Your Magento2 Environment is ready and available here: [http://127.0.0.1:8000/](http://127.0.0.1/).
+The next step you can open container and install Magento2.
 
 ### How install a magento
  - When you run container your environment is ready on http://127.0.0.1:8000/
