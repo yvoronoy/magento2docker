@@ -22,7 +22,7 @@ Mac OSX ready environment with full speed syncing your code for development.
  - Copy `conf/auth.json.example` to `conf/auth.json` and add your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
  
 ## Installation
-You can download archive of this project on [Release Page](#https://github.com/yvoronoy/magento2docker/releases). 
+You can download archive of this project on [Release Page](https://github.com/yvoronoy/magento2docker/releases). 
 
 Or just clone this repository ```git clone git@github.com:yvoronoy/magento2docker.git```
 
