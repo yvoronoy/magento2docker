@@ -5,6 +5,7 @@ Mac OSX ready environment with full speed syncing your code for development.
 ## Contents
 
 - [Pre-requirements](#pre-requirements)
+- [Installation](#installation)
 - [Usage](#usage)
  - [Quick Start](#quick-start)
  - [How install a magento](#how-install-magento)
@@ -19,6 +20,11 @@ Mac OSX ready environment with full speed syncing your code for development.
  - [Install Docker](https://docs.docker.com/engine/installation/mac/)
  - [Install Docker Sync](https://github.com/EugenMayer/docker-sync/wiki/1.-Installation) (only for Mac OSX)
  - Copy `conf/auth.json.example` to `conf/auth.json` and add your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
+ 
+## Installation
+You can download archive of this project on [Release Page](https://github.com/yvoronoy/magento2docker/releases). 
+
+Or just clone this repository ```git clone git@github.com:yvoronoy/magento2docker.git```
 
 ## Usage
 ### Quick Start
