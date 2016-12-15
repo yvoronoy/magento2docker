@@ -46,8 +46,7 @@ The next step you can open container and install Magento2.
 
 ### How install a magento
  - When you run container your environment is ready on http://127.0.0.1:8000/
-   - Login to container `docker exec -it magento2web bash` 
-   - Run `rm index.php`
+   - Login to container `docker exec -it magento2web bash`
    - Run `m2install.sh -s composer`
 
 ### How deploy dumps
