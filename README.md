@@ -19,7 +19,7 @@ Mac OSX ready environment with full speed syncing your code for development.
 ## Pre-requirements
  - [Install Docker](https://docs.docker.com/engine/installation/mac/)
  - [Install Docker Sync](https://github.com/EugenMayer/docker-sync/wiki/1.-Installation) (only for Mac OSX)
- - Copy `conf/auth.json.example` to `conf/auth.json` and add your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
+ - Copy `etc/composer/auth.json.example` to `etc/composer/auth.json` and add your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
  
 ## Installation
 You can download archive of this project on [Release Page](https://github.com/yvoronoy/magento2docker/releases). 
@@ -66,7 +66,7 @@ if you are using Mac OSX you have to create ip 10.254.254.254 as an alias on you
 by using next command:
 ```
 sudo curl -o /Library/LaunchDaemons/osx.docker.loopback.plist \
-https://raw.githubusercontent.com/yvoronoy/magento2docker/master/env/conf/osx.docker.loopback.plist \
+https://raw.githubusercontent.com/yvoronoy/magento2docker/master/env/etc/osx.docker.loopback.plist \
 && sudo launchctl load /Library/LaunchDaemons/osx.docker.loopback.plist
 ```
 More details you can find here: https://gist.github.com/ralphschindler/535dc5916ccbd06f53c1b0ee5a868c93

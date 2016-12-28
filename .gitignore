@@ -1,4 +1,4 @@
 src/*
 !src/index.php
-env/conf/auth.json
+env/etc/composer/auth.json
 .idea

@@ -28,8 +28,8 @@ ENV APACHE_LOG_DIR /var/log/apache2
 ENV APACHE_LOCK_DIR /var/lock/apache2
 ENV APACHE_PID_FILE /var/run/apache2.pid
 
-COPY ./conf/auth.json /root/.composer/auth.json
-COPY ./conf/.m2install.conf /root/.m2install.conf
+COPY ./etc/composer/auth.json /root/.composer/auth.json
+COPY ./etc/m2install/m2install.conf /root/.m2install.conf
 COPY ./misc/xdebug-php.sh /usr/local/bin/xdebug-php.sh
 
 RUN chmod +x /usr/local/bin/xdebug-php.sh
