@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<config>
+    <profile>
+        <simple_products>2</simple_products>
+        <configurable_products>1</configurable_products>
+        <categories>1</categories>
+        <categories_nesting_level>1</categories_nesting_level>
+        <customers>1</customers>
+        <configs>
+            <config>
+                <path>admin/security/session_lifetime</path>
+                <scope>default</scope>
+                <scopeId>0</scopeId>
+                <value>86400</value>
+            </config>
+            <config>
+                <path>admin/security/use_form_key</path>
+                <scope>default</scope>
+                <scopeId>0</scopeId>
+                <value>0</value>
+            </config>
+        </configs>
+    </profile>
+</config>
