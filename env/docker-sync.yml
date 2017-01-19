@@ -8,4 +8,4 @@ syncs:
     sync_strategy: 'unison'
     max_inotify_watches: 200000
     sync_args: [ '-prefer newer', '-copyonconflict' ]
-    sync_excludes: [ '.git', '.idea', 'var', 'pub/static', 'pub/media' ]
+    sync_excludes: [ '.idea', 'var', 'pub/static', 'pub/media' ]
