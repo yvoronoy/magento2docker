@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+  elasticsearch:
+    container_name: magento2elastic
+    restart: always
+    image: elasticsearch:2.4
+    ports:
+        - "9200:9200"
+    volumes:
+          - ./etc/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
