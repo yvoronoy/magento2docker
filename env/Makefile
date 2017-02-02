@@ -32,4 +32,3 @@ magento-console:
 	docker exec -it magento2web n98-magerun2 dev:console
 clean:
 	docker stop `docker ps -a -q`; docker rm `docker ps -a -q`
-	umount -f $(ROOT_DIR)/../src/
