@@ -9,6 +9,8 @@ down:
 	docker-compose down
 stop:
 	docker-compose stop
+build:
+	docker-compose build
 
 bash:
 	docker exec -it magento2web bash
@@ -20,3 +22,5 @@ deploy-dumps:
 	docker exec -it magento2web m2install.sh -f
 magento-console:
 	docker exec -it magento2web n98-magerun2 dev:console
+clean:
+	docker stop `docker ps -a -q`; docker rm `docker ps -a -q`
