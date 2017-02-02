@@ -1,2 +1,4 @@
 *
 !.gitignore
+!magento2docker
+!magento2docker.pub

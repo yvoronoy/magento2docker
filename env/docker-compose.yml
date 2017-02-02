@@ -7,6 +7,7 @@ services:
     build: .
     ports:
       - "8000:80"
+      - "2222:22"
   db:
     container_name: magento2db
     image: mysql:5.7
@@ -18,3 +19,5 @@ services:
       MYSQL_PASSWORD: magento
     ports:
       - "3306:3306"
+    volumes:
+      - "./etc/mysql:/etc/mysql/conf.d"

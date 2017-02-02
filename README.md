@@ -1,6 +1,8 @@
 # Magento2 Docker Environment
-A very simple Magento2 Docker Environment based on LAMP stack and Docker Sync by @EugenMayer.
-Mac OSX ready environment with full speed syncing your code for development.
+Magento2 Docker Environment based on LAMP stack. Tested on docker for mac.
+This project uses SSHFS to mount container directory on a host machine. Due to docker issue [File access in mounted volumes extremely slow](https://github.com/docker/for-mac/issues/77).
+
+I used to Docker Sync project before to synchronize files by UNISON. But it brokes very often,because Magento2 has huge amount of files. So I decided to move on SSHFS. It works pretty well and performance is enough on a host machine. Container works without any performance issue since it does not share volumes.
 
 ## Contents
 
@@ -18,7 +20,9 @@ Mac OSX ready environment with full speed syncing your code for development.
 
 ## Pre-requirements
  - [Install Docker](https://docs.docker.com/engine/installation/mac/)
- - [Install Docker Sync](https://github.com/EugenMayer/docker-sync/wiki/1.-Installation) (only for Mac OSX)
+ - Install SSHFS on Mac OSX.
+   - `brew install Caskroom/cask/osxfuse`
+   - `brew install sshfs`
  - Copy `etc/composer/auth.json.example` to `etc/composer/auth.json` and add your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
  
 ## Installation
@@ -29,29 +33,24 @@ Or just clone this repository ```git clone git@github.com:yvoronoy/magento2docke
 ## Usage
 ### Quick Start
 Commands should be executed from _env_ directory.
-Run docker containers on Mac OSX by using next command:
+Run make command to run developer environment.
+
 ```
-docker-sync-stack start
+make dev
 ```
-OR you can use equivalent commands
-```
-docker-sync start
-docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d
-```
-If you are on Linux
-just run `docker-compose up`
+That command will run docker-compose and mount sshfs into host src directory.
 
 Your Magento2 Environment is ready and available here: [http://127.0.0.1:8000/](http://127.0.0.1/).
 The next step you can open container and install Magento2.
 
-### How install a magento
+### How to install a magento inside container
  - When you run container your environment is ready on http://127.0.0.1:8000/
-   - Login to container `docker exec -it magento2web bash`
+   - Login to container `make web`
    - Run `m2install.sh -s composer`
 
-### How deploy dumps
+### How to deploy dumps (backups) inside container
  - Put dumps to src folder on your host machine
-   - Login to container `docker exec -it magento2web bash` 
+   - Login to container `make web` 
    - Run `m2install.sh`
 
 ## How to Enable xDebug
@@ -80,7 +79,7 @@ Also you can create loop back alias by using next command: `ifconfig lo0 alias 1
 
 ## Todo List
  - [x] Add xDebug and provide guide how to setup xDebug on your host machine.
- - [ ] Add useful tools like: n98-magerun2, m2install.sh, magento-bash-completion.
+ - [x] Add useful tools like: n98-magerun2, m2install.sh, magento-bash-completion.
  - [ ] Setup Cron.
 
 ## Contributing
@@ -89,4 +88,7 @@ Also you can create loop back alias by using next command: `ifconfig lo0 alias 1
 3. Commit your changes: `git commit -am 'Add some feature'`.
 4. Push to the branch: `git push origin my-new-feature`.
 5. Submit a pull request.
+
+## Credits
+Special thanks to @snosov and @tshabatyn who share their ideas and inspired to build this project.
 
