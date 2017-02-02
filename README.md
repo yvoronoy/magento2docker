@@ -89,3 +89,6 @@ Also you can create loop back alias by using next command: `ifconfig lo0 alias 1
 4. Push to the branch: `git push origin my-new-feature`.
 5. Submit a pull request.
 
+## Credits
+Special thanks to @snosov and @tshabatyn who share their ideas and inspired to build this project.
+
