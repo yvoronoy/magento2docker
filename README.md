@@ -30,10 +30,12 @@ Or just clone this repository ```git clone git@github.com:yvoronoy/magento2docke
 ## Usage
 ### Quick Start
 Commands should be executed from _env_ directory.
+Run make command to run developer environment.
 
 ```
-docker-compose up
+make dev
 ```
+That command will run docker-compose and mount sshfs into host src directory.
 
 Your Magento2 Environment is ready and available here: [http://127.0.0.1:8000/](http://127.0.0.1/).
 The next step you can open container and install Magento2.
