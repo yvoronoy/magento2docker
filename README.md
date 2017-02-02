@@ -1,5 +1,5 @@
 # Magento2 Docker Environment
-A very simple Magento2 Docker Environment based on LAMP stack.
+A very simple Magento2 Docker Environment based on LAMP stack. Docker for Mac Ready.
 
 ## Contents
 
@@ -17,7 +17,9 @@ A very simple Magento2 Docker Environment based on LAMP stack.
 
 ## Pre-requirements
  - [Install Docker](https://docs.docker.com/engine/installation/mac/)
- - [Install SSHFS](https://github.com/EugenMayer/docker-sync/wiki/1.-Installation) (only for Mac OSX)
+ - Install SSHFS on Mac OSX.
+   - `brew install Caskroom/cask/osxfuse`
+   - `brew install sshfs`
  - Copy `etc/composer/auth.json.example` to `etc/composer/auth.json` and add your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
  
 ## Installation
@@ -28,22 +30,24 @@ Or just clone this repository ```git clone git@github.com:yvoronoy/magento2docke
 ## Usage
 ### Quick Start
 Commands should be executed from _env_ directory.
+Run make command to run developer environment.
 
 ```
-docker-compose up
+make dev
 ```
+That command will run docker-compose and mount sshfs into host src directory.
 
 Your Magento2 Environment is ready and available here: [http://127.0.0.1:8000/](http://127.0.0.1/).
 The next step you can open container and install Magento2.
 
-### How install a magento
+### How to install a magento inside container
  - When you run container your environment is ready on http://127.0.0.1:8000/
-   - Login to container `docker exec -it magento2web bash`
+   - Login to container `make bash`
    - Run `m2install.sh -s composer`
 
-### How deploy dumps
+### How to deploy dumps (backups) inside container
  - Put dumps to src folder on your host machine
-   - Login to container `docker exec -it magento2web bash` 
+   - Login to container `make bash` 
    - Run `m2install.sh`
 
 ## How to Enable xDebug
