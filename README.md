@@ -40,12 +40,12 @@ That command will run docker-compose and mount sshfs into host src directory.
 Your Magento2 Environment is ready and available here: [http://127.0.0.1:8000/](http://127.0.0.1/).
 The next step you can open container and install Magento2.
 
-### How install a magento
+### How to install a magento inside container
  - When you run container your environment is ready on http://127.0.0.1:8000/
    - Login to container `docker exec -it magento2web bash`
    - Run `m2install.sh -s composer`
 
-### How deploy dumps
+### How to deploy dumps (backups) inside container
  - Put dumps to src folder on your host machine
    - Login to container `docker exec -it magento2web bash` 
    - Run `m2install.sh`
