@@ -1,5 +1,5 @@
 # Magento2 Docker Environment
-A very simple Magento2 Docker Environment based on LAMP stack.
+A very simple Magento2 Docker Environment based on LAMP stack. Docker for Mac Ready.
 
 ## Contents
 
@@ -17,7 +17,9 @@ A very simple Magento2 Docker Environment based on LAMP stack.
 
 ## Pre-requirements
  - [Install Docker](https://docs.docker.com/engine/installation/mac/)
- - [Install SSHFS](https://github.com/EugenMayer/docker-sync/wiki/1.-Installation) (only for Mac OSX)
+ - Install SSHFS on Mac OSX.
+   - `brew install Caskroom/cask/osxfuse`
+   - `brew install sshfs`
  - Copy `etc/composer/auth.json.example` to `etc/composer/auth.json` and add your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
  
 ## Installation
