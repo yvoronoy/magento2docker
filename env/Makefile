@@ -1,4 +1,4 @@
-.PHONY: dev prod down stop bash magento magento-console install deploy-dumps build umount mount
+.PHONY: dev prod down stop build mount umount clean web db magento-console
 ARG=
 ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 SRC_DIR:=$(ROOT_DIR)/../src
@@ -18,17 +18,12 @@ mount:
 	sudo sshfs -o follow_symlinks -o allow_other -o IdentityFile=$(ROOT_DIR)/etc/ssh/magento2docker -o port=2222 root@127.0.0.1:/var/www/html $(SRC_DIR)
 umount:
 	sudo umount -f $(SRC_DIR)
-
-
-bash:
-	docker exec -it magento2web bash
-magento:
-	docker exec -it magento2web bin/magento $(ARG)
-install:
-	docker exec -it magento2web m2install.sh -f -s composer -v $(ARG)
-deploy-dumps:
-	docker exec -it magento2web m2install.sh -f
-magento-console:
-	docker exec -it magento2web n98-magerun2 dev:console
 clean:
 	docker stop `docker ps -a -q`; docker rm `docker ps -a -q`
+
+web:
+	docker exec -it magento2web bash
+db:
+	docker exec -it magento2web bash
+magento-console:
+	docker exec -it magento2web n98-magerun2 dev:console
