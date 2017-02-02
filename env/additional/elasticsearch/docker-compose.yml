@@ -9,3 +9,8 @@ services:
         - "9200:9200"
     volumes:
           - ./etc/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+networks:
+  default:
+    external:
+      name: env_default
+
