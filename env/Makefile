@@ -1,4 +1,4 @@
-.PHONY: dev prod down stop bash magento magento-console install deploy-dumps
+.PHONY: dev prod down stop bash magento magento-console install deploy-dumps build
 ARG=
 
 dev:
