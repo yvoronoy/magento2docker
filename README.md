@@ -1,5 +1,8 @@
 # Magento2 Docker Environment
-A very simple Magento2 Docker Environment based on LAMP stack. Docker for Mac Ready.
+Magento2 Docker Environment based on LAMP stack. Tested on docker for mac.
+This project uses SSHFS to mount container directory on a host machine. Due to docker issue [File access in mounted volumes extremely slow](https://github.com/docker/for-mac/issues/77).
+
+I used to Docker Sync project before to synchronize files by UNISON. But it brokes very often,because Magento2 has huge amount of files. So I decided to move on SSHFS. It works pretty well and performance is enough on a host machine. Container works without any performance issue since it does not share volumes.
 
 ## Contents
 
