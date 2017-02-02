@@ -1,6 +1,5 @@
 # Magento2 Docker Environment
-A very simple Magento2 Docker Environment based on LAMP stack and Docker Sync by @EugenMayer.
-Mac OSX ready environment with full speed syncing your code for development.
+A very simple Magento2 Docker Environment based on LAMP stack.
 
 ## Contents
 
@@ -18,7 +17,7 @@ Mac OSX ready environment with full speed syncing your code for development.
 
 ## Pre-requirements
  - [Install Docker](https://docs.docker.com/engine/installation/mac/)
- - [Install Docker Sync](https://github.com/EugenMayer/docker-sync/wiki/1.-Installation) (only for Mac OSX)
+ - [Install SSHFS](https://github.com/EugenMayer/docker-sync/wiki/1.-Installation) (only for Mac OSX)
  - Copy `etc/composer/auth.json.example` to `etc/composer/auth.json` and add your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
  
 ## Installation
@@ -29,17 +28,10 @@ Or just clone this repository ```git clone git@github.com:yvoronoy/magento2docke
 ## Usage
 ### Quick Start
 Commands should be executed from _env_ directory.
-Run docker containers on Mac OSX by using next command:
+
 ```
-docker-sync-stack start
+docker-compose up
 ```
-OR you can use equivalent commands
-```
-docker-sync start
-docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d
-```
-If you are on Linux
-just run `docker-compose up`
 
 Your Magento2 Environment is ready and available here: [http://127.0.0.1:8000/](http://127.0.0.1/).
 The next step you can open container and install Magento2.
@@ -80,7 +72,7 @@ Also you can create loop back alias by using next command: `ifconfig lo0 alias 1
 
 ## Todo List
  - [x] Add xDebug and provide guide how to setup xDebug on your host machine.
- - [ ] Add useful tools like: n98-magerun2, m2install.sh, magento-bash-completion.
+ - [x] Add useful tools like: n98-magerun2, m2install.sh, magento-bash-completion.
  - [ ] Setup Cron.
 
 ## Contributing
