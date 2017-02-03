@@ -81,6 +81,10 @@ Also you can create loop back alias by using next command: `ifconfig lo0 alias 1
  - [x] Add xDebug and provide guide how to setup xDebug on your host machine.
  - [x] Add useful tools like: n98-magerun2, m2install.sh, magento-bash-completion.
  - [ ] Setup Cron.
+ - [ ] Add self-signed SSL certificate.
+ - [ ] Add Magento Testing Framework for functional tests.
+ - [ ] Add Solr Search Engine.
+ - [ ] Add Blackfire tool.
 
 ## Contributing
 1. Fork this repository.
