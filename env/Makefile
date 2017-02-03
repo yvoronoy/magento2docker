@@ -10,6 +10,8 @@ stop:
 	docker-compose stop
 build:
 	docker-compose build
+logs:
+	docker logs -f magento2web
 dev: up mount
 dev-down: down umount
 
@@ -26,3 +28,5 @@ db:
 	docker exec -it magento2db bash
 magento-console:
 	docker exec -it magento2web n98-magerun2 dev:console
+
+# vim: ts=4 sw=4 sts=4 sr noet

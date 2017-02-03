@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
         vim \
         bash-completion \
         openssh-server \
+        ssl-cert \
     && docker-php-ext-install -j$(nproc) iconv mcrypt \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd bcmath pdo pdo_mysql xsl intl zip
@@ -21,6 +22,9 @@ RUN echo ";zend_extension=xdebug.so" >> /usr/local/etc/php/conf.d/docker-php-ext
 RUN echo "xdebug.remote_host=10.254.254.254" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.remote_autostart=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+RUN a2enmod ssl
+RUN a2ensite default-ssl.conf
 
 RUN a2enmod rewrite
 RUN chown -R www-data:www-data /var/www/html
