@@ -5,6 +5,8 @@ services:
     container_name: magento2web
     restart: always
     build: .
+    environment:
+      - PHP_IDE_CONFIG=serverName=PHPSTORM
     ports:
       - "8000:80"
       - "8443:443"
