@@ -12,10 +12,8 @@ build:
 	docker-compose build
 logs:
 	docker logs -f magento2web
-dev:
-	docker-compose -f docker-compose.yml -f dev/docker-compose.yml up -d
-	sudo sshfs -o follow_symlinks -o allow_other -o IdentityFile=$(ROOT_DIR)/etc/ssh/magento2docker -o port=2222 root@127.0.0.1:/var/www/html $(SRC_DIR)
-dev-down: umount down 
+dev: up mount
+dev-down: umount down
 
 mount:
 	sudo sshfs -o follow_symlinks -o allow_other -o IdentityFile=$(ROOT_DIR)/etc/ssh/magento2docker -o port=2222 root@127.0.0.1:/var/www/html $(SRC_DIR)
