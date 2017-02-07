@@ -40,7 +40,7 @@ COPY ./etc/ssh /root/.ssh
 ADD ./etc/ssh/magento2docker.pub /root/.ssh/authorized_keys
 RUN chmod -R 400 /root/.ssh
 COPY ./etc/fixtures /etc/fixtures
-COPY ./etc/m2install/m2install.conf /root/.m2install.conf
+COPY ./etc/m2install/.m2install.conf* /root/
 COPY ./misc/xdebug-php.sh /usr/local/bin/xdebug-php.sh
 
 RUN chmod +x /usr/local/bin/xdebug-php.sh
