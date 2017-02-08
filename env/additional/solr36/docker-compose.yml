@@ -1,0 +1,19 @@
+version: '2'
+
+services:
+  solr:
+    container_name: magento2solr
+    restart: always
+    build:
+      context: .
+      args:
+        SOLR_VERSION: "3.6.2"
+        SOLR_KEY: "322D7ECA"
+        SOLR_SOURCE_SHA256_HASH: "3a1a40542670ea6efec246a081053732c5503ec1"
+    ports:
+      - "8983:8983"
+networks:
+  default:
+    external:
+      name: env_default
+

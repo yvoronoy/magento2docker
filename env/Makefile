@@ -29,4 +29,18 @@ db:
 magento-console:
 	docker exec -it magento2web n98-magerun2 dev:console
 
+#Additional Containers
+elastic:
+	cd additional/elasticsearch && docker-compose up -d && cd -
+elastic-stop:
+	cd additional/elasticsearch && docker-compose stop && cd -
+elastic-down:
+	cd additional/elasticsearch && docker-compose down && cd -
+solr:
+	cd additional/solr36 && docker-compose up -d && cd -
+solr-stop:
+	cd additional/solr36 && docker-compose stop && cd -
+solr-down:
+	cd additional/solr36 && docker-compose down && cd -
+
 # vim: ts=4 sw=4 sts=4 sr noet
