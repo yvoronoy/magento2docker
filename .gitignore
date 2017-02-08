@@ -2,4 +2,5 @@ src/*
 !src/index.php
 env/etc/composer/auth.json
 env/etc/m2install/.m2install.conf.override
+env/docker-compose.override.yml
 .idea
