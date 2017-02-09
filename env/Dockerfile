@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
         bash-completion \
         openssh-server \
         ssl-cert \
+        msmtp \
     && docker-php-ext-install -j$(nproc) iconv mcrypt \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd bcmath pdo pdo_mysql xsl intl zip
@@ -23,6 +24,12 @@ RUN echo "xdebug.remote_host=10.254.254.254" >> /usr/local/etc/php/conf.d/docker
 RUN echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.remote_autostart=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/mailcatcher.ini
+RUN echo "account default" >> /etc/msmtprc
+RUN echo "host mailcatcher" >> /etc/msmtprc
+RUN echo "port 1025" >> /etc/msmtprc
+RUN echo "auto_from on" >> /etc/msmtprc
 
 RUN a2enmod ssl
 RUN a2ensite default-ssl.conf

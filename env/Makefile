@@ -13,7 +13,7 @@ build:
 logs:
 	docker logs -f magento2web
 dev: up mount
-dev-down: umount down
+dev-stop: umount stop
 
 mount:
 	sshfs -o follow_symlinks -o IdentityFile=$(ROOT_DIR)/etc/ssh/magento2docker -o port=2222 root@127.0.0.1:/var/www/html $(SRC_DIR)
@@ -34,13 +34,13 @@ elastic:
 	cd additional/elasticsearch && docker-compose up -d && cd -
 elastic-stop:
 	cd additional/elasticsearch && docker-compose stop && cd -
-elastic-down:
-	cd additional/elasticsearch && docker-compose down && cd -
 solr:
 	cd additional/solr36 && docker-compose up -d && cd -
 solr-stop:
 	cd additional/solr36 && docker-compose stop && cd -
-solr-down:
-	cd additional/solr36 && docker-compose down && cd -
+mailcatcher:
+	cd additional/mailcatcher && docker-compose up -d && cd -
+mailcatcher-stop:
+	cd additional/mailcatcher && docker-compose stop && cd -
 
 # vim: ts=4 sw=4 sts=4 sr noet

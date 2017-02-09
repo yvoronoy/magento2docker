@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  mailcatcher:
+    image: schickling/mailcatcher
+    ports:
+      - "1080:1080"
+networks:
+  default:
+    external:
+      name: env_default
+
