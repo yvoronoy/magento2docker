@@ -14,8 +14,10 @@ logs:
 	docker logs -f magento2web
 dev: up mount
 dev-stop: umount stop
+all: up elastic mailcatcher solr
 
 mount:
+	chmod 400 $(ROOT_DIR)/etc/ssh/magento2docker
 	sshfs -o follow_symlinks -o IdentityFile=$(ROOT_DIR)/etc/ssh/magento2docker -o port=2222 root@127.0.0.1:/var/www/html $(SRC_DIR)
 umount:
 	umount -f $(SRC_DIR)
