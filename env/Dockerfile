@@ -26,6 +26,7 @@ RUN echo "xdebug.remote_autostart=1" >> /usr/local/etc/php/conf.d/docker-php-ext
 RUN echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/mailcatcher.ini
+RUN echo "memory_limit=2G" >> /usr/local/etc/php/conf.d/custom.ini
 RUN echo "account default" >> /etc/msmtprc
 RUN echo "host mailcatcher" >> /etc/msmtprc
 RUN echo "port 1025" >> /etc/msmtprc

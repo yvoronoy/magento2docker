@@ -11,6 +11,8 @@ services:
       - "8000:80"
       - "8443:443"
       - "2222:22"
+    volumes:
+      - src-volume:/var/www/html
   db:
     container_name: magento2db
     image: mysql:5.7
@@ -24,3 +26,7 @@ services:
       - "3306:3306"
     volumes:
       - "./etc/mysql:/etc/mysql/conf.d"
+      - db-volume:/var/lib/mysql
+volumes:
+  src-volume:
+  db-volume:
