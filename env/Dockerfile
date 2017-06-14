@@ -68,5 +68,6 @@ RUN curl -o /usr/local/bin/m2-convert-for-composer https://raw.githubusercontent
     && chmod +x /usr/local/bin/m2-convert-for-composer
 RUN curl -o /etc/bash_completion.d/magento2-bash-completion https://raw.githubusercontent.com/yvoronoy/magento2-bash-completion/master/magento2-bash-completion-enterprise
 RUN echo "source /etc/bash_completion" >> /root/.bashrc
+RUN curl -sS https://accounts.magento.cloud/cli/installer | php
 
 CMD service ssh start; apache2-foreground
