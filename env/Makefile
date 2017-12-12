@@ -44,5 +44,11 @@ mailcatcher:
 	cd additional/mailcatcher && docker-compose up -d && cd -
 mailcatcher-stop:
 	cd additional/mailcatcher && docker-compose stop && cd -
+redis:
+	cd additional/redis && docker-compose up -d && cd -
+redis-cli:
+	docker exec -it magento2redis redis-cli
+redis-stop:
+	cd additional/redis && docker-compose stop && cd -
 
 # vim: ts=4 sw=4 sts=4 sr noet

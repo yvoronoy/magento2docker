@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+  redis:
+    container_name: magento2redis
+    image: redis:3.2
+networks:
+  default:
+    external:
+      name: env_default
+
