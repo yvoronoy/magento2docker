@@ -13,6 +13,8 @@ services:
       - "2222:22"
     volumes:
       - src-volume:/var/www/html
+    cap_add:
+      - "SYS_PTRACE"
   db:
     container_name: magento2db
     image: mysql:5.7
