@@ -72,5 +72,11 @@ RUN curl -o /usr/local/bin/m2-convert-for-composer https://raw.githubusercontent
 RUN curl -o /etc/bash_completion.d/magento2-bash-completion https://raw.githubusercontent.com/yvoronoy/magento2-bash-completion/master/magento2-bash-completion-enterprise
 RUN echo "source /etc/bash_completion" >> /root/.bashrc
 RUN curl -sS https://accounts.magento.cloud/cli/installer | php
+RUN curl -o /tmp/teleport.tar.gz https://github.com/gravitational/teleport/releases/download/v1.3.2/teleport-v1.3.2-linux-amd64-bin.tar.gz
+RUN curl -L -o /tmp/teleport.tar.gz https://github.com/gravitational/teleport/releases/download/v1.3.2/teleport-v1.3.2-linux-amd64-bin.tar.gz
+RUN tar -xf /tmp/teleport.tar.gz -C /tmp/
+RUN make -C /tmp/teleport/
+RUN curl -o /usr/local/bin/cloud-teleport https://raw.githubusercontent.com/magento-sparta/teleport/master/cloud-teleport
+RUN chmod +x /usr/local/bin/cloud-teleport
 
 CMD service ssh start; apache2-foreground
