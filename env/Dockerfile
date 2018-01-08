@@ -29,6 +29,11 @@ RUN echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xd
 RUN echo "xdebug.remote_autostart=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
+#RUN cd /tmp/ && curl -OL https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz && cd -
+#RUN cd /tmp/ && tar xf ioncube_loaders_lin_x86-64.tar.gz && cd -
+#RUN cp /tmp/ioncube/ioncube_loader_lin_7.0.so /usr/local/lib/php/extensions/no-debug-non-zts-20151012/ioncube_loader_lin_7.0.so
+#RUN echo "zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20151012/ioncube_loader_lin_7.0.so" >> /usr/local/etc/php/conf.d/docker-php-ext-ioncube.ini
+
 RUN pear install PHP_CodeSniffer
 RUN mkdir /usr/local/magento-ecg-code-sniffer
 RUN cd /usr/local/magento-ecg-code-sniffer/ && composer require magento-ecg/coding-standard
@@ -56,6 +61,7 @@ COPY ./etc/composer/auth.json /root/.composer/auth.json
 COPY ./etc/ssh /root/.ssh
 ADD ./etc/ssh/magento2docker.pub /root/.ssh/authorized_keys
 RUN chmod -R 400 /root/.ssh
+RUN echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-gcm@openssh.com,aes256-gcm@openssh.com,chacha20-poly1305@openssh.com,blowfish-cbc,aes128-cbc,3des-cbc,cast128-cbc,arcfour,aes192-cbc,aes256-cbc" >> /etc/ssh/sshd_config
 COPY ./etc/fixtures /etc/fixtures
 COPY ./etc/m2install/.m2install.conf* /root/
 COPY ./misc/xdebug-php.sh /usr/local/bin/xdebug-php.sh
