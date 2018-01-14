@@ -3,4 +3,7 @@ src/*
 env/etc/composer/auth.json
 env/etc/m2install/.m2install.conf.override
 env/docker-compose.override.yml
+env/etc/*
+!env/etc/apache/vhost.conf.example
+!env/etc/apache/default.conf
 .idea
