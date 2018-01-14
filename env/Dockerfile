@@ -46,17 +46,6 @@ RUN echo "host mailcatcher" >> /etc/msmtprc
 RUN echo "port 1025" >> /etc/msmtprc
 RUN echo "auto_from on" >> /etc/msmtprc
 
-RUN a2enmod ssl
-RUN a2ensite default-ssl.conf
-
-RUN a2enmod rewrite
-RUN chown -R www-data:www-data /var/www/html
-ENV APACHE_RUN_USER www-data
-ENV APACHE_RUN_GROUP www-data
-ENV APACHE_LOG_DIR /var/log/apache2
-ENV APACHE_LOCK_DIR /var/lock/apache2
-ENV APACHE_PID_FILE /var/run/apache2.pid
-
 COPY ./etc/composer/auth.json /root/.composer/auth.json
 COPY ./etc/ssh /root/.ssh
 ADD ./etc/ssh/magento2docker.pub /root/.ssh/authorized_keys
@@ -83,5 +72,19 @@ RUN tar -xf /tmp/teleport.tar.gz -C /tmp/
 RUN make -C /tmp/teleport/
 RUN curl -o /usr/local/bin/cloud-teleport https://raw.githubusercontent.com/magento-sparta/teleport/master/cloud-teleport
 RUN chmod +x /usr/local/bin/cloud-teleport
+
+#APACHE
+COPY ./etc/apache /etc/apache2/sites-enabled/
+RUN a2enmod ssl
+RUN a2ensite default-ssl.conf
+
+RUN a2enmod rewrite
+RUN chown -R www-data:www-data /var/www/html
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_LOG_DIR /var/log/apache2
+ENV APACHE_LOCK_DIR /var/lock/apache2
+ENV APACHE_PID_FILE /var/run/apache2.pid
+#APACHE END
 
 CMD service ssh start; apache2-foreground
