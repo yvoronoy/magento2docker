@@ -45,6 +45,9 @@ RUN echo "host mailcatcher" >> /etc/msmtprc
 RUN echo "port 1025" >> /etc/msmtprc
 RUN echo "auto_from on" >> /etc/msmtprc
 
+#GIT
+COPY ./etc/git/gitconfig /root/.gitconfig
+
 COPY ./etc/composer/auth.json /root/.composer/auth.json
 COPY ./etc/ssh /root/.ssh
 ADD ./etc/ssh/magento2docker.pub /root/.ssh/authorized_keys
@@ -69,7 +72,10 @@ RUN curl -sS https://accounts.magento.cloud/cli/installer | php
 RUN curl -L -o /tmp/teleport.tar.gz https://github.com/gravitational/teleport/releases/download/v1.3.2/teleport-v1.3.2-linux-amd64-bin.tar.gz
 RUN tar -xf /tmp/teleport.tar.gz -C /tmp/
 RUN make -C /tmp/teleport/
-RUN curl -o /usr/local/bin/cloud-teleport https://raw.githubusercontent.com/magento-sparta/teleport/master/cloud-teleport
+
+RUN ssh-keygen -F github.com || ssh-keyscan github.com >>~/.ssh/known_hosts
+RUN git clone git@github.com:magento-sparta/ee-support-tools.git /usr/local/src/ee-support-tools
+RUN ln -s /usr/local/src/ee-support-tools/cloud-teleport/cloud-teleport /usr/local/bin/cloud-teleport
 RUN chmod +x /usr/local/bin/cloud-teleport
 
 #APACHE
