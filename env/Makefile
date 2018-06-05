@@ -1,6 +1,6 @@
 .PHONY: dev prod down stop build mount umount clean web db magento-console
 ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-SRC_DIR:=$(ROOT_DIR)/../src
+SRC_DIR:=$(shell bash etc/host/config.sh SOURCE_DIRECTORY)
 
 up:
 	docker-compose up -d

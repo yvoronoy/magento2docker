@@ -13,3 +13,5 @@ env/docker-compose.override.yml
 .idea
 env/etc/apache/*
 !env/etc/vhost.conf.example
+
+env/etc/host/config.sh.override
