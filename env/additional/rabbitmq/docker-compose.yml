@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  rabbitmq:
+    container_name: magento2rabbitmq
+    image: rabbitmq:3.6-management
+    restart: always
+    ports:
+            - "15672:15672"
+networks:
+  default:
+    external:
+      name: env_default
