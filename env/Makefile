@@ -44,6 +44,13 @@ mailcatcher:
 	cd additional/mailcatcher && docker-compose up -d && cd -
 mailcatcher-stop:
 	cd additional/mailcatcher && docker-compose stop && cd -
+rabbitmq:
+	cd additional/rabbitmq && docker-compose up -d && cd -
+	# Management Console:
+	# http://localhost:15672
+	# guest:guest
+rabbitmq-stop:
+	cd additional/rabbitmq && docker-compose stop && cd -
 redis:
 	cd additional/redis && docker-compose up -d && cd -
 redis-cli:
