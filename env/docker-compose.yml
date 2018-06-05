@@ -13,6 +13,7 @@ services:
       - "2222:22"
     volumes:
       - src-volume:/var/www/html
+      - src-composer-cache-volume:/root/.composer/cache
     cap_add:
       - "SYS_PTRACE"
   db:
@@ -32,3 +33,4 @@ services:
 volumes:
   src-volume:
   db-volume:
+  src-composer-cache-volume:
