@@ -12,6 +12,7 @@ build:
 	docker-compose build
 logs:
 	docker logs -f magento2web
+
 dev: up mount
 dev-stop: umount stop
 all: up elastic mailcatcher solr
@@ -25,7 +26,7 @@ clean:
 	docker stop `docker ps -a -q`; docker rm `docker ps -a -q`
 
 web:
-	docker exec -it magento2web bash
+	docker exec -it --user magento magento2web bash
 db:
 	docker exec -it magento2db bash
 magento-console:
