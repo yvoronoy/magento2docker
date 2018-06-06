@@ -13,12 +13,17 @@ RUN apt-get update && apt-get install -y \
         openssh-server \
         ssl-cert \
         msmtp \
+        sudo \
     && docker-php-ext-install -j$(nproc) iconv mcrypt soap\
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd bcmath pdo_mysql xsl intl zip
 RUN apt-get update              \
          &&      apt-get install -y git      \
          &&      apt-get clean all
+
+ENV _USER=magento
+ENV _HOME_DIRECTORY=/home/${_USER}
+RUN useradd -m ${_USER} && echo "${_USER}:${_USER}" | chpasswd && chsh ${_USER} -s /bin/bash && adduser ${_USER} sudo
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN pecl install xdebug
@@ -46,15 +51,23 @@ RUN echo "port 1025" >> /etc/msmtprc
 RUN echo "auto_from on" >> /etc/msmtprc
 
 #GIT
-COPY ./etc/git/gitconfig /root/.gitconfig
+COPY ./etc/git/gitconfig ${_HOME_DIRECTORY}/.gitconfig
 
-COPY ./etc/composer/auth.json /root/.composer/auth.json
+COPY ./etc/composer/auth.json /${_HOME_DIRECTORY}/.composer/auth.json
+
+#SSH
+COPY ./etc/ssh ${_HOME_DIRECTORY}/.ssh
+ADD ./etc/ssh/magento2docker.pub ${_HOME_DIRECTORY}/.ssh/authorized_keys
+RUN chown -R ${_USER}:${_USER} ${_HOME_DIRECTORY}/.ssh
+RUN chmod -R 400 ${_HOME_DIRECTORY}/.ssh
+
 COPY ./etc/ssh /root/.ssh
 ADD ./etc/ssh/magento2docker.pub /root/.ssh/authorized_keys
-RUN chmod -R 400 /root/.ssh
+#END
+
 RUN echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-gcm@openssh.com,aes256-gcm@openssh.com,chacha20-poly1305@openssh.com,blowfish-cbc,aes128-cbc,3des-cbc,cast128-cbc,arcfour,aes192-cbc,aes256-cbc" >> /etc/ssh/sshd_config
 COPY ./etc/fixtures /etc/fixtures
-COPY ./etc/m2install/.m2install.conf* /root/
+COPY ./etc/m2install/.m2install.conf* ${_HOME_DIRECTORY}/
 COPY ./misc/xdebug-php.sh /usr/local/bin/xdebug-php.sh
 
 RUN chmod +x /usr/local/bin/xdebug-php.sh
@@ -67,13 +80,13 @@ RUN curl -o /etc/bash_completion.d/n98-magerun2.phar.bash https://raw.githubuser
 RUN curl -o /usr/local/bin/m2-convert-for-composer https://raw.githubusercontent.com/isitnikov/m2-convert-patch-for-composer-install/master/convert-for-composer.php \
     && chmod +x /usr/local/bin/m2-convert-for-composer
 RUN curl -o /etc/bash_completion.d/magento2-bash-completion https://raw.githubusercontent.com/yvoronoy/magento2-bash-completion/master/magento2-bash-completion-enterprise
-RUN echo "source /etc/bash_completion" >> /root/.bashrc
+RUN echo "source /etc/bash_completion" >> ${_HOME_DIRECTORY}/.bashrc
 RUN curl -sS https://accounts.magento.cloud/cli/installer | php
 RUN curl -L -o /tmp/teleport.tar.gz https://github.com/gravitational/teleport/releases/download/v1.3.2/teleport-v1.3.2-linux-amd64-bin.tar.gz
 RUN tar -xf /tmp/teleport.tar.gz -C /tmp/
 RUN make -C /tmp/teleport/
 
-RUN ssh-keygen -F github.com || ssh-keyscan github.com >>~/.ssh/known_hosts
+RUN ssh-keygen -F github.com || ssh-keyscan github.com >> /root/.ssh/known_hosts
 RUN git clone git@github.com:magento-sparta/ee-support-tools.git /usr/local/src/ee-support-tools
 RUN ln -s /usr/local/src/ee-support-tools/cloud-teleport/cloud-teleport /usr/local/bin/cloud-teleport
 RUN chmod +x /usr/local/bin/cloud-teleport
@@ -84,12 +97,13 @@ RUN a2enmod ssl
 RUN a2ensite default-ssl.conf
 
 RUN a2enmod rewrite
-RUN chown -R www-data:www-data /var/www/html
-ENV APACHE_RUN_USER www-data
-ENV APACHE_RUN_GROUP www-data
+RUN chown -R ${_USER}:${_USER} /var/www/html
+ENV APACHE_RUN_USER ${_USER}
+ENV APACHE_RUN_GROUP ${_USER}
 ENV APACHE_LOG_DIR /var/log/apache2
 ENV APACHE_LOCK_DIR /var/lock/apache2
 ENV APACHE_PID_FILE /var/run/apache2.pid
 #APACHE END
+RUN chown -R ${_USER}:${_USER} ${_HOME_DIRECTORY}
 
 CMD service ssh start; apache2-foreground
