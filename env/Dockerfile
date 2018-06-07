@@ -59,11 +59,11 @@ COPY ./etc/composer/auth.json /${_HOME_DIRECTORY}/.composer/auth.json
 COPY ./etc/ssh ${_HOME_DIRECTORY}/.ssh
 ADD ./etc/ssh/magento2docker.pub ${_HOME_DIRECTORY}/.ssh/authorized_keys
 RUN chown -R ${_USER}:${_USER} ${_HOME_DIRECTORY}/.ssh
-RUN chmod -R 400 ${_HOME_DIRECTORY}/.ssh
+RUN chmod -R 700 ${_HOME_DIRECTORY}/.ssh
 
 COPY ./etc/ssh /root/.ssh
 ADD ./etc/ssh/magento2docker.pub /root/.ssh/authorized_keys
-RUN chmod -R 400 /root/.ssh
+RUN chmod -R 700 /root/.ssh
 #END
 
 RUN echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-gcm@openssh.com,aes256-gcm@openssh.com,chacha20-poly1305@openssh.com,blowfish-cbc,aes128-cbc,3des-cbc,cast128-cbc,arcfour,aes192-cbc,aes256-cbc" >> /etc/ssh/sshd_config
