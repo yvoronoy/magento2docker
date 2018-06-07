@@ -30,7 +30,7 @@ xdebugAction()
         || { echo "> ERROR: failed to update ${ini} file ..." 1>&2 && return 1; }
   fi
 
-  apachectl -k graceful
+  /etc/init.d/apache2 reload
   php -v
 }
 

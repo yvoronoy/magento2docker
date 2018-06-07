@@ -99,11 +99,7 @@ RUN a2ensite default-ssl.conf
 
 RUN a2enmod rewrite
 RUN chown -R ${_USER}:${_USER} /var/www/html
-ENV APACHE_RUN_USER ${_USER}
-ENV APACHE_RUN_GROUP ${_USER}
-ENV APACHE_LOG_DIR /var/log/apache2
-ENV APACHE_LOCK_DIR /var/lock/apache2
-ENV APACHE_PID_FILE /var/run/apache2.pid
+COPY ./etc/apache/envvars /etc/apache2/envvars
 #APACHE END
 RUN chown -R ${_USER}:${_USER} ${_HOME_DIRECTORY}
 
