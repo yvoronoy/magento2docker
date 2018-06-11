@@ -19,7 +19,7 @@ all: up elastic mailcatcher solr
 
 mount:
 	chmod 400 $(ROOT_DIR)/etc/ssh/magento2docker
-	sshfs root@127.0.0.1:/var/www/html $(SRC_DIR) -o reconnect -o StrictHostKeyChecking=no -o follow_symlinks -o IdentityFile=$(ROOT_DIR)/etc/ssh/magento2docker -o port=2222 -o compression=no
+	sshfs magento@127.0.0.1:/var/www/html $(SRC_DIR) -o reconnect -o StrictHostKeyChecking=no -o follow_symlinks -o IdentityFile=$(ROOT_DIR)/etc/ssh/magento2docker -o port=2222 -o compression=no
 umount:
 	umount -f $(SRC_DIR)
 clean:
