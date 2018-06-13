@@ -43,6 +43,8 @@ solr-stop:
 	cd additional/solr36 && docker-compose stop && cd -
 mailcatcher:
 	cd additional/mailcatcher && docker-compose up -d && cd -
+	# Management Console:
+	# http://127.0.0.1:1080/
 mailcatcher-stop:
 	cd additional/mailcatcher && docker-compose stop && cd -
 rabbitmq:
