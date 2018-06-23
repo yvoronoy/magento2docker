@@ -81,8 +81,6 @@ RUN curl -o /etc/bash_completion.d/n98-magerun2.phar.bash https://raw.githubuser
 RUN curl -o /usr/local/bin/m2-convert-for-composer https://raw.githubusercontent.com/isitnikov/m2-convert-patch-for-composer-install/master/convert-for-composer.php \
     && chmod +x /usr/local/bin/m2-convert-for-composer
 RUN curl -o /etc/bash_completion.d/magento2-bash-completion https://raw.githubusercontent.com/yvoronoy/magento2-bash-completion/master/magento2-bash-completion-enterprise
-RUN echo "source /etc/bash_completion" >> ${_HOME_DIRECTORY}/.bashrc
-RUN curl -sS https://accounts.magento.cloud/cli/installer | php
 RUN curl -L -o /tmp/teleport.tar.gz https://github.com/gravitational/teleport/releases/download/v1.3.2/teleport-v1.3.2-linux-amd64-bin.tar.gz
 RUN tar -xf /tmp/teleport.tar.gz -C /tmp/
 RUN make -C /tmp/teleport/
@@ -102,5 +100,11 @@ RUN chown -R ${_USER}:${_USER} /var/www/html
 COPY ./etc/apache/envvars /etc/apache2/envvars
 #APACHE END
 RUN chown -R ${_USER}:${_USER} ${_HOME_DIRECTORY}
+
+#USER SPECIFYC
+USER magento
+RUN echo "source /etc/bash_completion" >> ${_HOME_DIRECTORY}/.bashrc
+RUN curl -sS https://accounts.magento.cloud/cli/installer | php
+USER root
 
 CMD service ssh start; apache2-foreground
