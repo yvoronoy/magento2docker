@@ -8,10 +8,11 @@ env/etc/git/gitconfig
 
 env/etc/m2install/.m2install.conf.override
 env/docker-compose.override.yml
-!env/etc/apache/vhost.conf.example
-!env/etc/apache/default.conf
+
 .idea
 env/etc/apache/*
 !env/etc/vhost.conf.example
+!env/etc/apache/envvars
+!env/etc/apache/default.conf
 
 env/etc/host/config.sh.override
