@@ -34,6 +34,8 @@ magento-console:
 
 #Additional Containers
 elastic:
+	# Web interface:
+	# http://127.0.0.1:9200
 	cd additional/elasticsearch && docker-compose up -d && cd -
 elastic-stop:
 	cd additional/elasticsearch && docker-compose stop && cd -
