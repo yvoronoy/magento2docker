@@ -26,7 +26,7 @@ clean:
 	docker stop `docker ps -a -q`; docker rm `docker ps -a -q`
 
 web:
-	docker exec -it --user magento magento2web bash
+	docker exec -it --env COLUMNS=`tput cols` --env LINES=`tput lines` --user magento magento2web bash
 db:
 	docker exec -it magento2db bash
 magento-console:
