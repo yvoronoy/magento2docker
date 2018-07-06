@@ -71,6 +71,25 @@ COPY ./etc/fixtures /etc/fixtures
 COPY ./etc/m2install/.m2install.conf* ${_HOME_DIRECTORY}/
 COPY ./misc/xdebug-php.sh /usr/local/bin/xdebug-php.sh
 
+#APACHE
+COPY ./etc/apache /etc/apache2/sites-enabled/
+RUN a2enmod ssl
+RUN a2ensite default-ssl.conf
+
+RUN a2enmod rewrite
+RUN chown -R ${_USER}:${_USER} /var/www/html
+COPY ./etc/apache/envvars /etc/apache2/envvars
+#APACHE END
+RUN chown -R ${_USER}:${_USER} ${_HOME_DIRECTORY}
+
+#USER SPECIFYC
+USER magento
+RUN echo "source /etc/bash_completion" >> ${_HOME_DIRECTORY}/.bashrc
+RUN curl -sS https://accounts.magento.cloud/cli/installer | php
+USER root
+
+# Hack to not cache https://github.com/docker/docker/issues/1996#issuecomment-185872769
+ARG CACHEBUST=1
 RUN chmod +x /usr/local/bin/xdebug-php.sh
 RUN curl -o /usr/local/bin/m2install.sh https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install.sh \
     && chmod +x /usr/local/bin/m2install.sh
@@ -89,22 +108,5 @@ RUN ssh-keygen -F github.com || ssh-keyscan github.com >> /root/.ssh/known_hosts
 RUN git clone git@github.com:magento-sparta/ee-support-tools.git /usr/local/src/ee-support-tools
 RUN ln -s /usr/local/src/ee-support-tools/cloud-teleport/cloud-teleport /usr/local/bin/cloud-teleport
 RUN chmod +x /usr/local/bin/cloud-teleport
-
-#APACHE
-COPY ./etc/apache /etc/apache2/sites-enabled/
-RUN a2enmod ssl
-RUN a2ensite default-ssl.conf
-
-RUN a2enmod rewrite
-RUN chown -R ${_USER}:${_USER} /var/www/html
-COPY ./etc/apache/envvars /etc/apache2/envvars
-#APACHE END
-RUN chown -R ${_USER}:${_USER} ${_HOME_DIRECTORY}
-
-#USER SPECIFYC
-USER magento
-RUN echo "source /etc/bash_completion" >> ${_HOME_DIRECTORY}/.bashrc
-RUN curl -sS https://accounts.magento.cloud/cli/installer | php
-USER root
 
 CMD service ssh start; apache2-foreground

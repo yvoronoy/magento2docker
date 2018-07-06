@@ -9,7 +9,7 @@ down:
 stop:
 	docker-compose stop
 build:
-	docker-compose build
+	docker-compose build --build-arg CACHEBUST=`date +%s`
 logs:
 	docker logs -f magento2web
 
