@@ -29,6 +29,8 @@ I used to Docker Sync project before to synchronize files by UNISON. But it brok
   - Copy your private ssh keys, configs to have access to resources from inside container
     - `cp ~/.ssh/id_rsa env/etc/ssh/`
     - `cp ~/.ssh/config env/etc/ssh/`
+  - Update your gitconfig if needed
+    - `cp env/etc/git/gitconfig.example env/etc/git/gitconfig`
   - [Install bash completion (optional)](https://github.com/bobthecow/git-flow-completion/wiki/Install-Bash-git-completion)
  
 ## Installation
