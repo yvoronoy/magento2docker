@@ -23,7 +23,13 @@ I used to Docker Sync project before to synchronize files by UNISON. But it brok
  - Install SSHFS on Mac OSX.
    - `brew install Caskroom/cask/osxfuse`
    - `brew install sshfs`
- - Copy `etc/composer/auth.json.example` to `etc/composer/auth.json` and add your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
+ - Copy or create `env/etc/composer/auth.json` and put your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
+   - `cp env/etc/composer/auth.json.example env/etc/composer/auth.json`
+   - Edit env/etc/composer/auth.json and put your credentials [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
+  - Copy your private ssh keys, configs to have access to resources from inside container
+    - `cp ~/.ssh/id_rsa env/etc/ssh/`
+    - `cp ~/.ssh/config env/etc/ssh/`
+  - [Install bash completion (optional)](https://github.com/bobthecow/git-flow-completion/wiki/Install-Bash-git-completion)
  
 ## Installation
 You can download archive of this project on [Release Page](https://github.com/yvoronoy/magento2docker/releases). 
