@@ -55,6 +55,12 @@ mailcatcher:
 	# http://127.0.0.1:1080/
 mailcatcher-stop:
 	cd additional/mailcatcher && docker-compose stop && cd -
+mysql55:
+	# MySQL 5.5
+	# Host: db55
+	cd additional/mysql55 && docker-compose up -d && cd -
+mysql55-stop:
+	cd additional/mysql55 && docker-compose stop && cd -
 rabbitmq:
 	cd additional/rabbitmq && docker-compose up -d && cd -
 	# Management Console:
