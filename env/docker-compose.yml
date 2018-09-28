@@ -8,8 +8,8 @@ services:
     environment:
       - PHP_IDE_CONFIG=serverName=PHPSTORM
     ports:
-      - "8000:80"
-      - "8443:443"
+      - "80:80"
+      - "443:443"
       - "2222:22"
     volumes:
       - src-volume:/var/www/html

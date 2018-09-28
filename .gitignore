@@ -13,6 +13,6 @@ env/docker-compose.override.yml
 env/etc/apache/*
 !env/etc/vhost.conf.example
 !env/etc/apache/envvars
-!env/etc/apache/default.conf
+!env/etc/apache/000-default.conf
 
 env/etc/host/config.sh.override

@@ -26,7 +26,7 @@ ENV _HOME_DIRECTORY=/home/${_USER}
 RUN useradd -m ${_USER} && echo "${_USER}:${_USER}" | chpasswd && chsh ${_USER} -s /bin/bash && adduser ${_USER} sudo
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN pecl install xdebug
+RUN pecl install xdebug-2.5.5
 RUN echo ";zend_extension=xdebug.so" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.remote_host=10.254.254.254" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
@@ -67,14 +67,12 @@ RUN chmod -R 700 /root/.ssh
 #END
 
 RUN echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-gcm@openssh.com,aes256-gcm@openssh.com,chacha20-poly1305@openssh.com,blowfish-cbc,aes128-cbc,3des-cbc,cast128-cbc,arcfour,aes192-cbc,aes256-cbc" >> /etc/ssh/sshd_config
-COPY ./etc/fixtures /etc/fixtures
-COPY ./etc/m2install/.m2install.conf* ${_HOME_DIRECTORY}/
 COPY ./misc/xdebug-php.sh /usr/local/bin/xdebug-php.sh
 
 #APACHE
-COPY ./etc/apache /etc/apache2/sites-enabled/
 RUN a2enmod ssl
 RUN a2ensite default-ssl.conf
+RUN a2enmod vhost_alias
 
 RUN a2enmod rewrite
 RUN chown -R ${_USER}:${_USER} /var/www/html
@@ -90,6 +88,10 @@ USER root
 
 # Hack to not cache https://github.com/docker/docker/issues/1996#issuecomment-185872769
 ARG CACHEBUST=1
+COPY ./etc/apache /etc/apache2/sites-enabled/
+COPY ./etc/fixtures /etc/fixtures
+COPY ./etc/m2install/.m2install.conf* ${_HOME_DIRECTORY}/
+
 RUN chmod +x /usr/local/bin/xdebug-php.sh
 RUN curl -o /usr/local/bin/m2install.sh https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install.sh \
     && chmod +x /usr/local/bin/m2install.sh
