@@ -7,6 +7,8 @@ services:
     build: .
     ports:
         - "9200:9200"
+    environment:
+      - ES_HEAP_SIZE=2g
 networks:
   default:
     external:
