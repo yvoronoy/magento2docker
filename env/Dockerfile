@@ -14,6 +14,10 @@ RUN apt-get update && apt-get install -y \
         ssl-cert \
         msmtp \
         sudo \
+        dnsutils \
+        iputils-ping \
+        iputils-tracepath \
+        telnet \
     && docker-php-ext-install -j$(nproc) iconv mcrypt soap\
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd bcmath pdo_mysql xsl intl zip
@@ -45,6 +49,7 @@ RUN phpcs --config-set installed_paths /usr/local/magento-ecg-code-sniffer/vendo
 
 RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/mailcatcher.ini
 RUN echo "memory_limit=2G" >> /usr/local/etc/php/conf.d/custom.ini
+RUN echo "max_input_vars=10000" >> /usr/local/etc/php/conf.d/custom.ini
 RUN echo "account default" >> /etc/msmtprc
 RUN echo "host mailcatcher" >> /etc/msmtprc
 RUN echo "port 1025" >> /etc/msmtprc

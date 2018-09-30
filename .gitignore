@@ -15,4 +15,7 @@ env/etc/apache/*
 !env/etc/apache/envvars
 !env/etc/apache/000-default.conf
 
+env/misc/*
+!env/misc/xdebug-php.sh
+
 env/etc/host/config.sh.override
