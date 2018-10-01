@@ -93,6 +93,7 @@ USER root
 
 # Hack to not cache https://github.com/docker/docker/issues/1996#issuecomment-185872769
 ARG CACHEBUST=1
+COPY ./misc/* /usr/local/bin/
 COPY ./etc/apache /etc/apache2/sites-enabled/
 COPY ./etc/fixtures /etc/fixtures
 COPY ./etc/m2install/.m2install.conf* ${_HOME_DIRECTORY}/
