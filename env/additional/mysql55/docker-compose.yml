@@ -4,7 +4,6 @@ services:
   db55:
     container_name: magento2db55
     image: mysql:5.5
-    restart: always
     environment:
       MYSQL_DATABASE: magento
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
