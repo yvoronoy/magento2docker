@@ -3,14 +3,12 @@ version: '2'
 services:
   elasticsearch:
     container_name: magento2elastic
-    restart: always
     build: .
     ports:
-        - "9200:9200"
+      - "9200:9200"
     environment:
       - ES_HEAP_SIZE=2g
 networks:
   default:
     external:
       name: env_default
-
