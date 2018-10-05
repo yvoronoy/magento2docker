@@ -84,6 +84,7 @@ COPY ./misc/xdebug-php.sh /usr/local/bin/xdebug-php.sh
 RUN a2enmod ssl
 RUN a2ensite default-ssl.conf
 RUN a2enmod vhost_alias
+RUN a2enmod proxy
 
 RUN a2enmod rewrite
 RUN chown -R ${_USER}:${_USER} /var/www/html
