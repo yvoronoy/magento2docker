@@ -12,6 +12,12 @@ build:
 	docker-compose build --build-arg CACHEBUST=`date +%s`
 logs:
 	docker logs -f magento2web
+logs-db:
+	docker logs -f magento2db
+logs-elastic:
+	docker logs -f magento2elastic
+logs-elastic5:
+	docker logs -f magento2elastic5
 
 dev: up mount
 dev-stop: umount stop
