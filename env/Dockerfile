@@ -71,6 +71,8 @@ COPY ./etc/ssh ${_HOME_DIRECTORY}/.ssh
 ADD ./etc/ssh/magento2docker.pub ${_HOME_DIRECTORY}/.ssh/authorized_keys
 RUN chown -R ${_USER}:${_USER} ${_HOME_DIRECTORY}/.ssh
 RUN chmod -R 700 ${_HOME_DIRECTORY}/.ssh
+RUN echo "    ServerAliveInterval 30" >> /etc/ssh/ssh_config
+RUN echo "    TCPKeepAlive yes" >> /etc/ssh/ssh_config
 
 COPY ./etc/ssh /root/.ssh
 ADD ./etc/ssh/magento2docker.pub /root/.ssh/authorized_keys
