@@ -27,6 +27,9 @@ RUN apt-get update              \
          &&      apt-get install -y git      \
          &&      apt-get clean all
 
+# Tune environment
+RUN echo "Defaults    timestamp_timeout=-1" >> /etc/sudoers
+
 ENV _USER=magento
 ENV _HOME_DIRECTORY=/home/${_USER}
 RUN useradd -m ${_USER} && echo "${_USER}:${_USER}" | chpasswd && chsh ${_USER} -s /bin/bash && adduser ${_USER} sudo
