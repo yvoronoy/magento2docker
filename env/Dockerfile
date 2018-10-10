@@ -27,9 +27,6 @@ RUN apt-get update              \
          &&      apt-get install -y git      \
          &&      apt-get clean all
 
-# Tune environment
-RUN echo "Defaults    timestamp_timeout=-1" >> /etc/sudoers
-
 ENV _USER=magento
 ENV _HOME_DIRECTORY=/home/${_USER}
 RUN useradd -m ${_USER} && echo "${_USER}:${_USER}" | chpasswd && chsh ${_USER} -s /bin/bash && adduser ${_USER} sudo
@@ -99,6 +96,9 @@ USER magento
 RUN echo "source /etc/bash_completion" >> ${_HOME_DIRECTORY}/.bashrc
 RUN curl -sS https://accounts.magento.cloud/cli/installer | php
 USER root
+
+# Tune environment
+RUN echo "Defaults    timestamp_timeout=-1" >> /etc/sudoers
 
 # Hack to not cache https://github.com/docker/docker/issues/1996#issuecomment-185872769
 ARG CACHEBUST=1
