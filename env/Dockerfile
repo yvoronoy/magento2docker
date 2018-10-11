@@ -107,15 +107,11 @@ COPY ./etc/apache /etc/apache2/sites-enabled/
 COPY ./etc/fixtures /etc/fixtures
 COPY ./etc/m2install/.m2install.conf* ${_HOME_DIRECTORY}/
 
-RUN chmod +x /usr/local/bin/xdebug-php.sh
-RUN curl -o /usr/local/bin/m2install.sh https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install.sh \
-    && chmod +x /usr/local/bin/m2install.sh
+RUN curl -o /usr/local/bin/m2install.sh https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install.sh
 RUN curl -o /etc/bash_completion.d/m2install-bash-completion https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install-bash-completion
-RUN curl -o /usr/local/bin/n98-magerun2 https://files.magerun.net/n98-magerun2.phar \
-    && chmod +x /usr/local/bin/n98-magerun2
+RUN curl -o /usr/local/bin/n98-magerun2 https://files.magerun.net/n98-magerun2.phar
 RUN curl -o /etc/bash_completion.d/n98-magerun2.phar.bash https://raw.githubusercontent.com/netz98/n98-magerun2/master/res/autocompletion/bash/n98-magerun2.phar.bash
-RUN curl -o /usr/local/bin/m2-convert-for-composer https://raw.githubusercontent.com/isitnikov/m2-convert-patch-for-composer-install/master/convert-for-composer.php \
-    && chmod +x /usr/local/bin/m2-convert-for-composer
+RUN curl -o /usr/local/bin/m2-convert-for-composer https://raw.githubusercontent.com/isitnikov/m2-convert-patch-for-composer-install/master/convert-for-composer.php
 RUN curl -o /etc/bash_completion.d/magento2-bash-completion https://raw.githubusercontent.com/yvoronoy/magento2-bash-completion/master/magento2-bash-completion-enterprise
 RUN curl -L -o /tmp/teleport.tar.gz https://github.com/gravitational/teleport/releases/download/v1.3.2/teleport-v1.3.2-linux-amd64-bin.tar.gz
 RUN tar -xf /tmp/teleport.tar.gz -C /tmp/
@@ -124,6 +120,7 @@ RUN make -C /tmp/teleport/
 RUN ssh-keygen -F github.com || ssh-keyscan github.com >> /root/.ssh/known_hosts
 RUN git clone git@github.com:magento-sparta/ee-support-tools.git /usr/local/src/ee-support-tools
 RUN ln -s /usr/local/src/ee-support-tools/cloud-teleport/cloud-teleport /usr/local/bin/cloud-teleport
-RUN chmod +x /usr/local/bin/cloud-teleport
+
+RUN chmod +x /usr/local/bin/*
 
 CMD service ssh start; apache2-foreground
