@@ -14,6 +14,7 @@ env/etc/apache/*
 !env/etc/vhost.conf.example
 !env/etc/apache/envvars
 !env/etc/apache/000-default.conf
+!env/etc/apache/second-level.xip.io.conf
 
 env/misc/*
 !env/misc/xdebug-php.sh
