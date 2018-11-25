@@ -120,9 +120,10 @@ RUN curl -L -o /tmp/teleport.tar.gz https://github.com/gravitational/teleport/re
 RUN tar -xf /tmp/teleport.tar.gz -C /tmp/
 RUN make -C /tmp/teleport/
 
+RUN touch /root/.ssh/known_hosts
 RUN ssh-keygen -F github.com || ssh-keyscan github.com >> /root/.ssh/known_hosts
-RUN git clone git@github.com:magento-sparta/ee-support-tools.git /usr/local/src/ee-support-tools
-RUN ln -s /usr/local/src/ee-support-tools/cloud-teleport/cloud-teleport /usr/local/bin/cloud-teleport
+RUN git ls-remote git@github.com:magento-sparta/ee-support-tools.git 2>&1 | if grep -q HEAD; then git clone git@github.com:magento-sparta/ee-support-tools.git /usr/local/src/ee-support-tools; else echo; fi
+RUN if [ -d /usr/local/src/ee-support-tools ]; then ln -s /usr/local/src/ee-support-tools/cloud-teleport/cloud-teleport /usr/local/bin/cloud-teleport; else echo; fi
 
 RUN chmod +x /usr/local/bin/*
 
