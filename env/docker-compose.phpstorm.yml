@@ -3,7 +3,7 @@ version: '3'
 services:
   phpstorm:
     container_name: phpstorm
-    build: phpstorm/
+    build: additional/phpstorm/
     ports:
       - "9000:9000"
     volumes:
