@@ -11,6 +11,10 @@ services:
       - src-volume:/var/www/html
     environment:
       - DISPLAY=10.254.254.254:0
+networks:
+  default:
+    external:
+      name: env_default
 volumes:
   src-volume:
   phpstorm-settings:
