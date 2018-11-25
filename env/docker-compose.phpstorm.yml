@@ -4,6 +4,8 @@ services:
   phpstorm:
     container_name: phpstorm
     build: phpstorm/
+    ports:
+      - "9000:9000"
     volumes:
       - phpstorm-settings:/root/.PhpStorm2018.3
       - src-volume:/var/www/html
