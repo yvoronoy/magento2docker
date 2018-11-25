@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  phpstorm:
+    container_name: phpstorm
+    image: iainmckay/phpstorm:2017.1-php5
+    volumes:
+      - src-volume:/var/www/html
+    environment:
+      - DISPLAY=10.254.254.254:0
+volumes:
+  src-volume:
