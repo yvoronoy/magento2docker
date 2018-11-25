@@ -20,6 +20,10 @@ I used to Docker Sync project before to synchronize files by UNISON. But it brok
 
 ## Pre-requirements
  - [Install Docker](https://docs.docker.com/engine/installation/mac/)
+ - Install and setup XQuartz
+   - Install `brew cask install xquartz`
+   - Open `open -a XQuartz` and go to X11 Preferences
+     - Goto Security tab and check Allow connections from network clients
  - Install SSHFS on Mac OSX.
    - `brew install Caskroom/cask/osxfuse`
    - `brew install sshfs`
