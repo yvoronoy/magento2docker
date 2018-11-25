@@ -3,10 +3,12 @@ version: '3'
 services:
   phpstorm:
     container_name: phpstorm
-    image: iainmckay/phpstorm:2017.1-php5
+    build: phpstorm/
     volumes:
+      - phpstorm-settings:/root/.PhpStorm2018.3
       - src-volume:/var/www/html
     environment:
       - DISPLAY=10.254.254.254:0
 volumes:
   src-volume:
+  phpstorm-settings:

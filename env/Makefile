@@ -1,4 +1,4 @@
-.PHONY: dev prod down stop build mount umount clean web db magento-console
+.PHONY: dev prod down stop build mount umount clean web db magento-console phpstorm
 ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 SRC_DIR:=$(shell bash etc/host/config.sh SOURCE_DIRECTORY)
 
@@ -25,6 +25,7 @@ all: up elastic mailcatcher solr
 
 phpstorm:
 	xhost + 10.254.254.254
+	docker-compose -f docker-compose.phpstorm.yml build
 	docker-compose -f docker-compose.yml -f docker-compose.phpstorm.yml up -d
 mount:
 	chmod 400 $(ROOT_DIR)/etc/ssh/magento2docker
