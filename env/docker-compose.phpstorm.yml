@@ -7,7 +7,7 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - phpstorm-settings:/root/.PhpStorm2018.3
+      - phpstorm-settings:/root
       - src-volume:/var/www/html
     environment:
       - DISPLAY=10.254.254.254:0
