@@ -24,6 +24,7 @@ I used to Docker Sync project before to synchronize files by UNISON. But it brok
    - Install `brew cask install xquartz`
    - Open `open -a XQuartz` and go to X11 Preferences
      - Goto Security tab and check Allow connections from network clients
+     - Restart computer
    - Create ip 10.254.254.254 as an alias on your loopback device 127.0.0.1
      by using next command:
      ```
