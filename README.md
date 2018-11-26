@@ -54,9 +54,14 @@ Commands should be executed from _env_ directory.
 Run make command to run developer environment.
 
 ```
-make dev
+make phpstorm
 ```
-That command will run docker-compose and mount sshfs into host src directory.
+That command will run docker-compose and phpstorm from container.
+
+If you need just web server + db container use:
+```
+make up
+```
 
 ### How to install a magento inside container
    - Login to container `make web`
