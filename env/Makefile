@@ -24,7 +24,7 @@ dev-stop: umount stop
 all: up elastic mailcatcher solr
 
 phpstorm:
-	xhost + 10.254.254.254
+	xhost + 127.0.0.1
 	docker-compose -f docker-compose.phpstorm.yml build
 	docker-compose -f docker-compose.yml -f docker-compose.phpstorm.yml up -d
 mount:
