@@ -20,9 +20,11 @@ I used to Docker Sync project before to synchronize files by UNISON. But it brok
 
 ## Pre-requirements
  - [Install Docker](https://docs.docker.com/engine/installation/mac/)
- - Install SSHFS on Mac OSX.
-   - `brew install Caskroom/cask/osxfuse`
-   - `brew install sshfs`
+ - Install and setup XQuartz
+   - Install `brew cask install xquartz`
+   - Open `open -a XQuartz` and go to X11 Preferences
+     - Goto Security tab and check Allow connections from network clients
+     - Restart computer
  - Copy or create `env/etc/composer/auth.json` and put your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
    - `cp env/etc/composer/auth.json.example env/etc/composer/auth.json`
    - Edit env/etc/composer/auth.json and put your credentials [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
@@ -44,9 +46,14 @@ Commands should be executed from _env_ directory.
 Run make command to run developer environment.
 
 ```
-make dev
+make phpstorm
 ```
-That command will run docker-compose and mount sshfs into host src directory.
+That command will run docker-compose and phpstorm from container.
+
+If you need just web server + db container use:
+```
+make up
+```
 
 ### How to install a magento inside container
    - Login to container `make web`
@@ -67,19 +74,8 @@ it is dramatically decrease performance.
 ### Pre-requirements
 xDebug configuration is using remote host ip = 10.254.254.254.
 
-if you are using Mac OSX you have to create ip 10.254.254.254 as an alias on your loopback device 127.0.0.1
-by using next command:
-```
-sudo curl -o /Library/LaunchDaemons/osx.docker.loopback.plist \
-https://raw.githubusercontent.com/yvoronoy/magento2docker/master/env/etc/osx.docker.loopback.plist \
-&& sudo launchctl load /Library/LaunchDaemons/osx.docker.loopback.plist
-```
-More details you can find here: https://gist.github.com/ralphschindler/535dc5916ccbd06f53c1b0ee5a868c93
-
-Also you can create loop back alias by using next command: `ifconfig lo0 alias 10.254.254.254` 
-
 ### Usage
- - Login to your container `docker exec -it magento2web bash`
+ - Login to your container `make web`
  - Run command `xdebug-php.sh 1`
  - Run IDE (PHPStorm) and press button _Start Listening for PHPDebug Connection_
 
