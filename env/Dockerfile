@@ -69,7 +69,6 @@ COPY ./etc/composer/auth.json /${_HOME_DIRECTORY}/.composer/auth.json
 #SSH
 COPY ./etc/ssh ${_HOME_DIRECTORY}/.ssh
 ADD ./etc/ssh/magento2docker.pub ${_HOME_DIRECTORY}/.ssh/authorized_keys
-RUN chown -R ${_USER}:${_USER} ${_HOME_DIRECTORY}/.ssh
 RUN chmod -R 700 ${_HOME_DIRECTORY}/.ssh
 RUN echo "    ServerAliveInterval 30" >> /etc/ssh/ssh_config
 RUN echo "    TCPKeepAlive yes" >> /etc/ssh/ssh_config
@@ -92,6 +91,7 @@ RUN a2enmod rewrite
 RUN chown -R ${_USER}:${_USER} /var/www/html
 COPY ./etc/apache/envvars /etc/apache2/envvars
 #APACHE END
+
 RUN chown -R ${_USER}:${_USER} ${_HOME_DIRECTORY}
 
 #USER SPECIFYC
