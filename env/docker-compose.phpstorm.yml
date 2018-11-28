@@ -3,11 +3,14 @@ version: '3'
 services:
   phpstorm:
     container_name: phpstorm
-    build: additional/phpstorm/
+    build:
+      context: ./
+      dockerfile: additional/phpstorm/Dockerfile
     ports:
       - "9000:9000"
     volumes:
-      - phpstorm-settings:/root
+      - phpstorm-config:/home/magento/.PhpStorm2018.3
+      - phpstorm-java:/home/magento/.java
       - src-volume:/var/www/html
     environment:
       - DISPLAY=host.docker.internal:0
@@ -17,4 +20,5 @@ networks:
       name: env_default
 volumes:
   src-volume:
-  phpstorm-settings:
+  phpstorm-config:
+  phpstorm-java:
