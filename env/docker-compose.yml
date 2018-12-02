@@ -7,6 +7,8 @@ services:
     build: .
     environment:
       - PHP_IDE_CONFIG=serverName=PHPSTORM
+      - BLACKFIRE_CLIENT_ID
+      - BLACKFIRE_CLIENT_TOKEN
     ports:
       - "80:80"
       - "443:443"
@@ -30,6 +32,11 @@ services:
     volumes:
       - "./etc/mysql:/etc/mysql/conf.d"
       - db-volume:/var/lib/mysql
+  blackfire:
+    image: blackfire/blackfire
+    environment:
+        - BLACKFIRE_SERVER_ID
+        - BLACKFIRE_SERVER_TOKEN
 volumes:
   src-volume:
   db-volume:

@@ -1,8 +1,12 @@
 # Magento2 Docker Environment
-Magento2 Docker Environment based on LAMP stack. Tested on docker for mac.
-This project uses SSHFS to mount container directory on a host machine. Due to docker issue [File access in mounted volumes extremely slow](https://github.com/docker/for-mac/issues/77).
-
-I used to Docker Sync project before to synchronize files by UNISON. But it brokes very often,because Magento2 has huge amount of files. So I decided to move on SSHFS. It works pretty well and performance is enough on a host machine. Container works without any performance issue since it does not share volumes.
+The Perfect Magento2 Development Environment Mac OSX Centric.
+Key features of the project:
+ - Simple Apache PHP container based on original images.
+ - Multi-project setup with clean host names. Based on external xip.io wildcard DNS server.
+ - Do not share source with host and runs PHPStorm IDE inside container instead.
+ - Includes great set of tools with zero configuration like Blackfire, XDebug.
+ - Includes external services: ElasticSearch 2.X & 5.X, Redis, MailCatcher, RabbitMQ.
+ - Use Make tool as a wrapper. Simplify managing containers and support bash completion to hightlight commands.
 
 ## Contents
 
@@ -13,6 +17,7 @@ I used to Docker Sync project before to synchronize files by UNISON. But it brok
  - [How install a magento](#how-install-magento)
  - [How deploy magento dumps](#how-deploy-dumps)
 - [How to Enable xDebug](#how-to-enable-xdebug)
+- [How to start using Blackfire](#how-to-start-using-blackfire)
  - [Pre-requirements](#pre-requirements-1)
  - [Usage](#usage-1)
 - [Todo List](#todo-list)
@@ -73,20 +78,38 @@ it is dramatically decrease performance.
 
 ### Pre-requirements
 xDebug configuration is using remote host ip = 10.254.254.254.
+You need to have the IP 10.254.254.254 as an alias on your loopback device 127.0.0.1.
+You can use the following command to create a permanent loopback:
+
+sudo curl -o /Library/LaunchDaemons/osx.docker.loopback.plist \
+https://raw.githubusercontent.com/yvoronoy/magento2docker/master/env/etc/osx.docker.loopback.plist \
+&& sudo launchctl load /Library/LaunchDaemons/osx.docker.loopback.plist
+More details you can find here: https://gist.github.com/ralphschindler/535dc5916ccbd06f53c1b0ee5a868c93
+
+Also you can create loop back alias by using next command: ifconfig lo0 alias 10.254.254.254
 
 ### Usage
  - Login to your container `make web`
  - Run command `xdebug-php.sh 1`
  - Run IDE (PHPStorm) and press button _Start Listening for PHPDebug Connection_
 
+
+## How to start using Blackfire
+[Blackfire Profiler](https://blackfire.io/docs/introduction) is a PHP profiler and automated performance testing tool. It enables you to investigate performance issues in very simple way, just install a browser extension and press the button. You will get granular performance report to measure CPU, IO, Memory, Network, etc.
+Profiling with Blackfire is on-demand. This means that Blackfire adds no overhead for your end users, which makes it safe to use in production.
+
+### Get your Blackfire credentials
+Blackfire provides you a free account "Hack" which allows you to run profiles on your development environment. 
+ - Create account and login here: https://blackfire.io/login
+ - Install Browser Extension https://blackfire.io/docs/integrations/chrome
+ - Go to the page https://blackfire.io/docs/integrations/docker
+   - Define these environment variables from this page on the host system (OSX)
+   - You can save them permanently by putting them into ~/.bash_profile file
+ - Recreate containers by using command `make up`
+
 ## Todo List
- - [x] Add xDebug and provide guide how to setup xDebug on your host machine.
- - [x] Add useful tools like: n98-magerun2, m2install.sh, magento-bash-completion.
- - [ ] Setup Cron.
- - [x] Add self-signed SSL certificate.
- - [ ] Add Magento Testing Framework for functional tests.
- - [ ] Add Solr Search Engine.
- - [ ] Add Blackfire tool.
+ - [ ] JMeter tool to perform stress testing
+ - [ ] Add Selenium to run tests
 
 ## Contributing
 1. Fork this repository.
