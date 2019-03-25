@@ -1,4 +1,4 @@
-FROM php:7.0-apache
+FROM php:7.1-apache
 RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
