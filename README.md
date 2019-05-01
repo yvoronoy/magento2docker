@@ -68,7 +68,7 @@ If you need just web server + db container use:
 make up
 ```
 
-### How to install a magento inside container"
+### How to install a magento inside container
    - Login to container `make web`
    - Create a directory e.g: magento2
    - Inside the magento2 directory run `m2install.sh -s composer -v 2.2.6`
