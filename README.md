@@ -54,13 +54,21 @@ Run make command to run developer environment.
 make phpstorm
 ```
 That command will run docker-compose and phpstorm from container.
+#
+Optionaly you can map your docker volume into a host machine folder through sshfs, by default it will be mounted on _magento2docker/src_:
+```
+make mount
+```
+#####Note from [docker docs](https://docs.docker.com/docker-for-mac/osxfs-caching/):
+_"with certain types of workloads, the overhead of maintaining perfect consistency can result in significantly worse performance than a native (non-Docker) environment_
 
+#
 If you need just web server + db container use:
 ```
 make up
 ```
 
-### How to install a magento inside container
+### How to install a magento inside container"
    - Login to container `make web`
    - Create a directory e.g: magento2
    - Inside the magento2 directory run `m2install.sh -s composer -v 2.2.6`
@@ -89,10 +97,17 @@ More details you can find here: https://gist.github.com/ralphschindler/535dc5916
 Also you can create loop back alias by using next command: ifconfig lo0 alias 10.254.254.254
 
 ### Usage
- - Login to your container `make web`
- - Run command `xdebug-php.sh 1`
- - Run IDE (PHPStorm) and press button _Start Listening for PHPDebug Connection_
-
+ - Run command `make xdebug-on` to enable xdebug
+ - On PHPStorm, press button _Start Listening for PHPDebug Connection_
+ - On Visual Code, install the extension _PHP Debug_ and add the following lines to _launch.json_ right bellow `"port": 9000,`:
+ ```
+ "pathMappings": {
+    "/var/www/html/<root_folder>": "${workspaceRoot}"`
+} 
+``` 
+ - Change `<root_folder>` to the name of your actual project name, example: `"/var/www/html/magento2ee": "${workspaceRoot}"`
+ 
+ - Run command `make xdebug-off` to disable xdebug
 
 ## How to start using Blackfire
 [Blackfire Profiler](https://blackfire.io/docs/introduction) is a PHP profiler and automated performance testing tool. It enables you to investigate performance issues in very simple way, just install a browser extension and press the button. You will get granular performance report to measure CPU, IO, Memory, Network, etc.

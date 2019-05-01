@@ -23,6 +23,11 @@ dev: up mount
 dev-stop: umount stop
 all: up elastic mailcatcher solr
 
+xdebug-on:
+	docker exec magento2web xdebug-php.sh 1
+xdebug-off:
+	docker exec magento2web xdebug-php.sh 0
+	
 phpstorm:
 	xhost + 127.0.0.1
 	docker-compose -f docker-compose.phpstorm.yml build
