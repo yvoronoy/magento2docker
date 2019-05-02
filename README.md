@@ -55,12 +55,10 @@ make phpstorm
 ```
 That command will run docker-compose and phpstorm from container.
 #
-Optionaly you can map your docker volume into a host machine folder through sshfs, by default it will be mounted on _magento2docker/src_:
+Optionaly you can mount your container into the host machine using sshfs, by default it will be mounted on _magento2docker/src_:
 ```
 make mount
 ```
-#####Note from [docker docs](https://docs.docker.com/docker-for-mac/osxfs-caching/):
-_"with certain types of workloads, the overhead of maintaining perfect consistency can result in significantly worse performance than a native (non-Docker) environment_
 
 #
 If you need just web server + db container use:
