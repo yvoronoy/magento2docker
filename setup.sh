@@ -140,14 +140,14 @@ echo "  src-volume:
     driver_opts:
       type: nfs
       o: addr=host.docker.internal,rw,nolock,soft,nfsvers=3 
-      device: device: \":$HOST_PATH/nfs\"" >> env/docker-compose.yml
+      device: \":$HOST_PATH/nfs\"" >> env/docker-compose.yml
 
  echo "  src-volume:
     driver: local
     driver_opts:
       type: nfs
       o: addr=host.docker.internal,rw,nolock,soft,nfsvers=3 
-      device: device: \":$HOST_PATH/nfs\"" >> env/docker-compose.phpstorm.yml     
+      device: \":$HOST_PATH/nfs\"" >> env/docker-compose.phpstorm.yml     
 
     sudo renice -n -15 $(pgrep nfsd)
     sudo chown -R "$U":"$G" .
@@ -160,55 +160,4 @@ echo "  src-volume:
     echo "sudo renice -n -15 \$(pgrep nfsd)"
     echo ""
     echo ""
-
 fi
-
-
-
-
-
-
-
-# OS=`uname -s`
-
-# if [ $OS != "Darwin" ]; then
-#   echo "This script is OSX-only. Please do not run it on any other Unix."
-#   exit 1
-# fi
-
-# if [[ $EUID -eq 0 ]]; then
-#   echo "This script must NOT be run with sudo/root. Please re-run without sudo." 1>&2
-#   exit 1
-# fi
-
-
-
-
-# ------
-
-
-# U=`id -u`
-# G=`id -g`
-
-# echo "== Setting up nfs..."
-# LINE="/Users -alldirs -mapall=$U:$G 127.0.0.1"
-# FILE=/etc/exports
-# sudo cp /dev/null $FILE
-# grep -qF -- "$LINE" "$FILE" || sudo echo "$LINE" | sudo tee -a $FILE > /dev/null
-
-# LINE="nfs.server.mount.require_resv_port = 0"
-# FILE=/etc/nfs.conf
-# grep -qF -- "$LINE" "$FILE" || sudo echo "$LINE" | sudo tee -a $FILE > /dev/null
-
-# echo "== Resetting folder permissions..."
-# sudo chown -R "$U":"$G" .
-
-# echo "== Restarting nfsd..."
-# sudo nfsd restart
-
-# echo "== Restarting docker..."
-# open -a Docker
-
-# while ! docker ps > /dev/null 2>&1 ; do sleep 2; done
-
-# echo "SUCCESS!"
