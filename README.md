@@ -65,8 +65,16 @@ If you need just web server + db container use:
 ```
 make up
 ```
+#
+### If you want to use a local directory (on the host machine) and share it as docker volume: 
+```
+./setup.sh
+```
+- For Linux users: The folder _magento2docker/src_ will be shared between your host and docker.
+- For Mac users: the above approach implicate in a very poor performance, so the sharing wil be through nfs on the folder _magento2docker/nfs_.
+#
 
-### How to install magento inside container
+### How to install a magento inside container
    - Login to container `make web`
    - Create a directory e.g: magento2
    - Inside the magento2 directory run `m2install.sh -s composer -v 2.2.6`
