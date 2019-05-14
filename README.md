@@ -49,24 +49,18 @@ Or just clone this repository ```git clone git@github.com:yvoronoy/magento2docke
 ### Quick Start
 Commands should be executed from _env_ directory.
 Run make command to run developer environment.
-
-```
-make phpstorm
-```
-That command will run docker-compose and phpstorm from container.
-#
-Optionaly you can mount your container into the host machine using sshfs, by default it will be mounted on _magento2docker/src_:
-```
-make mount
-```
-
 #
 If you need just web server + db container use:
 ```
 make up
 ```
 #
-### If you want to use a local directory (on the host machine) and share it as docker volume: 
+To run phpstorm from container:
+```
+make phpstorm
+```
+#
+If you want to use a local directory (on the host machine) and share it as docker volume: 
 ```
 ./setup.sh
 ```
@@ -74,6 +68,11 @@ make up
 - For Mac users: the above approach implicate in a very poor performance, so the sharing wil be through nfs on the folder _magento2docker/nfs_.
 #
 
+Optionaly you can mount your container into the host machine using sshfs, by default it will be mounted on _magento2docker/src_:
+```
+make mount
+```
+#
 ### How to install a magento inside container
    - Login to container `make web`
    - Create a directory e.g: magento2
