@@ -73,10 +73,20 @@ Optionaly you can mount your container into the host machine using sshfs, by def
 make mount
 ```
 #
-### How to install a magento inside container
-   - Login to container `make web`
+### How to install magento inside container
+   - Login to container:
+```
+make web
+```
    - Create a directory e.g: magento2
-   - Inside the magento2 directory run `m2install.sh -s composer -v 2.2.6`
+   - Inside the magento2 directory run:
+```
+m2install.sh -s composer -v 2.2.6 --ee --sample-data yes
+```
+or for developer:
+```
+m2install.sh -s git -v 2.2-develop --ee --sample-data yes
+```
    - Open browser and go to http://magento2.127.0.0.1.xip.io/
 
 ### How to deploy dumps (backups) inside container
