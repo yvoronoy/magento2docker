@@ -149,7 +149,7 @@ echo "  src-volume:
       o: addr=host.docker.internal,rw,nolock,soft,nfsvers=3 
       device: \":$HOST_PATH/nfs\"" >> env/docker-compose.phpstorm.yml 
       
-sed -i '' 's|RUN chmod +x /usr/local/bin/*|RUN chmod +x /usr/local/bin/* \
+sed -i '' 's|RUN chmod +x /usr/local/bin/\*|RUN chmod +x /usr/local/bin/\* \
 RUN usermod \-u '$U' '$HOST_USER_NAME'|g' env/dockerfile
 
     sudo renice -n -15 $(pgrep nfsd)
