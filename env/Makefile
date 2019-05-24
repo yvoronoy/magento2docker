@@ -18,6 +18,25 @@ logs-elastic:
 	docker logs -f magento2elastic
 logs-elastic5:
 	docker logs -f magento2elastic5
+add-host:
+	echo "127.0.0.1 $(host)" | sudo tee -a /etc/hosts
+	cp etc/apache/vhost.conf.example etc/apache/$(host).conf
+	cat etc/apache/$(host).conf | sed "s/ServerName example.com/ServerName $(host)/" > etc/apache/$(host).conf.tmp
+	mv etc/apache/$(host).conf.tmp etc/apache/$(host).conf
+	cat etc/apache/$(host).conf | sed "s/\/var\/www\/html\/example/\/var\/www\/html\/$(host)/" > etc/apache/$(host).conf.tmp
+	mv etc/apache/$(host).conf.tmp etc/apache/$(host).conf
+	docker-compose build
+	docker-compose up -d
+	docker exec -it --user magento magento2web mkdir -p /var/www/html/$(host)
+	docker exec -i --user magento magento2web sh -c "cat ~/.m2install.conf | sed 's/HTTP_HOST=.*/HTTP_HOST=http:\/\/$(host)\//g' | tee /var/www/html/$(host)/.m2install.conf 1>/dev/null"
+	docker exec -i --user magento magento2web sh -c "sed -i 's/BASE_PATH=.*/BASE_PATH=/g' /var/www/html/$(host)/.m2install.conf"
+remove-host:
+	cat /etc/hosts | sed 's/.*$(host)//g' > /tmp/hosts.tmp
+	sudo mv /tmp/hosts.tmp /etc/hosts
+	rm etc/apache/$(host).conf
+	docker-compose build
+	docker-compose up -d
+	docker exec -i --user magento magento2web sh -c "rm /var/www/html/$(host)/.m2install.conf"
 
 dev: up mount
 dev-stop: umount stop
@@ -93,5 +112,14 @@ redis-cli:
 	docker exec -it magento2redis redis-cli
 redis-stop:
 	cd additional/redis && docker-compose stop && cd -
+varnish:
+	cd additional/varnish && docker-compose up -d && cd -
+	# Update port to 8080 for Magento Base URL configuration
+varnish-cli:
+	docker exec -it magento2varnish redis-cli
+varnish-stop:
+	cd additional/varnish && docker-compose stop && cd -
+varnish-logs:
+	docker logs -f magento2varnish
 
 # vim: ts=4 sw=4 sts=4 sr noet
