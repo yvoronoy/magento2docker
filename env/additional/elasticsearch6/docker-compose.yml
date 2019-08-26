@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  elasticsearch:
+    container_name: magento2elastic6
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    build: .
+    ports:
+      - "9206:9206"
+networks:
+  default:
+    external:
+      name: env_default
