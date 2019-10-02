@@ -1,12 +1,14 @@
-FROM php:7.1-apache
+FROM php:7.1-apache-stretch
 RUN apt-get update && apt-get install -y \
+        libwebp-dev \
+	libxpm-dev \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
         libpng-dev \
         libxslt-dev \
         libicu-dev \
-        mysql-client \
+	mariadb-client \
         pv \
         vim \
         bash-completion \
@@ -22,7 +24,9 @@ RUN apt-get update && apt-get install -y \
         unzip \
         gnupg \
     && docker-php-ext-install -j$(nproc) iconv mcrypt soap sockets \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-configure gd --with-gd --with-webp-dir \
+    --with-png-dir --with-zlib-dir --with-xpm-dir \
+    --enable-gd-native-ttf --with-freetype-dir=/usr/include/freetype2/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd bcmath pdo_mysql xsl intl zip
 RUN apt-get update              \
          &&      apt-get install -y git      \

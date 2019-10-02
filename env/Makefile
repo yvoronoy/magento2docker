@@ -46,16 +46,28 @@ phpstorm:
 	xhost + 127.0.0.1
 	docker-compose -f docker-compose.phpstorm.yml build
 	docker-compose -f docker-compose.yml -f docker-compose.phpstorm.yml up -d
-mount:
-	###############################################################################
-	# DEPRECATED                                                                  #
-	# Use PHPStorm IDE inside docker container  if you need work with source code #
-	# Usage: make phpstorm                                                        #
-	###############################################################################
+mount-sshfs:
 	chmod 400 $(ROOT_DIR)/etc/ssh/magento2docker
 	sshfs magento@127.0.0.1:/var/www/html $(SRC_DIR) -o reconnect -o StrictHostKeyChecking=no -o follow_symlinks -o IdentityFile=$(ROOT_DIR)/etc/ssh/magento2docker -o port=2222 -o compression=no
 umount:
 	umount -f $(SRC_DIR)
+mount-mutagen:
+	mutagen create --name=magento2web \
+	--default-group-beta=magento \
+	--default-owner-beta=magento \
+	--sync-mode=two-way-resolved \
+	--default-file-mode=0664 \
+	--default-directory-mode=0755 \
+	--ignore=/.idea \
+	--ignore=/.magento \
+	--ignore=/.docker \
+	--ignore=/.github \
+	--ignore-vcs \
+	--symlink-mode=posix-raw \
+	$(SRC_DIR) \
+	docker://magento@magento2web/var/www/html/
+umount-mutagen:
+	mutagen terminate magento2web
 clean:
 	docker stop `docker ps -a -q`; docker rm `docker ps -a -q`
 
