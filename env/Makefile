@@ -95,6 +95,12 @@ elastic5:
 elastic5-stop:
 	cd additional/elasticsearch5 && docker-compose stop && cd -
 	cd additional/elasticsearch5/kibana && docker-compose stop && cd -
+elastic6:
+	cd additional/elasticsearch6 && docker-compose up -d && cd -
+	# Web interface:
+	# http://127.0.0.1:9206
+elastic6-stop:
+	cd additional/elasticsearch6 && docker-compose stop && cd -
 solr:
 	cd additional/solr36 && docker-compose up -d && cd -
 solr-stop:

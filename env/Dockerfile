@@ -95,7 +95,7 @@ ADD ./etc/ssh/magento2docker.pub /root/.ssh/authorized_keys
 RUN chmod -R 700 /root/.ssh
 #END
 
-RUN echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-gcm@openssh.com,aes256-gcm@openssh.com,chacha20-poly1305@openssh.com,blowfish-cbc,aes128-cbc,3des-cbc,cast128-cbc,arcfour,aes192-cbc,aes256-cbc" >> /etc/ssh/sshd_config
+RUN echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-gcm@openssh.com,aes256-gcm@openssh.com,chacha20-poly1305@openssh.com,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc" >> /etc/ssh/sshd_config
 COPY ./misc/xdebug-php.sh /usr/local/bin/xdebug-php.sh
 
 #APACHE
