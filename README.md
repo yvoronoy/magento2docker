@@ -50,7 +50,11 @@ Commands should be executed from _env_ directory.
 Run make command to run environment.
 
 ```
+# Build and mount containers
 make dev
+
+# Login on web server container
+make web
 ```
 
 ### How to install a magento inside container
