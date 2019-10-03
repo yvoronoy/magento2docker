@@ -38,8 +38,8 @@ remove-host:
 	docker-compose up -d
 	docker exec -i --user magento magento2web sh -c "rm /var/www/html/$(host)/.m2install.conf"
 
-dev: up mount
-dev-stop: umount stop
+dev: up mount-mutagen
+dev-stop: umount-mutagen stop
 all: up elastic mailcatcher solr
 
 phpstorm:
