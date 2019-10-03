@@ -2,6 +2,8 @@
 ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 SRC_DIR:=$(shell bash etc/host/config.sh SOURCE_DIRECTORY)
 
+mutagenSession = $(shell mutagen list | grep 'magento2web')
+
 up:
 	docker-compose up -d
 down:
@@ -52,6 +54,7 @@ mount-sshfs:
 umount:
 	umount -f $(SRC_DIR)
 mount-mutagen:
+ifeq ($(mutagenSession),)
 	mutagen create --name=magento2web \
 	--default-group-beta=magento \
 	--default-owner-beta=magento \
@@ -66,8 +69,12 @@ mount-mutagen:
 	--symlink-mode=posix-raw \
 	$(SRC_DIR) \
 	docker://magento@magento2web/var/www/html/
+else
+	@echo "Mutagen magento2web session exits, resuming"
+	mutagen resume magento2web
+endif
 umount-mutagen:
-	mutagen terminate magento2web
+	mutagen pause magento2web
 clean:
 	docker stop `docker ps -a -q`; docker rm `docker ps -a -q`
 
