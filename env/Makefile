@@ -12,6 +12,14 @@ stop:
 	docker-compose stop
 build:
 	docker-compose build --build-arg CACHEBUST=`date +%s`
+build-php70:
+	docker-compose build --build-arg CACHEBUST=`date +%s` --build-arg PHP_IMAGE_VERSION=7.0
+build-php71:
+	docker-compose build --build-arg CACHEBUST=`date +%s` --build-arg PHP_IMAGE_VERSION=7.1
+build-php72:
+	docker-compose build --build-arg CACHEBUST=`date +%s` --build-arg PHP_IMAGE_VERSION=7.2
+build-php73:
+	docker-compose build --build-arg CACHEBUST=`date +%s` --build-arg PHP_IMAGE_VERSION=7.3
 logs:
 	docker logs -f magento2web
 logs-db:

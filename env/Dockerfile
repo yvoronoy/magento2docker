@@ -1,4 +1,5 @@
-FROM php:7.1-apache-stretch
+ARG PHP_IMAGE_VERSION=7.1
+FROM php:${PHP_IMAGE_VERSION}-apache-stretch
 RUN apt-get update && apt-get install -y \
         libwebp-dev \
 	libxpm-dev \
@@ -62,8 +63,9 @@ RUN echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xd
 
 #RUN cd /tmp/ && curl -OL https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz && cd -
 #RUN cd /tmp/ && tar xf ioncube_loaders_lin_x86-64.tar.gz && cd -
-#RUN cp /tmp/ioncube/ioncube_loader_lin_7.0.so /usr/local/lib/php/extensions/no-debug-non-zts-20151012/ioncube_loader_lin_7.0.so
-#RUN echo "zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20151012/ioncube_loader_lin_7.0.so" >> /usr/local/etc/php/conf.d/docker-php-ext-ioncube.ini
+#RUN version=$(php -r "echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;") \
+#    && cp /tmp/ioncube/ioncube_loader_lin_${version}.so /usr/local/lib/php/extensions/no-debug-non-zts-20151012/ioncube_loader_lin_${version}.so 
+#    && echo "zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20151012/ioncube_loader_lin_${version}.so" >> /usr/local/etc/php/conf.d/docker-php-ext-ioncube.ini
 
 RUN pear install PHP_CodeSniffer
 RUN mkdir /usr/local/magento-ecg-code-sniffer
