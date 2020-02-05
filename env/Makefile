@@ -1,4 +1,5 @@
 .PHONY: dev prod down stop build mount umount clean web db magento-console phpstorm
+FS_MOUNT_TYPE:=$(shell bash etc/host/config.sh FS_MOUNT_TYPE)
 ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 SRC_DIR:=$(shell bash etc/host/config.sh SOURCE_DIRECTORY)
 
@@ -48,8 +49,8 @@ remove-host:
 	docker-compose up -d
 	docker exec -i --user magento magento2web sh -c "rm /var/www/html/$(host)/.m2install.conf"
 
-dev: up mount-mutagen
-dev-stop: umount-mutagen stop
+dev: up mount
+dev-stop: umount stop
 all: up elastic mailcatcher solr
 
 phpstorm:
@@ -59,7 +60,7 @@ phpstorm:
 mount-sshfs:
 	chmod 400 $(ROOT_DIR)/etc/ssh/magento2docker
 	sshfs magento@127.0.0.1:/var/www/html $(SRC_DIR) -o reconnect -o StrictHostKeyChecking=no -o follow_symlinks -o IdentityFile=$(ROOT_DIR)/etc/ssh/magento2docker -o port=2222 -o compression=no
-umount:
+umount-sshfs:
 	umount -f $(SRC_DIR)
 mount-mutagen:
 ifeq ($(mutagenSession),)
@@ -83,6 +84,18 @@ else
 endif
 umount-mutagen:
 	mutagen pause magento2web
+mount:
+ifeq "$(FS_MOUNT_TYPE)" "sshfs"
+	make mount-sshfs
+else
+	make mount-mutagen
+endif
+umount:
+ifeq "$(FS_MOUNT_TYPE)" "sshfs"
+	make umount-sshfs
+else
+	make umount-mutagen
+endif
 clean:
 	docker stop `docker ps -a -q`; docker rm `docker ps -a -q`
 

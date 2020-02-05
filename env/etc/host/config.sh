@@ -1,3 +1,4 @@
+FS_MOUNT_TYPE='mutagen'
 SOURCE_DIRECTORY=$(cd ../src && pwd)
 
 if [ -f etc/host/config.sh.override ]

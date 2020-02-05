@@ -2,14 +2,14 @@ ARG PHP_IMAGE_VERSION=7.1
 FROM php:${PHP_IMAGE_VERSION}-apache-stretch
 RUN apt-get update && apt-get install -y \
         libwebp-dev \
-	libxpm-dev \
+        libxpm-dev \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
         libpng-dev \
         libxslt-dev \
         libicu-dev \
-	mariadb-client \
+        mariadb-client \
         pv \
         vim \
         bash-completion \
@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
         iputils-ping \
         iputils-tracepath \
         host \
+        strace \
         telnet \
         unzip \
         gnupg \
