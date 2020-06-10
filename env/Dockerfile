@@ -1,4 +1,4 @@
-ARG PHP_IMAGE_VERSION=7.1
+ARG PHP_IMAGE_VERSION=7.2
 FROM php:${PHP_IMAGE_VERSION}-apache-stretch
 RUN apt-get update && apt-get install -y \
         libwebp-dev \
@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
 	mariadb-client \
         pv \
         vim \
+        nano \
         bash-completion \
         openssh-server \
         ssl-cert \
@@ -24,10 +25,10 @@ RUN apt-get update && apt-get install -y \
         telnet \
         unzip \
         gnupg \
-    && docker-php-ext-install -j$(nproc) iconv mcrypt soap sockets \
+    && docker-php-ext-install -j$(nproc) iconv soap sockets \
     && docker-php-ext-configure gd --with-gd --with-webp-dir \
     --with-png-dir --with-zlib-dir --with-xpm-dir \
-    --enable-gd-native-ttf --with-freetype-dir=/usr/include/freetype2/ --with-jpeg-dir=/usr/include/ \
+    --with-freetype-dir=/usr/include/freetype2/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd bcmath pdo_mysql xsl intl zip
 RUN apt-get update              \
          &&      apt-get install -y git      \
@@ -53,7 +54,7 @@ ENV _HOME_DIRECTORY=/home/${_USER}
 RUN useradd -m ${_USER} && echo "${_USER}:${_USER}" | chpasswd && chsh ${_USER} -s /bin/bash && adduser ${_USER} sudo
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN pecl install xdebug-2.5.5
+RUN pecl install xdebug
 RUN echo ";zend_extension=xdebug.so" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.remote_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
@@ -115,12 +116,15 @@ RUN chown -R ${_USER}:${_USER} ${_HOME_DIRECTORY}
 
 #USER SPECIFYC
 USER magento
+
 RUN echo "source /etc/bash_completion" >> ${_HOME_DIRECTORY}/.bashrc
 RUN curl -sS https://accounts.magento.cloud/cli/installer | php
 USER root
 
 # Tune environment
 RUN echo "Defaults    timestamp_timeout=-1" >> /etc/sudoers
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
 
 # Hack to not cache https://github.com/docker/docker/issues/1996#issuecomment-185872769
 ARG CACHEBUST=1

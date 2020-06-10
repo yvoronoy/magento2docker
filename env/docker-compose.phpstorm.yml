@@ -4,16 +4,15 @@ services:
   phpstorm:
     container_name: phpstorm
     build:
-      context: ./
-      dockerfile: additional/phpstorm/Dockerfile
+      context: ./additional/vnc-phpstorm
+      dockerfile: Dockerfile
     ports:
       - "9000:9000"
+      - "5900:5900"
     volumes:
       - phpstorm-config:/home/magento/.PhpStorm2018.3
       - phpstorm-java:/home/magento/.java
       - src-volume:/var/www/html
-    environment:
-      - DISPLAY=host.docker.internal:0
 networks:
   default:
     external:

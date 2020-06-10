@@ -52,6 +52,9 @@ dev: up mount-mutagen
 dev-stop: umount-mutagen stop
 all: up elastic mailcatcher solr
 
+vncphpstorm:
+	docker-compose -f docker-compose.yml -f docker-compose.phpstorm.yml up -d
+
 phpstorm:
 	xhost + 127.0.0.1
 	docker-compose -f docker-compose.phpstorm.yml build
@@ -137,6 +140,7 @@ rabbitmq:
 	# Management Console:
 	# http://localhost:15672
 	# guest:guest
+	# virtual_host: vhost
 rabbitmq-stop:
 	cd additional/rabbitmq && docker-compose stop && cd -
 redis:

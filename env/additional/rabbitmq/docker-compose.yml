@@ -5,6 +5,10 @@ services:
     container_name: magento2rabbitmq
     image: rabbitmq:3.6-management
     restart: always
+    environment:
+      RABBITMQ_DEFAULT_VHOST: vhost
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
     ports:
             - "15672:15672"
 networks:
