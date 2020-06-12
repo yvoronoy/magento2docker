@@ -9,7 +9,7 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - phpstorm-config:/home/magento/.PhpStorm2018.3
+      - phpstorm-config:/home/magento/.PhpStorm2020.1
       - phpstorm-java:/home/magento/.java
       - src-volume:/var/www/html
     environment:

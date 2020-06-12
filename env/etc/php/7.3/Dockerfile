@@ -1,5 +1,5 @@
 #PHP IMAGE
-FROM php:7.2-apache-stretch
+FROM php:7.3-apache-stretch
 
 #SETTING UP THE SYSTEM
 RUN apt-get update \
@@ -43,10 +43,9 @@ RUN docker-php-ext-install -j$(nproc) iconv soap sockets \
     && docker-php-ext-install -j$(nproc) gd bcmath pdo_mysql xsl intl zip \
     && pecl install mcrypt-1.0.1 \ 
     && mkdir -p /tmp/libsodium \
-    && cd /tmp/libsodium \
-    && wget https://download.libsodium.org/libsodium/releases/LATEST.tar.gz \
-    && tar -xzf LATEST.tar.gz \
-    && ./libsodium-stable/configure \
+    && wget https://download.libsodium.org/libsodium/releases/LATEST.tar.gz -C /tmp/libsodium \
+    && tar -xzf /tmp/libsodium/LATEST.tar.gz \
+    && /tmp/libsodium/configure \
     && make \
     && make install \
     && pecl install libsodium-2.0.22
