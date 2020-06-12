@@ -87,7 +87,7 @@ it is dramatically decrease performance.
 
 ## Persistent folders
 ### Any file saved out of these folders will be lost when the container is terminated
-  - var/www
+  - var/www/html
   - home/magento
   - /root/.composer/cache
 
