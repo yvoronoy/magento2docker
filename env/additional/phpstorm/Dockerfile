@@ -21,12 +21,12 @@ COPY ./etc/composer/auth.json ${_HOME_DIRECTORY}/.composer/auth.json
 
 RUN chown -R ${_USER}:${_USER} ${_HOME_DIRECTORY}
 
-RUN curl -O https://download-cf.jetbrains.com/webide/PhpStorm-2018.3.tar.gz
+RUN curl -O https://download-cf.jetbrains.com/webide/PhpStorm-2020.1.tar.gz
 RUN mkdir -p /opt/phpstorm
-RUN tar --strip-components=1 -xzf PhpStorm-2018.3.tar.gz -C /opt/phpstorm
-RUN rm PhpStorm-2018.3.tar.gz
+RUN tar --strip-components=1 -xzf PhpStorm-2020.1.tar.gz -C /opt/phpstorm
+RUN rm PhpStorm-2020.1.tar.gz
 
 USER magento
-RUN mkdir ${_HOME_DIRECTORY}/.PhpStorm2018.3
+RUN mkdir ${_HOME_DIRECTORY}/.PhpStorm2020.1
 RUN mkdir ${_HOME_DIRECTORY}/.java
 CMD /opt/phpstorm/bin/phpstorm.sh
