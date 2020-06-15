@@ -64,7 +64,7 @@ remove-host:
 
 dev: up mount
 dev-stop: umount stop
-all: up elastic mailcatcher solr
+all: up elastic6 mailcatcher solr
 
 phpstorm:
 	xhost + 127.0.0.1
