@@ -49,7 +49,7 @@ Commands should be executed from _env_ directory.
 Run make command to run environment.
 
 ```
-# Build and mount containers (php-7.2)
+# Build and mount containers (default: php-7.2)
 make dev
 
 # Login on web server container

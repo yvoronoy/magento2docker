@@ -16,7 +16,6 @@ services:
     volumes:
       - src-volume:/var/www/html
       - src-composer-cache-volume:/root/.composer/cache
-      - home:/home/magento
     cap_add:
       - "SYS_PTRACE"
   db:
@@ -42,4 +41,3 @@ volumes:
   src-volume:
   db-volume:
   src-composer-cache-volume:
-  home:
