@@ -14,31 +14,26 @@ stop:
 	docker-compose stop
 build:
 	docker-compose build --build-arg CACHEBUST=`date +%s`
-up70:
-	$(info "=====Buildng container with php 7.0=====")
+up70: php70 build up
+up71: php71 build up
+up72: php72 build up
+up73: php73 build up
+up74: php74 build up
+php70:
+	$(info ""=====Buildng container with php 7.0"=====")
 	$(shell yes | cp etc/php/7.0/Dockerfile .)
-	build
-	docker-compose up -d
-up71:
+php71:
 	$(info ""=====Buildng container with php 7.1"=====")
 	$(shell yes | cp etc/php/7.1/Dockerfile .)
-	build
-	docker-compose up -d
-up72:
+php72:
 	$(info ""=====Buildng container with php 7.2"=====")
 	$(shell yes | cp etc/php/7.2/Dockerfile .)
-	build
-	docker-compose up -d
-up73:
+php73:
 	$(info ""=====Buildng container with php 7.3"=====")
 	$(shell yes | cp etc/php/7.3/Dockerfile .)
-	build
-	docker-compose up -d
-up74:
+php74:
 	$(info ""=====Buildng container with php 7.4"=====")
 	$(shell yes | cp etc/php/7.4/Dockerfile .)
-	build
-	docker-compose up -d
 logs:
 	docker logs -f magento2web
 logs-db:
