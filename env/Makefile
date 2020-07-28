@@ -6,6 +6,7 @@ SRC_DIR:=$(shell bash etc/host/config.sh SOURCE_DIRECTORY)
 mutagenSession = $(shell mutagen list | grep 'magento2web')
 
 up:
+	$(info "=====$(shell cat Dockerfile | grep 'FROM')=====")
 	docker-compose up -d
 down:
 	docker-compose down
@@ -13,14 +14,26 @@ stop:
 	docker-compose stop
 build:
 	docker-compose build --build-arg CACHEBUST=`date +%s`
-build-php70:
-	docker-compose build --build-arg CACHEBUST=`date +%s` --build-arg PHP_IMAGE_VERSION=7.0
-build-php71:
-	docker-compose build --build-arg CACHEBUST=`date +%s` --build-arg PHP_IMAGE_VERSION=7.1
-build-php72:
-	docker-compose build --build-arg CACHEBUST=`date +%s` --build-arg PHP_IMAGE_VERSION=7.2
-build-php73:
-	docker-compose build --build-arg CACHEBUST=`date +%s` --build-arg PHP_IMAGE_VERSION=7.3
+up70: php70 build up
+up71: php71 build up
+up72: php72 build up
+up73: php73 build up
+up74: php74 build up
+php70:
+	$(info ""=====Buildng container with php 7.0"=====")
+	$(shell yes | cp etc/php/7.0/Dockerfile .)
+php71:
+	$(info ""=====Buildng container with php 7.1"=====")
+	$(shell yes | cp etc/php/7.1/Dockerfile .)
+php72:
+	$(info ""=====Buildng container with php 7.2"=====")
+	$(shell yes | cp etc/php/7.2/Dockerfile .)
+php73:
+	$(info ""=====Buildng container with php 7.3"=====")
+	$(shell yes | cp etc/php/7.3/Dockerfile .)
+php74:
+	$(info ""=====Buildng container with php 7.4"=====")
+	$(shell yes | cp etc/php/7.4/Dockerfile .)
 logs:
 	docker logs -f magento2web
 logs-db:
@@ -29,6 +42,8 @@ logs-elastic:
 	docker logs -f magento2elastic
 logs-elastic5:
 	docker logs -f magento2elastic5
+logs-elastic6:
+	docker logs -f magento2elastic6
 add-host:
 	echo "127.0.0.1 $(host)" | sudo tee -a /etc/hosts
 	cp etc/apache/vhost.conf.example etc/apache/$(host).conf
@@ -51,7 +66,7 @@ remove-host:
 
 dev: up mount
 dev-stop: umount stop
-all: up elastic mailcatcher solr
+all: up elastic6 mailcatcher solr
 
 phpstorm:
 	xhost + 127.0.0.1

@@ -49,11 +49,18 @@ Commands should be executed from _env_ directory.
 Run make command to run environment.
 
 ```
-# Build and mount containers
+# Build and mount containers (default: php-7.2)
 make dev
 
 # Login on web server container
 make web
+
+# Change php version
+  - For php-7.0: make up70
+  - For php-7.1: make up71
+  - For php-7.2: make up72
+  - For php-7.3: make up73
+  - For php-7.4: make up74
 ```
 
 ### How to install a magento inside container
@@ -76,6 +83,13 @@ it is dramatically decrease performance.
  - Login to your container `make web`
  - Run command `xdebug-php.sh 1`
  - Run IDE (PHPStorm) and press button _Start Listening for PHPDebug Connection_
+
+
+## Persistent folders
+### Any file saved out of these folders will be lost when the container is terminated
+  - var/www/html
+  - home/magento
+  - /root/.composer/cache
 
 ## How to start using Blackfire
 [Blackfire Profiler](https://blackfire.io/docs/introduction) is a PHP profiler and automated performance testing tool. It enables you to investigate performance issues in very simple way, just install a browser extension and press the button. You will get granular performance report to measure CPU, IO, Memory, Network, etc.
