@@ -42,7 +42,7 @@ RUN docker-php-ext-install -j$(nproc) iconv soap sockets \
     && docker-php-ext-install -j$(nproc) gd bcmath pdo_mysql xsl intl zip \
     && mkdir -p /tmp/libsodium \
     && cd /tmp/libsodium \
-    && wget https://download.libsodium.org/libsodium/releases/LATEST.tar.gz \
+    && curl https://download.libsodium.org/libsodium/releases/LATEST.tar.gz --output LATEST.tar.gz \
     && tar -xzf LATEST.tar.gz \
     && ./libsodium-stable/configure \
     && make \
