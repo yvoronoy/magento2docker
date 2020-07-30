@@ -38,6 +38,7 @@ RUN apt-get update \
 
 #PHP EXTENSIONS
 RUN docker-php-ext-install -j$(nproc) iconv soap sockets \
+    && docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp\
     && docker-php-ext-configure gd \
     && docker-php-ext-install -j$(nproc) gd bcmath pdo_mysql xsl intl zip \
     && mkdir -p /tmp/libsodium \
