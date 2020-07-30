@@ -144,6 +144,12 @@ elastic6:
 	# http://127.0.0.1:9206
 elastic6-stop:
 	cd additional/elasticsearch6 && docker-compose stop && cd -
+elastic7:
+	cd additional/elasticsearch7 && docker-compose up -d && cd -
+	# Web interface:
+	# http://127.0.0.1:9207
+elastic7-stop:
+	cd additional/elasticsearch7 && docker-compose stop && cd -	
 solr:
 	cd additional/solr36 && docker-compose up -d && cd -
 solr-stop:
