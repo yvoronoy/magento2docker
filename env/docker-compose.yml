@@ -28,7 +28,7 @@ services:
       MYSQL_USER: magento
       MYSQL_PASSWORD: magento
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - "./etc/mysql:/etc/mysql/conf.d"
       - db-volume:/var/lib/mysql
