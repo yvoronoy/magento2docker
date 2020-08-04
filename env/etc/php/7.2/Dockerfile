@@ -32,6 +32,7 @@ RUN apt-get update \
     unzip \
     gnupg \
     gcc \
+    lsof \
     && apt-get update \
     && apt-get clean all
 
