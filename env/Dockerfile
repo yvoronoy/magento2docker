@@ -81,7 +81,7 @@ ENV _HOME_DIRECTORY=/home/${_USER}
 RUN useradd -m ${_USER} && echo "${_USER}:${_USER}" | chpasswd && chsh ${_USER} -s /bin/bash && adduser ${_USER} sudo
 
 #COMPOSER
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --1\
     && apt -qy install $PHPIZE_DEPS
 COPY ./etc/composer/auth.json /${_HOME_DIRECTORY}/.composer/auth.json
 
