@@ -35,6 +35,11 @@ RUN apt-get update \
     && apt-get update \
     && apt-get clean all
 
+#CREATE USER
+ENV _USER=magento
+ENV _HOME_DIRECTORY=/home/${_USER}
+RUN useradd -m ${_USER} && echo "${_USER}:${_USER}" | chpasswd && chsh ${_USER} -s /bin/bash && adduser ${_USER} sudo
+
 #PHP EXTENSIONS
 RUN docker-php-ext-install -j$(nproc) iconv soap sockets \
     && docker-php-ext-configure gd --with-gd --with-webp-dir \
@@ -61,7 +66,6 @@ COPY ./etc/git/gitconfig ${_HOME_DIRECTORY}/.gitconfig
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash \
     && apt-get install -y nodejs
 
-
 #BLACKFIRE
 RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
     && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
@@ -74,11 +78,6 @@ RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
     && curl -A "Docker" -L https://blackfire.io/api/v1/releases/client/linux_static/amd64 | tar zxp -C /tmp/blackfire \
     && mv /tmp/blackfire/blackfire /usr/bin/blackfire \
     && rm -Rf /tmp/blackfire
-
-#CREATE USER
-ENV _USER=magento
-ENV _HOME_DIRECTORY=/home/${_USER}
-RUN useradd -m ${_USER} && echo "${_USER}:${_USER}" | chpasswd && chsh ${_USER} -s /bin/bash && adduser ${_USER} sudo
 
 #COMPOSER
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --1\
