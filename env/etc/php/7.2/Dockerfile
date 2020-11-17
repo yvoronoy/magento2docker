@@ -33,6 +33,7 @@ RUN apt-get update \
     gnupg \
     gcc \
     lsof \
+    libsodium-dev \
     && apt-get update \
     && apt-get clean all
 
@@ -48,13 +49,6 @@ RUN docker-php-ext-install -j$(nproc) iconv soap sockets \
     --with-freetype-dir=/usr/include/freetype2/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd bcmath pdo_mysql xsl intl zip \
     && pecl install mcrypt-1.0.1 \ 
-    && mkdir -p /tmp/libsodium \
-    && cd /tmp/libsodium \
-    && wget https://download.libsodium.org/libsodium/releases/LATEST.tar.gz \
-    && tar -xzf LATEST.tar.gz \
-    && ./libsodium-stable/configure \
-    && make \
-    && make install \
     && pecl install libsodium-2.0.22
 
 #GIT

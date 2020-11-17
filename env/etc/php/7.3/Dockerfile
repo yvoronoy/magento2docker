@@ -34,6 +34,7 @@ RUN apt-get update \
     gcc \
     lsof \
     libzip-dev \
+    libsodium-dev \
     && apt-get update \
     && apt-get clean all
 
@@ -48,13 +49,6 @@ RUN docker-php-ext-install -j$(nproc) iconv soap sockets \
     --with-png-dir --with-zlib-dir --with-xpm-dir \
     --with-freetype-dir=/usr/include/freetype2/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd bcmath pdo_mysql xsl intl zip \
-    && mkdir -p /tmp/libsodium \
-    && cd /tmp/libsodium \
-    && wget https://download.libsodium.org/libsodium/releases/LATEST.tar.gz \
-    && tar -xzf LATEST.tar.gz \
-    && ./libsodium-stable/configure \
-    && make \
-    && make install \
     && pecl install libsodium-2.0.22
 
 #GIT

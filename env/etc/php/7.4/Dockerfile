@@ -33,6 +33,7 @@ RUN apt-get update \
     gnupg \
     gcc \
     lsof \
+    libsodium-dev \
     libzip-dev \
     && apt-get update \
     && apt-get clean all
@@ -46,20 +47,12 @@ RUN useradd -m ${_USER} && echo "${_USER}:${_USER}" | chpasswd && chsh ${_USER} 
 RUN docker-php-ext-install -j$(nproc) iconv soap sockets \
     && docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) gd bcmath pdo_mysql xsl intl zip \
-    && mkdir -p /tmp/libsodium \
-    && cd /tmp/libsodium \
-    && curl https://download.libsodium.org/libsodium/releases/LATEST.tar.gz --output LATEST.tar.gz \
-    && tar -xzf LATEST.tar.gz \
-    && ./libsodium-stable/configure \
-    && make \
-    && make install \
     && pecl install libsodium-2.0.22
 
 #GIT
 RUN apt-get update \
     && apt-get install -y git \
     && apt-get clean all
-COPY ./etc/git/gitconfig ${_HOME_DIRECTORY}/.gitconfig
 
 #NODEJS
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash \
@@ -80,8 +73,7 @@ RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
 
 #COMPOSER
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --1\
-    && apt -qy install $PHPIZE_DEPS
-COPY ./etc/composer/auth.json /${_HOME_DIRECTORY}/.composer/auth.json
+    && apt -qy install $PHPIZE_DEPS && mkdir /${_HOME_DIRECTORY}/.composer
 
 #XDEBUG
 RUN pecl install xdebug-2.9.0 \
@@ -128,7 +120,6 @@ RUN a2enmod ssl \
     && a2enmod proxy \
     && a2enmod rewrite \
     && chown -R ${_USER}:${_USER} /var/www/html
-COPY ./etc/apache/envvars /etc/apache2/envvars
 RUN chown -R ${_USER}:${_USER} ${_HOME_DIRECTORY}
 
 #BASH COMPLETION
@@ -142,9 +133,14 @@ USER root
 #TUNE ENVIRONMENT
 RUN echo "Defaults    timestamp_timeout=-1" >> /etc/sudoers
 
-# Hack to not cache https://github.com/docker/docker/issues/1996#issuecomment-185872769
+#FLAG TO NOT CACHE ANYTHING FROM THIS POINT, details: https://github.com/docker/docker/issues/1996#issuecomment-185872769
 ARG CACHEBUST=1
+
+#CUSTOM CONFIGURATIONS
+COPY ./etc/git/gitconfig ${_HOME_DIRECTORY}/.gitconfig
+COPY ./etc/composer/auth.json /${_HOME_DIRECTORY}/.composer/auth.json
 COPY ./misc/* /usr/local/bin/
+COPY ./etc/apache/envvars /etc/apache2/envvars
 COPY ./etc/apache /etc/apache2/sites-enabled/
 COPY ./etc/fixtures /etc/fixtures
 COPY ./etc/m2install/.m2install.conf* ${_HOME_DIRECTORY}/
