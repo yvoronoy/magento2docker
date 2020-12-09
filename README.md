@@ -61,6 +61,7 @@ make web
   - For php-7.2: make up72
   - For php-7.3: make up73
   - For php-7.4: make up74
+  - For php-8.0: make up80
 ```
 
 ### How to install a magento inside container
