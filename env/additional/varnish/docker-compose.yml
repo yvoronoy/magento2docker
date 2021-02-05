@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  varnish:
+    container_name: magento2varnish
+    image: varnish:6.5
+    ports:
+      - "8080:8080"
+networks:
+  default:
+    external:
+      name: env_default
+
