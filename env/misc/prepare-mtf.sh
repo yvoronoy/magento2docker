@@ -9,8 +9,8 @@ bin/magento cache:clean config full_page
 
 vendor/bin/mftf build:project
 vendor/bin/mftf generate:urn-catalog --force .idea/misc.xml
-echo "MAGENTO_BASE_URL=http://magento2.dev/pub/" > dev/tests/acceptance/.env
-echo "MAGENTO_CLI_COMMAND_PATH=http://magento2.dev/pub/" >> dev/tests/acceptance/.env
+echo "MAGENTO_BASE_URL=http://magento2.test/pub/" > dev/tests/acceptance/.env
+echo "MAGENTO_CLI_COMMAND_PATH=http://magento2.test/pub/" >> dev/tests/acceptance/.env
 echo "MAGENTO_BACKEND_NAME=admin" >> dev/tests/acceptance/.env
 echo "MAGENTO_ADMIN_USERNAME=admin" >> dev/tests/acceptance/.env
 echo "MAGENTO_ADMIN_PASSWORD=123123q" >> dev/tests/acceptance/.env
