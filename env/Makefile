@@ -152,6 +152,9 @@ elastic7:
 	cd additional/elasticsearch7 && docker-compose up -d && cd -
 	# Web interface:
 	# http://127.0.0.1:9207
+selenium:
+	cd additional/selenium && docker-compose up -d && cd -
+	# VNC open vnc://:secret@127.0.0.1:5900
 elastic7-stop:
 	cd additional/elasticsearch7 && docker-compose stop && cd -	
 solr:

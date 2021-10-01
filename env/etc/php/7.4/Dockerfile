@@ -84,6 +84,7 @@ RUN pecl install xdebug-2.9.0 \
     && echo "xdebug.max_nesting_level=10000" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 COPY ./misc/xdebug-php.sh /usr/local/bin/xdebug-php.sh
+COPY ./misc/prepare-mtf.sh /usr/local/bin/prepare-mtf.sh
 
 #CODESNIFFER
 RUN pear install PHP_CodeSniffer \
