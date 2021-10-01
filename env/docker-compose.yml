@@ -2,7 +2,7 @@ version: '3'
 
 services:
   web:
-    hostname: magento2.dev
+    hostname: magento2.test
     container_name: magento2web
     restart: always
     build: .
