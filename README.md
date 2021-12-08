@@ -3,7 +3,7 @@ An Ideal Magento2 Development Environment OSX Centric.
 Key features of the project:
  - Simple Apache PHP container based on original images.
  - Ideal to work with multiple projects same time
- - Multi-project setup with clean host names. Based on external xip.io wildcard DNS server.
+ - Multi-project setup with clean host names. Based on external nip.io wildcard DNS server.
  - Provides real-time file synchronization by Mutagen
  - Includes PHPStorm container which can be rendered by X.ORG port for OSX
  - Includes great set of tools with zero configuration like Blackfire, XDebug.
@@ -68,7 +68,7 @@ make web
    - Login to container `make web`
    - Create a directory e.g: magento2
    - Inside the magento2 directory run `m2install.sh -s composer -v 2.3.3`
-   - Open browser and go to http://magento2.127.0.0.1.xip.io/
+   - Open browser and go to http://magento2.127.0.0.1.nip.io/
 
 ### How to deploy dumps (backups) inside container
  - Put dumps to src folder on your host machine
