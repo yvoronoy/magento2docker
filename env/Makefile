@@ -3,7 +3,7 @@ FS_MOUNT_TYPE:=$(shell bash etc/host/config.sh FS_MOUNT_TYPE)
 ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 SRC_DIR:=$(shell bash etc/host/config.sh SOURCE_DIRECTORY)
 
-mutagenSession = $(shell mutagen list | grep 'magento2web')
+mutagenSession = $(shell mutagen sync list | grep 'magento2web')
 
 up:
 	$(info "=====$(shell cat Dockerfile | grep 'FROM')=====")
@@ -83,7 +83,7 @@ umount-sshfs:
 	umount -f $(SRC_DIR)
 mount-mutagen:
 ifeq ($(mutagenSession),)
-	mutagen create --name=magento2web \
+	mutagen sync create --name=magento2web \
 	--default-group-beta=magento \
 	--default-owner-beta=magento \
 	--sync-mode=two-way-resolved \
@@ -99,10 +99,10 @@ ifeq ($(mutagenSession),)
 	docker://magento@magento2web/var/www/html/
 else
 	@echo "Mutagen magento2web session exits, resuming"
-	mutagen resume magento2web
+	mutagen sync resume magento2web
 endif
 umount-mutagen:
-	mutagen pause magento2web
+	mutagen sync pause magento2web
 mount:
 ifeq "$(FS_MOUNT_TYPE)" "sshfs"
 	make mount-sshfs
