@@ -35,6 +35,7 @@ RUN apt-get update \
     lsof \
     libsodium-dev \
     libzip-dev \
+    parallel \
     && apt-get update \
     && apt-get clean all
 
