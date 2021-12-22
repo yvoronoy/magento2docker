@@ -18,5 +18,6 @@ env/etc/apache/*
 
 env/misc/*
 !env/misc/xdebug-php.sh
+!env/misc/prepare-mtf.sh
 
 env/etc/host/config.sh.override
