@@ -95,7 +95,7 @@ RUN pear install PHP_CodeSniffer \
 
 #SENDMAIL
 RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/mailcatcher.ini \
-    && echo "memory_limit=2G" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "memory_limit=4G" >> /usr/local/etc/php/conf.d/custom.ini \
     && echo "max_input_vars=10000" >> /usr/local/etc/php/conf.d/custom.ini \
     && echo "account default" >> /etc/msmtprc \
     && echo "host mailcatcher" >> /etc/msmtprc \
