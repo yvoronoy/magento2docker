@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+source bin/.init
+
+cd additional/elasticsearch7/
+docker-compose down --remove-orphans -v
+
+cd ../../
+docker-compose down --remove-orphans -v
