@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+source bin/.init
+docker exec -it --user magento magento2web /home/magento/.magento-cloud/bin/magento-cloud ssh-cert:load
+docker exec -it --user magento magento2web /home/magento/.magento-cloud/bin/magento-cloud "$@"

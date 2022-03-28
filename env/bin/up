@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+source bin/.init
+docker-compose up -d
+( cd additional/elasticsearch7 && docker-compose up -d && cd - )

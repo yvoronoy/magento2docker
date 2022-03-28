@@ -32,14 +32,17 @@ Key features of the project:
  - [Install bash completion (optional)](https://github.com/bobthecow/git-flow-completion/wiki/Install-Bash-git-completion)
  
 ## Installation
-You can download archive of this project on [Release Page](https://github.com/yvoronoy/magento2docker/releases). 
+You can download archive of this project on [Release Page](https://github.com/yvoronoy/magento2docker/releases).
+
  - Clone or Download the repository ```git clone git@github.com:yvoronoy/magento2docker.git```
  - Copy or create `env/etc/composer/auth.json` and put your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
    - `cp env/etc/composer/auth.json.example env/etc/composer/auth.json`
    - Edit env/etc/composer/auth.json and put your credentials [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
  - Update your gitconfig if needed
    - `cp env/etc/git/gitconfig.example env/etc/git/gitconfig`
-  - (Optional) Copy your private ssh keys, configs to have access to resources from inside container
+ - Update and edit Commerce Cloud CLI Token
+   - `cp env/.env.example env/.env`
+ - (Optional) Copy your private ssh keys, configs to have access to resources from inside container
     - `cp ~/.ssh/id_rsa env/etc/ssh/`
     - `cp ~/.ssh/config env/etc/ssh/`
 
@@ -50,10 +53,10 @@ Run make command to run environment.
 
 ```
 # Build and mount containers (default: php-7.2)
-make dev
+bin/up
 
 # Login on web server container
-make web
+bin/shell
 
 # Change php version
   - For php-7.0: make up70
