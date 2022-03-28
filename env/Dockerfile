@@ -1,5 +1,5 @@
 #PHP IMAGE
-FROM php:7.2-apache-stretch
+FROM php:7.4-apache-buster
 
 #SETTING UP THE SYSTEM
 RUN apt-get update \
@@ -32,7 +32,9 @@ RUN apt-get update \
     unzip \
     gnupg \
     gcc \
+    lsof \
     libsodium-dev \
+    libzip-dev \
     && apt-get update \
     && apt-get clean all
 
@@ -43,11 +45,8 @@ RUN useradd -m ${_USER} && echo "${_USER}:${_USER}" | chpasswd && chsh ${_USER} 
 
 #PHP EXTENSIONS
 RUN docker-php-ext-install -j$(nproc) iconv soap sockets \
-    && docker-php-ext-configure gd --with-gd --with-webp-dir \
-    --with-png-dir --with-zlib-dir --with-xpm-dir \
-    --with-freetype-dir=/usr/include/freetype2/ --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) gd bcmath pdo_mysql xsl intl zip \
-    && pecl install mcrypt-1.0.1 \ 
     && pecl install libsodium-2.0.22
 
 #GIT
@@ -85,6 +84,7 @@ RUN pecl install xdebug-2.9.0 \
     && echo "xdebug.max_nesting_level=10000" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 COPY ./misc/xdebug-php.sh /usr/local/bin/xdebug-php.sh
+COPY ./misc/prepare-mtf.sh /usr/local/bin/prepare-mtf.sh
 
 #CODESNIFFER
 RUN pear install PHP_CodeSniffer \
@@ -94,7 +94,7 @@ RUN pear install PHP_CodeSniffer \
 
 #SENDMAIL
 RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/mailcatcher.ini \
-    && echo "memory_limit=2G" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "memory_limit=4G" >> /usr/local/etc/php/conf.d/custom.ini \
     && echo "max_input_vars=10000" >> /usr/local/etc/php/conf.d/custom.ini \
     && echo "account default" >> /etc/msmtprc \
     && echo "host mailcatcher" >> /etc/msmtprc \

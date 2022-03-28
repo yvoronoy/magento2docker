@@ -1,6 +1,7 @@
 src/*
 !src/index.php
 
+env/.env
 env/etc/composer/auth.json
 !env/etc/git/*
 !env/etc/git/gitconfig.example
