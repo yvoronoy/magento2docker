@@ -21,7 +21,7 @@ services:
       - "SYS_PTRACE"
   db:
     container_name: magento2db
-    image: mysql:5.7
+    image: mariadb:10.7.1
     restart: always
     environment:
       MYSQL_DATABASE: magento
