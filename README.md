@@ -6,7 +6,7 @@ Key features of the project:
  - Multi-project setup with clean host names. Based on external nip.io wildcard DNS server.
  - Provides real-time file synchronization by Mutagen
  - Includes PHPStorm container which can be rendered by X.ORG port for OSX
- - Includes great set of tools with zero configuration like Blackfire, XDebug.
+ - Includes great set of tools with zero configuration like XDebug.
  - Includes external services: ElasticSearch 2.x - 6.x, Redis, MailCatcher, RabbitMQ.
  - Provides Make tool as a wrapper. Simplify managing containers and support bash completion to hightlight commands.
 
@@ -19,7 +19,6 @@ Key features of the project:
  - [How to install a magento](#how-install-magento)
  - [How to deploy magento dumps/backups](#how-deploy-dumps)
 - [How to use xDebug](#how-to-enable-xdebug)
-- [How to use Blackfire](#how-to-start-using-blackfire)
  - [Pre-requirements](#pre-requirements-1)
  - [Usage](#usage-1)
 - [How to run PHPStorm inside container](#how-to-run-phpstorm-inside-container)
@@ -94,19 +93,6 @@ it is dramatically decrease performance.
   - var/www/html
   - home/magento
   - /root/.composer/cache
-
-## How to start using Blackfire
-[Blackfire Profiler](https://blackfire.io/docs/introduction) is a PHP profiler and automated performance testing tool. It enables you to investigate performance issues in very simple way, just install a browser extension and press the button. You will get granular performance report to measure CPU, IO, Memory, Network, etc.
-Profiling with Blackfire is on-demand. This means that Blackfire adds no overhead for your end users, which makes it safe to use in production.
-
-### Get your Blackfire credentials
-Blackfire provides you a free account "Hack" which allows you to run profiles on your development environment. 
- - Create account and login here: https://blackfire.io/login
- - Install Browser Extension https://blackfire.io/docs/integrations/chrome
- - Go to the page https://blackfire.io/docs/integrations/docker
-   - Define these environment variables from this page on the host system (OSX)
-   - You can save them permanently by putting them into ~/.bash_profile file
- - Recreate containers by using command `make up`
 
 ## How to run PHPStorm inside container
 
