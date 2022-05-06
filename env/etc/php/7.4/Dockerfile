@@ -80,8 +80,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer2 --2
 
 #COMPOSER link (1 is default for PHP 7.4)
-RUN ln -s /usr/local/bin/composer1 /usr/local/bin/composer \
-    && chmod 777 /usr/local/bin/composer
+RUN ln -s /usr/local/bin/composer1 /usr/local/bin/composer
 
 #XDEBUG
 RUN pecl install xdebug-2.9.0 \
