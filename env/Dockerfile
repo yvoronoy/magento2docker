@@ -35,6 +35,7 @@ RUN apt-get update \
     lsof \
     libsodium-dev \
     libzip-dev \
+    parallel \
     && apt-get update \
     && apt-get clean all
 
@@ -59,8 +60,14 @@ RUN curl -sL https://deb.nodesource.com/setup_12.x | bash \
     && apt-get install -y nodejs
 
 #COMPOSER
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --1\
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer1 --1\
     && apt -qy install $PHPIZE_DEPS && mkdir /${_HOME_DIRECTORY}/.composer
+
+#COMPOSER 2 (additional)
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer2 --2
+
+#COMPOSER link (1 is default for PHP 7.4)
+RUN ln -s /usr/local/bin/composer1 /usr/local/bin/composer
 
 #XDEBUG
 RUN pecl install xdebug-2.9.0 \
@@ -72,6 +79,7 @@ RUN pecl install xdebug-2.9.0 \
     && echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 COPY ./misc/xdebug-php.sh /usr/local/bin/xdebug-php.sh
 COPY ./misc/prepare-mtf.sh /usr/local/bin/prepare-mtf.sh
+COPY ./misc/composer-link.sh /usr/local/bin/composer-link.sh
 
 #CODESNIFFER
 RUN pear install PHP_CodeSniffer \

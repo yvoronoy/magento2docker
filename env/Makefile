@@ -3,7 +3,7 @@ FS_MOUNT_TYPE:=$(shell bash etc/host/config.sh FS_MOUNT_TYPE)
 ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 SRC_DIR:=$(shell bash etc/host/config.sh SOURCE_DIRECTORY)
 
-mutagenSession = $(shell mutagen list | grep 'magento2web')
+mutagenSession = $(shell mutagen sync list | grep 'magento2web')
 
 up:
 	$(info "=====$(shell cat Dockerfile | grep 'FROM')=====")
