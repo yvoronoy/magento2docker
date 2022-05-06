@@ -78,6 +78,17 @@ bin/shell
    - Login to container `make web` 
    - Run `m2install.sh`
 
+## How to link Composer versions
+
+Containers for PHP 7.4 and PHP 8.0 has Composer 2 because of Magento 2.4.2 supports Composer 2 since 2.4.2 
+version.
+
+### Usage:
+- Login to your container `bin/shell-root`
+- To use composer as default you have two commands:
+  - Run command `composer-link.sh 1` to use Composer 1 
+  - Run command `composer-link.sh 2` to use Composer 2 
+
 ## How to Enable xDebug
 
 The container already includes PHP xDebug extension. The xDebug extension is disabled by default because
