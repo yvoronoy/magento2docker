@@ -17,7 +17,7 @@ RUN apt-get update \
     mariadb-client \
     pv \
     vim \
-    nano \ 
+    nano \
     bash-completion \
     openssh-server \
     ssl-cert \
@@ -93,6 +93,7 @@ RUN pecl install xdebug-2.9.0 \
 COPY ./misc/xdebug-php.sh /usr/local/bin/xdebug-php.sh
 COPY ./misc/prepare-mtf.sh /usr/local/bin/prepare-mtf.sh
 COPY ./misc/composer-link.sh /usr/local/bin/composer-link.sh
+COPY ./misc/wdi.sh /usr/local/bin/wdi
 
 #CODESNIFFER
 RUN pear install PHP_CodeSniffer \
@@ -134,6 +135,7 @@ RUN chown -R ${_USER}:${_USER} ${_HOME_DIRECTORY}
 #BASH COMPLETION
 USER magento
 RUN echo "source /etc/bash_completion" >> ${_HOME_DIRECTORY}/.bashrc
+RUN echo 'alias m="php bin/magento"' >> ~/.bash_aliases
 
 #MAGENTO CLI
 RUN curl -sS https://accounts.magento.cloud/cli/installer | php

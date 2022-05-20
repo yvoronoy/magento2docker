@@ -65,6 +65,10 @@ bin/shell
   - For php-7.3: make up73
   - For php-7.4: make up74
   - For php-8.0: make up80
+
+# alias for "php bin/magento" - "m", for example:
+m cache:flush
+m app:config:import
 ```
 
 ### How to install a magento inside container
@@ -133,6 +137,18 @@ Run the following command inside env directory
 ```
 make phpstorm
 ```
+
+## WDI script
+
+WDI script allows to download and deploy cloud env into local folder.
+
+Command can be called without arguments, and you will be asked about it.
+WDI uses cloud-teleport tool to download the dumps.
+
+### Usage
+- magento-cloud key should be configured and cloud-teleport installed inside container
+- Login to your container `make web`
+- Run command `wdi folder_name cloud_project_id cloud_env_branchname`
 
 ## Todo List
 
