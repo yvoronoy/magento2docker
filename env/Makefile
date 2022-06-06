@@ -20,6 +20,7 @@ up72: php72 build up
 up73: php73 build up
 up74: php74 build up
 up80: php80 build up
+up80: php81 build up
 php70:
 	$(info ""=====Buildng container with php 7.0"=====")
 	$(shell yes | cp etc/php/7.0/Dockerfile .)
@@ -38,6 +39,9 @@ php74:
 php80:
 	$(info ""=====Buildng container with php 8.0"=====")
 	$(shell yes | cp etc/php/8.0/Dockerfile .)	
+php81:
+        $(info ""=====Buildng container with php 8.1"=====")
+        $(shell yes | cp etc/php/8.1/Dockerfile .)
 logs:
 	docker logs -f magento2web
 logs-db:
