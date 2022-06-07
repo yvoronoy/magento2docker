@@ -20,7 +20,7 @@ up72: php72 build up
 up73: php73 build up
 up74: php74 build up
 up80: php80 build up
-up80: php81 build up
+up81: php81 build up
 php70:
 	$(info ""=====Buildng container with php 7.0"=====")
 	$(shell yes | cp etc/php/7.0/Dockerfile .)
