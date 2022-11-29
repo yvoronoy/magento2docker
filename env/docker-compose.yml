@@ -23,7 +23,8 @@ services:
       - "SYS_PTRACE"
   db:
     container_name: magento2db
-    image: mysql:5.7
+    # MariaDB is most common in Cloud
+    image: mariadb:10.2
     restart: always
     environment:
       MYSQL_DATABASE: magento
