@@ -1,7 +1,0 @@
----
-# Default Kibana configuration from kibana-docker.
-
-server.name: kibana
-server.host: "0"
-elasticsearch.url: http://magento2elastic5:9205
-xpack.monitoring.ui.container.elasticsearch.enabled: true
