@@ -14,13 +14,10 @@ stop:
 	docker-compose stop
 build:
 	docker-compose build --build-arg CACHEBUST=`date +%s`
-up72: php72 build up
 up73: php73 build up
 up74: php74 build up
 up80: php80 build up
-php72:
-	$(info ""=====Buildng container with php 7.2"=====")
-	$(shell yes | cp etc/php/7.2/Dockerfile .)
+up81: php81 build up
 php73:
 	$(info ""=====Buildng container with php 7.3"=====")
 	$(shell yes | cp etc/php/7.3/Dockerfile .)
@@ -30,6 +27,9 @@ php74:
 php80:
 	$(info ""=====Buildng container with php 8.0"=====")
 	$(shell yes | cp etc/php/8.0/Dockerfile .)	
+php81:
+    $(info ""=====Buildng container with php 8.1"=====")
+    $(shell yes | cp etc/php/8.1/Dockerfile .)
 logs:
 	docker logs -f magento2web
 logs-db:
