@@ -3,7 +3,11 @@ version: '2'
 services:
   varnish:
     container_name: magento2varnish
+    # for Varnis 6 there is no official image for arm-v8 (Apple M1) so we need to force different platform and image will work with emulation (WARNING: will be slow)
+    platform: linux/x86_64
     image: varnish:6.5
+    # for MAgento 2.4.4 and up, comment out the above two lines and uncomment the below one for better performance
+    # image: varnish:7.0
     ports:
       - "8080:8080"
 networks:

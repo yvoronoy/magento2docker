@@ -3,6 +3,8 @@ version: '2'
 services:
   elasticsearch:
     container_name: magento2elastic6
+    # for ES 6 there is no official image for arm-v8 (Apple M1) so we need to force different platform and image will work with emulation (WARNING: will be slow)
+    platform: linux/x86_64
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     build: .
