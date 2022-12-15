@@ -52,19 +52,17 @@ Commands should be executed from _env_ directory.
 Run make command to run environment.
 
 ```
-# Build and mount containers (default: php-7.2)
+# Build and mount containers (default: php-7.4)
 bin/up
 
 # Login on web server container
 bin/shell
 
 # Change php version
-  - For php-7.0: make up70
-  - For php-7.1: make up71
-  - For php-7.2: make up72
   - For php-7.3: make up73
   - For php-7.4: make up74
   - For php-8.0: make up80
+  - For php-8.1: make up81
 ```
 
 ### How to install a magento inside container
@@ -80,7 +78,7 @@ bin/shell
 
 ## How to link Composer versions
 
-Containers for PHP 7.4 and PHP 8.0 has Composer 2 because of Magento 2.4.2 supports Composer 2 since 2.4.2 
+Containers for PHP 7.4, PHP 8.0, and PHP 8.1 has Composer 2 because of Magento supports Composer 2 since 2.4.2
 version.
 
 ### Usage:
@@ -102,8 +100,9 @@ it is dramatically decrease performance.
 
 ## Persistent folders
 ### Any file saved out of these folders will be lost when the container is terminated
-  - var/www/html
-  - home/magento
+  - /var/www/html
+  - /home
+  - /root
   - /root/.composer/cache
 
 ## How to start using Blackfire
