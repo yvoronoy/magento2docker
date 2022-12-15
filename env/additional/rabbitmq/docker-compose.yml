@@ -3,7 +3,7 @@ version: '2'
 services:
   rabbitmq:
     container_name: magento2rabbitmq
-    image: rabbitmq:3.6-management
+    image: rabbitmq:3.8-management
     restart: always
     ports:
             - "15672:15672"
