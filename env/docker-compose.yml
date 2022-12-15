@@ -19,6 +19,8 @@ services:
     volumes:
       - src-volume:/var/www/html
       - src-composer-cache-volume:/root/.composer/cache
+      - home-volume:/home
+      - root-volume:/root
     cap_add:
       - "SYS_PTRACE"
   db:
@@ -42,6 +44,8 @@ services:
         - BLACKFIRE_SERVER_ID
         - BLACKFIRE_SERVER_TOKEN
 volumes:
+  home-volume:
+  root-volume:
   src-volume:
   db-volume:
   src-composer-cache-volume:
