@@ -1,5 +1,5 @@
 #PHP IMAGE
-FROM php:7.3-apache-stretch
+FROM php:8.1-apache-buster
 
 #SETTING UP THE SYSTEM
 RUN apt-get update \
@@ -33,8 +33,8 @@ RUN apt-get update \
     gnupg \
     gcc \
     lsof \
-    libzip-dev \
     libsodium-dev \
+    libzip-dev \
     && apt-get update \
     && apt-get clean all
 
@@ -44,12 +44,9 @@ ENV _HOME_DIRECTORY=/home/${_USER}
 RUN useradd -m ${_USER} && echo "${_USER}:${_USER}" | chpasswd && chsh ${_USER} -s /bin/bash && adduser ${_USER} sudo
 
 #PHP EXTENSIONS
-RUN docker-php-ext-install -j$(nproc) iconv soap sockets \
-    && docker-php-ext-configure gd --with-gd --with-webp-dir \
-    --with-png-dir --with-zlib-dir --with-xpm-dir \
-    --with-freetype-dir=/usr/include/freetype2/ --with-jpeg-dir=/usr/include/ \
-    && docker-php-ext-install -j$(nproc) gd bcmath pdo_mysql xsl intl zip \
-    && pecl install libsodium-2.0.22
+RUN docker-php-ext-install -j$(nproc) soap sockets \
+    && docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install -j$(nproc) gd bcmath pdo_mysql xsl intl zip
 
 #GIT
 RUN apt-get update \
@@ -74,18 +71,27 @@ RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
     && rm -Rf /tmp/blackfire
 
 #COMPOSER
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --1\
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer1 --1 \
     && apt -qy install $PHPIZE_DEPS && mkdir /${_HOME_DIRECTORY}/.composer
 
+#COMPOSER 2 (additional)
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer2 --2
+
+#COMPOSER link (2 is default for PHP 8.1)
+RUN ln -s /usr/local/bin/composer2 /usr/local/bin/composer
+
 #XDEBUG
-RUN pecl install xdebug-2.9.0 \
+RUN pecl install xdebug \
     && echo ";zend_extension=xdebug.so" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-    && echo "xdebug.remote_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-    && echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-    && echo "xdebug.remote_autostart=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.max_nesting_level=10000" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 COPY ./misc/xdebug-php.sh /usr/local/bin/xdebug-php.sh
+
+# COMPOSER VERSION SWITCHER
+COPY ./misc/composer-link.sh /usr/local/bin/composer-link.sh
 
 #CODESNIFFER
 RUN pear install PHP_CodeSniffer \
@@ -95,7 +101,7 @@ RUN pear install PHP_CodeSniffer \
 
 #SENDMAIL
 RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/mailcatcher.ini \
-    && echo "memory_limit=4G" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "memory_limit=2G" >> /usr/local/etc/php/conf.d/custom.ini \
     && echo "max_input_vars=10000" >> /usr/local/etc/php/conf.d/custom.ini \
     && echo "account default" >> /etc/msmtprc \
     && echo "host mailcatcher" >> /etc/msmtprc \

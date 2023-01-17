@@ -2,6 +2,7 @@ version: '3'
 
 services:
   web:
+    hostname: magento2.test
     container_name: magento2web
     restart: always
     build: .
@@ -9,6 +10,8 @@ services:
       - PHP_IDE_CONFIG=serverName=PHPSTORM
       - BLACKFIRE_CLIENT_ID
       - BLACKFIRE_CLIENT_TOKEN
+      - MAGENTO_CLOUD_CLI_TOKEN
+      - COMPOSER_AUTH
     ports:
       - "80:80"
       - "443:443"
@@ -16,11 +19,14 @@ services:
     volumes:
       - src-volume:/var/www/html
       - src-composer-cache-volume:/root/.composer/cache
+      - home-volume:/home
+      - root-volume:/root
     cap_add:
       - "SYS_PTRACE"
   db:
     container_name: magento2db
-    image: mysql:5.7
+    # MariaDB is most common in Cloud
+    image: mariadb:10.2
     restart: always
     environment:
       MYSQL_DATABASE: magento
@@ -38,6 +44,8 @@ services:
         - BLACKFIRE_SERVER_ID
         - BLACKFIRE_SERVER_TOKEN
 volumes:
+  home-volume:
+  root-volume:
   src-volume:
   db-volume:
   src-composer-cache-volume:

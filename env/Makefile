@@ -14,21 +14,10 @@ stop:
 	docker-compose stop
 build:
 	docker-compose build --build-arg CACHEBUST=`date +%s`
-up70: php70 build up
-up71: php71 build up
-up72: php72 build up
 up73: php73 build up
 up74: php74 build up
 up80: php80 build up
-php70:
-	$(info ""=====Buildng container with php 7.0"=====")
-	$(shell yes | cp etc/php/7.0/Dockerfile .)
-php71:
-	$(info ""=====Buildng container with php 7.1"=====")
-	$(shell yes | cp etc/php/7.1/Dockerfile .)
-php72:
-	$(info ""=====Buildng container with php 7.2"=====")
-	$(shell yes | cp etc/php/7.2/Dockerfile .)
+up81: php81 build up
 php73:
 	$(info ""=====Buildng container with php 7.3"=====")
 	$(shell yes | cp etc/php/7.3/Dockerfile .)
@@ -38,16 +27,13 @@ php74:
 php80:
 	$(info ""=====Buildng container with php 8.0"=====")
 	$(shell yes | cp etc/php/8.0/Dockerfile .)	
+php81:
+    $(info ""=====Buildng container with php 8.1"=====")
+    $(shell yes | cp etc/php/8.1/Dockerfile .)
 logs:
 	docker logs -f magento2web
 logs-db:
 	docker logs -f magento2db
-logs-elastic:
-	docker logs -f magento2elastic
-logs-elastic5:
-	docker logs -f magento2elastic5
-logs-elastic6:
-	docker logs -f magento2elastic6
 add-host:
 	echo "127.0.0.1 $(host)" | sudo tee -a /etc/hosts
 	cp etc/apache/vhost.conf.example etc/apache/$(host).conf
@@ -70,7 +56,7 @@ remove-host:
 
 dev: up mount
 dev-stop: umount stop
-all: up elastic6 mailcatcher solr
+all: up elastic7 mailcatcher
 
 phpstorm:
 	xhost + 127.0.0.1
@@ -94,6 +80,11 @@ ifeq ($(mutagenSession),)
 	--ignore=/.docker \
 	--ignore=/.github \
 	--ignore-vcs \
+	--ignore=/**/var/cache \
+	--ignore=/**/var/page_cache \
+	--ignore=/**/var/session \
+	--ignore=/**/var/log \
+	--ignore=/**/.DS_Store \
 	--symlink-mode=posix-raw \
 	$(SRC_DIR) \
 	docker://magento@magento2web/var/www/html/
@@ -126,50 +117,31 @@ magento-console:
 	docker exec -it magento2web n98-magerun2 dev:console
 
 #Additional Containers
-elastic:
-	# Web interface:
-	# http://127.0.0.1:9200
-	cd additional/elasticsearch && docker-compose up -d && cd -
-elastic-stop:
-	cd additional/elasticsearch && docker-compose stop && cd -
-elastic5:
-	cd additional/elasticsearch5 && docker-compose up -d && cd -
-	cd additional/elasticsearch5/kibana && docker-compose up -d && cd -
-	# Web interface:
-	# http://127.0.0.1:9205
-	# Kibana Web Interface
-	# http://127.0.0.1:5601
-elastic5-stop:
-	cd additional/elasticsearch5 && docker-compose stop && cd -
-	cd additional/elasticsearch5/kibana && docker-compose stop && cd -
 elastic6:
 	cd additional/elasticsearch6 && docker-compose up -d && cd -
 	# Web interface:
 	# http://127.0.0.1:9206
+logs-elastic6:
+	docker logs -f magento2elastic6
 elastic6-stop:
 	cd additional/elasticsearch6 && docker-compose stop && cd -
 elastic7:
 	cd additional/elasticsearch7 && docker-compose up -d && cd -
 	# Web interface:
 	# http://127.0.0.1:9207
+logs-elastic7:
+	docker logs -f magento2elastic7
 elastic7-stop:
-	cd additional/elasticsearch7 && docker-compose stop && cd -	
-solr:
-	cd additional/solr36 && docker-compose up -d && cd -
-solr-stop:
-	cd additional/solr36 && docker-compose stop && cd -
+	cd additional/elasticsearch7 && docker-compose stop && cd -
+selenium:
+	cd additional/selenium && docker-compose up -d && cd -
+	# VNC open vnc://:secret@127.0.0.1:5900
 mailcatcher:
 	cd additional/mailcatcher && docker-compose up -d && cd -
 	# Management Console:
 	# http://127.0.0.1:1080/
 mailcatcher-stop:
 	cd additional/mailcatcher && docker-compose stop && cd -
-mysql55:
-	# MySQL 5.5
-	# Host: db55
-	cd additional/mysql55 && docker-compose up -d && cd -
-mysql55-stop:
-	cd additional/mysql55 && docker-compose stop && cd -
 rabbitmq:
 	cd additional/rabbitmq && docker-compose up -d && cd -
 	# Management Console:

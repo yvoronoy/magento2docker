@@ -1,6 +1,7 @@
 src/*
 !src/index.php
 
+env/.env
 env/etc/composer/auth.json
 !env/etc/git/*
 !env/etc/git/gitconfig.example
@@ -18,5 +19,6 @@ env/etc/apache/*
 
 env/misc/*
 !env/misc/xdebug-php.sh
+!env/misc/prepare-mtf.sh
 
 env/etc/host/config.sh.override
