@@ -159,7 +159,7 @@ varnish:
 	cd additional/varnish && docker-compose up -d && cd -
 	# Update port to 8080 for Magento Base URL configuration
 varnish-cli:
-	docker exec -it magento2varnish redis-cli
+	docker exec -it magento2varnish varnishadm
 varnish-stop:
 	cd additional/varnish && docker-compose stop && cd -
 varnish-logs:
