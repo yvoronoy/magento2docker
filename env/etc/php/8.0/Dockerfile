@@ -1,5 +1,5 @@
 #PHP IMAGE
-FROM php:8.0-apache-buster
+FROM php:8.0-apache-bullseye
 
 #SETTING UP THE SYSTEM
 RUN apt-get update \

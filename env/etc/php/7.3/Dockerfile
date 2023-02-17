@@ -1,5 +1,5 @@
 #PHP IMAGE
-FROM php:7.3-apache-stretch
+FROM php:7.3-apache-bullseye
 
 #SETTING UP THE SYSTEM
 RUN apt-get update \
