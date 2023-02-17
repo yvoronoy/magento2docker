@@ -1,5 +1,5 @@
 #PHP IMAGE
-FROM php:8.1-apache-buster
+FROM php:8.1-apache-bullseye
 
 #SETTING UP THE SYSTEM
 RUN apt-get update \
@@ -81,13 +81,15 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN ln -s /usr/local/bin/composer2 /usr/local/bin/composer
 
 #XDEBUG
+ARG M2D_XDEBUG_IDE_KEY=PHPSTORM
+ENV M2D_XDEBUG_IDE_KEY=${M2D_XDEBUG_IDE_KEY:-PHPSTORM}
 RUN pecl install xdebug \
     && echo ";zend_extension=xdebug.so" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.max_nesting_level=10000" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-    && echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+    && echo "xdebug.idekey=$M2D_XDEBUG_IDE_KEY" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 COPY ./misc/xdebug-php.sh /usr/local/bin/xdebug-php.sh
 
 # COMPOSER VERSION SWITCHER

@@ -4,7 +4,7 @@ services:
   rabbitmq:
     container_name: magento2rabbitmq
     image: rabbitmq:3.8-management
-    restart: always
+    restart: unless-stopped
     ports:
             - "15672:15672"
 networks:
