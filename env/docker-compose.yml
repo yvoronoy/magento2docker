@@ -7,7 +7,9 @@ services:
     restart: unless-stopped
     build:
       context: .
+      target: php_base
       args:
+        - M2D_PHP_VERSION=${M2D_PHP_VERSION:-7.4}
         - M2D_XDEBUG_IDE_KEY=${M2D_XDEBUG_IDE_KEY:-PHPSTORM}
     environment:
       - PHP_IDE_CONFIG=serverName=PHPSTORM
