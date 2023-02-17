@@ -5,7 +5,10 @@ services:
     hostname: magento2.test
     container_name: magento2web
     restart: unless-stopped
-    build: .
+    build:
+      context: .
+      args:
+        - M2D_XDEBUG_IDE_KEY=${M2D_XDEBUG_IDE_KEY:-PHPSTORM}
     environment:
       - PHP_IDE_CONFIG=serverName=PHPSTORM
       - BLACKFIRE_CLIENT_ID
