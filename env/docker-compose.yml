@@ -4,8 +4,11 @@ services:
   web:
     hostname: magento2.test
     container_name: magento2web
-    restart: always
-    build: .
+    restart: unless-stopped
+    build:
+      context: .
+      args:
+        - M2D_XDEBUG_IDE_KEY=${M2D_XDEBUG_IDE_KEY:-PHPSTORM}
     environment:
       - PHP_IDE_CONFIG=serverName=PHPSTORM
       - BLACKFIRE_CLIENT_ID
@@ -27,7 +30,7 @@ services:
     container_name: magento2db
     # MariaDB is most common in Cloud
     image: mariadb:10.2
-    restart: always
+    restart: unless-stopped
     environment:
       MYSQL_DATABASE: magento
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
