@@ -133,6 +133,14 @@ logs-elastic7:
 	docker logs -f magento2elastic7
 elastic7-stop:
 	cd additional/elasticsearch7 && docker-compose stop && cd -
+opensearch:
+	cd additional/opensearch && docker-compose up -d && cd -
+	# Web interface:
+	# http://127.0.0.1:9200
+logs-opensearch:
+	docker logs -f magento2opensearch
+opensearch-stop:
+	cd additional/opensearch && docker-compose stop && cd -
 selenium:
 	cd additional/selenium && docker-compose up -d && cd -
 	# VNC open vnc://:secret@127.0.0.1:5900
