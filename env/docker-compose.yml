@@ -4,7 +4,7 @@ services:
   web:
     hostname: magento2.test
     container_name: magento2web
-    restart: always
+    restart: unless-stopped
     build: .
     environment:
       - PHP_IDE_CONFIG=serverName=PHPSTORM
@@ -27,7 +27,7 @@ services:
     container_name: magento2db
     # MariaDB is most common in Cloud
     image: mariadb:10.2
-    restart: always
+    restart: unless-stopped
     environment:
       MYSQL_DATABASE: magento
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
