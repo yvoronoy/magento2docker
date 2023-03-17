@@ -12,12 +12,12 @@ ENV _HOME_DIRECTORY=/home/${_USER}
 RUN useradd -m ${_USER} && echo "${_USER}:${_USER}" | chpasswd && chsh ${_USER} -s /bin/bash && adduser ${_USER} sudo
 
 #SSH
-COPY ./etc/ssh ${_HOME_DIRECTORY}/.ssh
+COPY ./services/web-servers/apache/etc/ssh ${_HOME_DIRECTORY}/.ssh
 RUN chmod -R 700 ${_HOME_DIRECTORY}/.ssh
 
 #GIT
-COPY ./etc/git/gitconfig ${_HOME_DIRECTORY}/.gitconfig
-COPY ./etc/composer/auth.json ${_HOME_DIRECTORY}/.composer/auth.json
+COPY ./services/web-servers/apache/etc/git/gitconfig ${_HOME_DIRECTORY}/.gitconfig
+COPY ./services/web-servers/apache/etc/composer/auth.json ${_HOME_DIRECTORY}/.composer/auth.json
 
 RUN chown -R ${_USER}:${_USER} ${_HOME_DIRECTORY}
 

@@ -4,8 +4,8 @@ services:
   phpstorm:
     container_name: phpstorm
     build:
-      context: ./
-      dockerfile: additional/phpstorm/Dockerfile
+      context: .
+      dockerfile: services/phpstorm/Dockerfile
     ports:
       - "9000:9000"
     volumes:
