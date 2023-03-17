@@ -29,9 +29,14 @@ services:
     cap_add:
       - "SYS_PTRACE"
   db:
+    build:
+      context: .
+      dockerfile: services/db-engines/Dockerfile
+      target: m2d_db_engine
+      args:
+        - M2D_DB_ENGINE_VENDOR:${M2D_DB_ENGINE_VENDOR:-mariadb}
+        - M2D_DB_ENGINE_VERSION:${M2D_DB_ENGINE_VERSION:-10}
     container_name: magento2db
-    # MariaDB is most common in Cloud
-    image: mariadb:10.2
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: magento
@@ -39,9 +44,8 @@ services:
       MYSQL_USER: magento
       MYSQL_PASSWORD: magento
     ports:
-      - "3306:3306"
+      - "${M2D_PORT_FOR_DB_ENGINE:-3306}:3306"
     volumes:
-      - "./etc/mysql:/etc/mysql/conf.d"
       - db-volume:/var/lib/mysql
 
   search_engine:
