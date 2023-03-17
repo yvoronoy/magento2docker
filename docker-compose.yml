@@ -44,6 +44,22 @@ services:
       - "./etc/mysql:/etc/mysql/conf.d"
       - db-volume:/var/lib/mysql
 
+  search_engine:
+    build:
+      context: .
+      dockerfile: services/search-engines/Dockerfile
+      target: m2d_search_engine
+      args:
+        - M2D_ENABLE_SEARCH_ENGINE=${M2D_ENABLE_SEARCH_ENGINE:-yes}
+        - M2D_SEARCH_ENGINE_VENDOR=${M2D_SEARCH_ENGINE_VENDOR:-elasticsearch}
+        - M2D_SEARCH_ENGINE_VERSION=${M2D_SEARCH_ENGINE_VERSION:7}
+    container_name: magento2searchengine
+    environment:
+      - "ES_JAVA_OPTS=-Xms128m -Xmx1g"
+      - "OPENSEARCH_JAVA_OPTS=-Xms128m -Xmx1g"
+    ports:
+      - "${M2D_PORT_FOR_SEARCH_ENGINE:-9200}:9200"
+
   message_broker:
     build:
       context: .

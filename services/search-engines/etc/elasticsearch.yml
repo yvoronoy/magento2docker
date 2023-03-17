@@ -1,5 +1,5 @@
 http.host: 0.0.0.0
-http.port: 9207
+http.port: 9200
 
 indices.query.bool.max_clause_count: 10240
 
