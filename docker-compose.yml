@@ -48,6 +48,21 @@ services:
     environment:
         - BLACKFIRE_SERVER_ID
         - BLACKFIRE_SERVER_TOKEN
+
+  message_broker:
+    build:
+      context: .
+      dockerfile: services/message-brokers/Dockerfile
+      target: m2d_message_broker
+      args:
+        - M2D_ENABLE_MESSAGE_BROKER=${M2D_ENABLE_MESSAGE_BROKER:-no}
+        - M2D_MESSAGE_BROKER_VENDOR=${M2D_MESSAGE_BROKER_VENDOR:-rabbitmq}
+        - M2D_MESSAGE_BROKER_VERSION=${M2D_MESSAGE_BROKER_VERSION:-'3.8-management'}
+    container_name: magento2messagebroker
+    restart: unless-stopped
+    ports:
+      - "${M2D_PORT_FOR_MESSAGE_BROKER:-15672}:15672"
+
   mailcatcher:
     build:
       context: .
@@ -58,6 +73,7 @@ services:
     container_name: magento2mailcatcher
     ports:
       - "${M2D_PORT_FOR_MAILCATCHER:-1080}:1080"
+
 volumes:
   home-volume:
   root-volume:
