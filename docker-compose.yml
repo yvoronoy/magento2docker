@@ -9,10 +9,10 @@ services:
       context: .
       target: php_base
       args:
-        - M2D_PHP_VERSION=${M2D_PHP_VERSION:-7.4}
+        - M2D_WEB_SERVER_PHP_VERSION=${M2D_WEB_SERVER_PHP_VERSION:-8.1}
+        - M2D_ENABLE_BLACKFIRE=${M2D_ENABLE_BLACKFIRE:-no}
         - M2D_XDEBUG_IDE_KEY=${M2D_XDEBUG_IDE_KEY:-PHPSTORM}
     environment:
-      - PHP_IDE_CONFIG=serverName=PHPSTORM
       - BLACKFIRE_CLIENT_ID
       - BLACKFIRE_CLIENT_TOKEN
       - MAGENTO_CLOUD_CLI_TOKEN

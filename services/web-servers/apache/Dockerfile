@@ -1,9 +1,8 @@
-## To build image for any PHP version, just set version in the M2D_PHP_VERSION variable.
-## It can be in .env file or in your terminal with export M2D_PHP_VERSION=7.4
+ARG M2D_WEB_SERVER_PHP_VERSION='8.1'
+ARG M2D_ENABLE_BLACKFIRE='no'
 
 ## BASE PHP IMAGE - COMMON FOR ALL PHP VERSIONS ##
-ARG M2D_PHP_VERSION='8.1'
-FROM php:${M2D_PHP_VERSION}-apache-bullseye AS php_base_
+FROM php:${M2D_WEB_SERVER_PHP_VERSION}-apache-bullseye AS m2d_web_server_apache_php_base_
 
 # SETTING UP THE SYSTEM:
 RUN apt-get update \
@@ -62,12 +61,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
     && apt -qy install $PHPIZE_DEPS && mkdir /${_HOME_DIRECTORY}/.composer \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer2 --2
 
-# COMPOSER VERSION SWITCHER:
-COPY ./misc/composer-link.sh /usr/local/bin/composer-link.sh
-
-# XDEBUG enable/disable script
-COPY ./misc/xdebug-php.sh /usr/local/bin/xdebug-php.sh
-COPY ./misc/prepare-mtf.sh /usr/local/bin/prepare-mtf.sh
+# TOOLS:
+COPY ./services/web-servers/apache/tools/* /usr/local/bin/
 
 # CODESNIFFER:
 # RUN pear install PHP_CodeSniffer \
@@ -121,13 +116,13 @@ RUN echo "Defaults    timestamp_timeout=-1" >> /etc/sudoers
 ARG CACHEBUST=1
 
 # CUSTOM CONFIGURATIONS:
-COPY ./etc/git/gitconfig ${_HOME_DIRECTORY}/.gitconfig
-COPY ./etc/composer/auth.json /${_HOME_DIRECTORY}/.composer/auth.json
-COPY ./misc/* /usr/local/bin/
-COPY ./etc/apache/envvars /etc/apache2/envvars
-COPY ./etc/apache /etc/apache2/sites-enabled/
-COPY ./etc/fixtures /etc/fixtures
-COPY ./etc/m2install/.m2install.conf* ${_HOME_DIRECTORY}/
+COPY ./services/web-servers/apache/etc/apache2 /etc/apache2
+# COPY ./services/web-servers/apache/etc/apache2/envvars /etc/apache2/envvars
+# COPY ./services/web-servers/apache/etc/apache2/sites-enabled /etc/apache2/sites-enabled/
+COPY ./services/web-servers/apache/etc/git/gitconfig ${_HOME_DIRECTORY}/.gitconfig
+COPY ./services/web-servers/apache/etc/composer/auth.json /${_HOME_DIRECTORY}/.composer/auth.json
+COPY ./services/web-servers/apache/etc/fixtures /etc/fixtures
+COPY ./services/web-servers/apache/etc/m2install/.m2install.conf* ${_HOME_DIRECTORY}/
 
 # MAGENTO TOOLS:
 RUN curl -o /usr/local/bin/m2install.sh https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install.sh \
@@ -140,14 +135,19 @@ RUN curl -o /usr/local/bin/m2install.sh https://raw.githubusercontent.com/yvoron
     && tar -xf /tmp/teleport.tar.gz -C /tmp/ \
     && make -C /tmp/teleport/ \
     && git ls-remote git@github.com:magento-sparta/ee-support-tools.git 2>&1 | if grep -q HEAD; then git clone git@github.com:magento-sparta/ee-support-tools.git /usr/local/src/ee-support-tools; else echo; fi \
-    && if [ -d /usr/local/src/ee-support-tools ]; then ln -s /usr/local/src/ee-support-tools/cloud-teleport/cloud-teleport /usr/local/bin/cloud-teleport; else echo; fi
+    && if [ -d /usr/local/src/ee-support-tools ]; then ln -s /usr/local/src/ee-support-tools/cloud-teleport/cloud-teleport /usr/local/bin/cloud-teleport; else echo; fi \
+    && git ls-remote git@github.com:magento-sparta/m-it.git 2>&1 | if grep -q HEAD; then git clone git@github.com:magento-sparta/m-it.git /usr/local/src/m-it; else echo; fi \
+    && if [ -d /usr/local/src/m-it ]; then /usr/local/src/m-it/mit-installer.sh; else echo; fi
 
 RUN chmod +x /usr/local/bin/*
 ## END OF BASE IMAGE ##
 
 
-## BASE IMAGE WITH BLACKFIRE ""
-FROM php_base_ AS php_base_blackfire
+## BASE IMAGE WITHOUT BLACKFIRE ##
+FROM m2d_web_server_apache_php_base_ AS m2d_web_server_apache_php_base_blackfire_no
+
+## BASE IMAGE WITH BLACKFIRE ##
+FROM m2d_web_server_apache_php_base_ AS m2d_web_server_apache_php_base_blackfire_yes
 
 # BLACKFIRE:
 RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
@@ -165,8 +165,7 @@ RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
 
 
 ## IMAGE ADJUSTMENTS FOR PHP 7.x ##
-ARG M2D_BLACKFIRE=''
-FROM php_base_${M2D_BLACKFIRE} AS php7x
+FROM m2d_web_server_apache_php_base_${M2D_ENABLE_BLACKFIRE'} AS m2d_web_server_apache_php7x
 
 # COMPOSER 1 LINKED AS DEFAULT:
 RUN ln -s /usr/local/bin/composer1 /usr/local/bin/composer
@@ -191,8 +190,7 @@ RUN pecl install libsodium-2.0.23
 
 
 ## IMAGE ADJUSTEMNTS FOR PHP 8.x
-ARG M2D_BLACKFIRE=''
-FROM php_base_${M2D_BLACKFIRE} AS php8x
+FROM m2d_web_server_apache_php_base_${M2D_ENABLE_BLACKFIRE} AS m2d_web_server_apache_php8x
 
 # PHP EXTENSIONS GD:
 RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp \
@@ -218,7 +216,7 @@ RUN pecl install xdebug \
 
 
 ## IMAGE ADJUSTEMNTS FOR PHP 7.3 ##
-FROM php7x AS php_7.3
+FROM m2d_web_server_apache_php7x AS m2d_web_server_apache_php7.3
 # PHP EXTENSIONS GD:
 RUN docker-php-ext-configure gd --with-gd --with-webp-dir \
     --with-png-dir --with-zlib-dir --with-xpm-dir \
@@ -228,7 +226,7 @@ RUN docker-php-ext-configure gd --with-gd --with-webp-dir \
 
 
 ## IMAGE ADJUSTEMNTS FOR PHP 7.4 ##
-FROM php7x AS php_7.4
+FROM m2d_web_server_apache_php7x AS m2d_web_server_apache_php7.4
 # PHP EXTENSIONS GD:
 RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) gd
@@ -236,7 +234,7 @@ RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-w
 
 
 ## IMAGE ADJUSTEMNTS FOR PHP 8.0 ##
-FROM php8x AS php_8.0
+FROM m2d_web_server_apache_php8x AS m2d_web_server_apache_php8.0
 
 # ADDITIONAL EXTENSIONS
 RUN pecl install libsodium-2.0.23
@@ -244,17 +242,15 @@ RUN pecl install libsodium-2.0.23
 
 
 ## IMAGE ADJUSTEMNTS FOR PHP 8.1 ##
-FROM php8x AS php_8.1
+FROM m2d_web_server_apache_php8x AS m2d_web_server_apache_php8.1
 ## END OF IMAGE ADJUSTMENTS FOR PHP 8.1 ##
 
 
 ## IMAGE ADJUSTEMNTS FOR PHP 8.2 ##
-FROM php8x AS php_8.2
+FROM m2d_web_server_apache_php8x AS m2d_web_server_apache_php8.2
 ## END OF IMAGE ADJUSTMENTS FOR PHP 8.2 ##
 
 
 ## TARGET IMAGE ADJUSTEMNTS ##
-ARG M2D_PHP_VERSION='8.1'
-FROM php_${M2D_PHP_VERSION} AS php_base
-
+FROM m2d_web_server_apache_php${M2D_WEB_SERVER_PHP_VERSION} AS web_server
 CMD service ssh start; apache2-foreground
