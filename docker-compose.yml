@@ -43,11 +43,6 @@ services:
     volumes:
       - "./etc/mysql:/etc/mysql/conf.d"
       - db-volume:/var/lib/mysql
-  blackfire:
-    image: blackfire/blackfire
-    environment:
-        - BLACKFIRE_SERVER_ID
-        - BLACKFIRE_SERVER_TOKEN
 
   message_broker:
     build:
@@ -73,6 +68,17 @@ services:
     container_name: magento2mailcatcher
     ports:
       - "${M2D_PORT_FOR_MAILCATCHER:-1080}:1080"
+
+  blackfire:
+    build:
+      context: .
+      dockerfile: tools/blackfire/Dockerfile
+      target: m2d_blackfire
+      args:
+        M2D_ENABLE_BLACKFIRE=${M2D_ENABLE_BLACKFIRE:-no}
+    environment:
+        - BLACKFIRE_SERVER_ID
+        - BLACKFIRE_SERVER_TOKEN
 
 volumes:
   home-volume:
