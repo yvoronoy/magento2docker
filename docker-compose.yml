@@ -58,6 +58,20 @@ services:
     ports:
       - "${M2D_PORT_FOR_MESSAGE_BROKER:-15672}:15672"
 
+  web_cache:
+    build:
+      context: .
+      dockerfile: services/web-cache/Dokerfile
+      target: m2d_web_cache
+      args:
+        - M2D_ENABLE_WEB_CACHE:${M2D_ENABLE_WEB_CACHE:-no}
+        - M2D_WEB_CACHE_VENDOR:${M2D_WEB_CACHE_VENDOR:-varnish}
+        - M2D_WEB_CACHE_VERSION:${M2D_WEB_CACHE_VERSION:-'6.5'}
+    container_name: magento2webcache
+    restart: unless-stopped
+    ports:
+      - "${M2D_PORT_FOR_WEB_CACHE:-8080}:8080"
+
   mailcatcher:
     build:
       context: .
