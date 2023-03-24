@@ -56,8 +56,8 @@ services:
       args:
         - M2D_ENABLE_SEARCH_ENGINE=${M2D_ENABLE_SEARCH_ENGINE:-yes}
         - M2D_SEARCH_ENGINE_VENDOR=${M2D_SEARCH_ENGINE_VENDOR:-elasticsearch}
-        - M2D_SEARCH_ENGINE_VERSION=${M2D_SEARCH_ENGINE_VERSION:7}
-    container_name: magento2searchengine
+        - M2D_SEARCH_ENGINE_VERSION=${M2D_SEARCH_ENGINE_VERSION:-7}
+    container_name: m2d-searchengine
     environment:
       - "ES_JAVA_OPTS=-Xms128m -Xmx1g"
       - "OPENSEARCH_JAVA_OPTS=-Xms128m -Xmx1g"
