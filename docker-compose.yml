@@ -112,7 +112,7 @@ services:
       target: m2d_mailcatcher
       args:
         - M2D_ENABLE_MAILCATCHER=${M2D_ENABLE_MAILCATCHER:-no}
-    container_name: magento2mailcatcher
+    container_name: m2d-mailcatcher
     ports:
       - "${M2D_PORT_FOR_MAILCATCHER:-1080}:1080"
 
