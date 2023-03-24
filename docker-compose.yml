@@ -3,11 +3,12 @@ version: '3'
 services:
   web:
     hostname: magento2.test
-    container_name: magento2web
+    container_name: m2d-web
     restart: unless-stopped
     build:
       context: .
-      target: php_base
+      dockerfile: services/web-servers/${M2D_WEB_SERVER_VENDOR:-apache}/Dockerfile
+      target: web_server
       args:
         - M2D_WEB_SERVER_PHP_VERSION=${M2D_WEB_SERVER_PHP_VERSION:-8.1}
         - M2D_ENABLE_BLACKFIRE=${M2D_ENABLE_BLACKFIRE:-no}

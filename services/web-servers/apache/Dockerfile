@@ -64,12 +64,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # TOOLS:
 COPY ./services/web-servers/apache/tools/* /usr/local/bin/
 
-# CODESNIFFER:
-# RUN pear install PHP_CodeSniffer \
-#     && mkdir /usr/local/magento-ecg-code-sniffer \
-#     && cd /usr/local/magento-ecg-code-sniffer/ && composer require magento-ecg/coding-standard \
-#     && phpcs --config-set installed_paths /usr/local/magento-ecg-code-sniffer/vendor/magento-ecg/coding-standard
-
 # SENDMAIL:
 RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/mailcatcher.ini \
     && echo "memory_limit=2G" >> /usr/local/etc/php/conf.d/custom.ini \
@@ -80,13 +74,13 @@ RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/mailcatc
     && echo "auto_from on" >> /etc/msmtprc
 
 # SSH:
-COPY ./etc/ssh ${_HOME_DIRECTORY}/.ssh
-ADD ./etc/ssh/magento2docker.pub ${_HOME_DIRECTORY}/.ssh/authorized_keys
+COPY ./services/web-servers/apache/etc/ssh ${_HOME_DIRECTORY}/.ssh
+ADD ./services/web-servers/apache/etc/ssh/magento2docker.pub ${_HOME_DIRECTORY}/.ssh/authorized_keys
 RUN chmod -R 700 ${_HOME_DIRECTORY}/.ssh \
     && echo "    ServerAliveInterval 30" >> /etc/ssh/ssh_config \
     && echo "    TCPKeepAlive yes" >> /etc/ssh/ssh_config
-COPY ./etc/ssh /root/.ssh
-ADD ./etc/ssh/magento2docker.pub /root/.ssh/authorized_keys
+COPY ./services/web-servers/apache/etc/ssh /root/.ssh
+ADD ./services/web-servers/apache/etc/ssh/magento2docker.pub /root/.ssh/authorized_keys
 RUN chmod -R 700 /root/.ssh \
     && echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-gcm@openssh.com,aes256-gcm@openssh.com,chacha20-poly1305@openssh.com,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc" >> /etc/ssh/sshd_config \
     && touch /root/.ssh/known_hosts \
@@ -117,10 +111,8 @@ ARG CACHEBUST=1
 
 # CUSTOM CONFIGURATIONS:
 COPY ./services/web-servers/apache/etc/apache2 /etc/apache2
-# COPY ./services/web-servers/apache/etc/apache2/envvars /etc/apache2/envvars
-# COPY ./services/web-servers/apache/etc/apache2/sites-enabled /etc/apache2/sites-enabled/
 COPY ./services/web-servers/apache/etc/git/gitconfig ${_HOME_DIRECTORY}/.gitconfig
-COPY ./services/web-servers/apache/etc/composer/auth.json /${_HOME_DIRECTORY}/.composer/auth.json
+COPY ./services/web-servers/apache/etc/composer/auth.json* /${_HOME_DIRECTORY}/.composer/
 COPY ./services/web-servers/apache/etc/fixtures /etc/fixtures
 COPY ./services/web-servers/apache/etc/m2install/.m2install.conf* ${_HOME_DIRECTORY}/
 
@@ -138,6 +130,10 @@ RUN curl -o /usr/local/bin/m2install.sh https://raw.githubusercontent.com/yvoron
     && if [ -d /usr/local/src/ee-support-tools ]; then ln -s /usr/local/src/ee-support-tools/cloud-teleport/cloud-teleport /usr/local/bin/cloud-teleport; else echo; fi \
     && git ls-remote git@github.com:magento-sparta/m-it.git 2>&1 | if grep -q HEAD; then git clone git@github.com:magento-sparta/m-it.git /usr/local/src/m-it; else echo; fi \
     && if [ -d /usr/local/src/m-it ]; then /usr/local/src/m-it/mit-installer.sh; else echo; fi
+
+USER magento
+RUN if [ -d /usr/local/src/m-it ]; then /usr/local/src/m-it/mit-installer.sh; else echo; fi
+USER root
 
 RUN chmod +x /usr/local/bin/*
 ## END OF BASE IMAGE ##
@@ -163,9 +159,10 @@ RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
     && rm -Rf /tmp/blackfire
 ## END OF BASE IMAGE WITH BLACKFIRE ##
 
+FROM m2d_web_server_apache_php_base_blackfire_${M2D_ENABLE_BLACKFIRE} AS m2d_web_server_apache_blackfire
 
 ## IMAGE ADJUSTMENTS FOR PHP 7.x ##
-FROM m2d_web_server_apache_php_base_${M2D_ENABLE_BLACKFIRE'} AS m2d_web_server_apache_php7x
+FROM m2d_web_server_apache_blackfire AS m2d_web_server_apache_php7x
 
 # COMPOSER 1 LINKED AS DEFAULT:
 RUN ln -s /usr/local/bin/composer1 /usr/local/bin/composer
@@ -190,7 +187,7 @@ RUN pecl install libsodium-2.0.23
 
 
 ## IMAGE ADJUSTEMNTS FOR PHP 8.x
-FROM m2d_web_server_apache_php_base_${M2D_ENABLE_BLACKFIRE} AS m2d_web_server_apache_php8x
+FROM m2d_web_server_apache_blackfire AS m2d_web_server_apache_php8x
 
 # PHP EXTENSIONS GD:
 RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp \
@@ -253,4 +250,9 @@ FROM m2d_web_server_apache_php8x AS m2d_web_server_apache_php8.2
 
 ## TARGET IMAGE ADJUSTEMNTS ##
 FROM m2d_web_server_apache_php${M2D_WEB_SERVER_PHP_VERSION} AS web_server
+# CODESNIFFER:
+RUN pear install PHP_CodeSniffer \
+    && mkdir /usr/local/magento-ecg-code-sniffer \
+    && cd /usr/local/magento-ecg-code-sniffer/ && composer require magento-ecg/coding-standard \
+    && phpcs --config-set installed_paths /usr/local/magento-ecg-code-sniffer/vendor/magento-ecg/coding-standard
 CMD service ssh start; apache2-foreground
