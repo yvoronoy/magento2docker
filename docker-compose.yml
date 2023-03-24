@@ -146,6 +146,10 @@ services:
      - "${M2D_PORT_FOR_SELENIUM_VNC:-5900}:5900"
     shm_size: '2gb'
 
+networks:
+  default:
+    name: m2d-network
+
 volumes:
   home-volume:
   root-volume:
