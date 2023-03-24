@@ -95,13 +95,13 @@ services:
   db_cache:
     build:
       context: .
-      dockerfile: services/db-cache/Dokerfile
+      dockerfile: services/db-cache/Dockerfile
       target: m2d_db_cache
       args:
-        - M2D_ENABLE_DB_CACHE:${M2D_ENABLE_DB_CACHE:-no}
-        - M2D_DB_CACHE_VENDOR:${M2D_DB_CACHE_VENDOR:-redis}
-        - M2D_DB_CACHE_VERSION:${M2D_DB_CACHE_VERSION:-'6.0'}
-    container_name: magento2dbcache
+        - M2D_ENABLE_DB_CACHE=${M2D_ENABLE_DB_CACHE:-no}
+        - M2D_DB_CACHE_VENDOR=${M2D_DB_CACHE_VENDOR:-redis}
+        - M2D_DB_CACHE_VERSION=${M2D_DB_CACHE_VERSION:-6.0}
+    container_name: m2d-dbcache
     restart: unless-stopped
 
   mailcatcher:
