@@ -28,15 +28,16 @@ services:
       - root-volume:/root
     cap_add:
       - "SYS_PTRACE"
+
   db:
     build:
       context: .
       dockerfile: services/db-engines/Dockerfile
       target: m2d_db_engine
       args:
-        - M2D_DB_ENGINE_VENDOR:${M2D_DB_ENGINE_VENDOR:-mariadb}
-        - M2D_DB_ENGINE_VERSION:${M2D_DB_ENGINE_VERSION:-10}
-    container_name: magento2db
+        - M2D_DB_ENGINE_VENDOR=${M2D_DB_ENGINE_VENDOR:-mariadb}
+        - M2D_DB_ENGINE_VERSION=${M2D_DB_ENGINE_VERSION:-10}
+    container_name: m2d-db
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: magento
