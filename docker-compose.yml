@@ -72,8 +72,8 @@ services:
       args:
         - M2D_ENABLE_MESSAGE_BROKER=${M2D_ENABLE_MESSAGE_BROKER:-no}
         - M2D_MESSAGE_BROKER_VENDOR=${M2D_MESSAGE_BROKER_VENDOR:-rabbitmq}
-        - M2D_MESSAGE_BROKER_VERSION=${M2D_MESSAGE_BROKER_VERSION:-'3.8-management'}
-    container_name: magento2messagebroker
+        - M2D_MESSAGE_BROKER_VERSION=${M2D_MESSAGE_BROKER_VERSION:-3.8}
+    container_name: m2d-messagebroker
     restart: unless-stopped
     ports:
       - "${M2D_PORT_FOR_MESSAGE_BROKER:-15672}:15672"
