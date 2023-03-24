@@ -134,10 +134,10 @@ services:
       dockerfile: tools/selenium/Dockerfile
       target: m2d_selenium
       args:
-        - M2D_CPU_TYPE:${M2D_CPU_TYPE:-m1}
-        - M2D_ENABLE_SELENIUM:${M2D_ENABLE_SELENIUM:-no}
-        - M2D_SELENIUM_VERSION:${M2D_SELENIUM_VERSION:-'3.14.0'}
-    container_name: selenium
+        - M2D_CPU_TYPE=${M2D_CPU_TYPE:-m1}
+        - M2D_ENABLE_SELENIUM=${M2D_ENABLE_SELENIUM:-no}
+        - M2D_SELENIUM_VERSION=${M2D_SELENIUM_VERSION:-'3.14.0'}
+    container_name: m2d-selenium
     volumes:
       - /dev/shm:/dev/shm
     ports:
