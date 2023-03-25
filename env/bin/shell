@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-source bin/.init
-
-docker exec -it --user magento magento2web bash
