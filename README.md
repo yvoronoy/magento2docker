@@ -1,19 +1,22 @@
-# Magento2 Docker Environment
-An Ideal Magento2 Development Environment OSX Centric.
+# Magento2Docker Environment
+A near to perfect Magento2 Development Environment OS agnostic, OSX focused.
 Key features of the project:
  - Simple Apache PHP container based on original images.
- - Ideal to work with multiple projects same time
+ - Ideal to work with multiple projects same time.
  - Multi-project setup with clean host names. Based on external nip.io wildcard DNS server.
- - Provides real-time file synchronization by Mutagen
- - Includes PHPStorm container which can be rendered by X.ORG port for OSX
+ - Provides real-time file synchronization by Mutagen.
+ - Includes PHPStorm container which can be rendered by X.ORG port for OSX.
  - Includes great set of tools with zero configuration like Blackfire, XDebug.
- - Includes external services: ElasticSearch 2.x - 6.x, Redis, MailCatcher, RabbitMQ.
- - Provides Make tool as a wrapper. Simplify managing containers and support bash completion to hightlight commands.
-
+ - Includes all external services needed by Magento: ElasticSearch, Opensearch, Redis, Varnish, MySQL, MariaDB, MailCatcher, RabbitMQ, other.
+ - Provides bash CLI tool a wrapper. Simplify managing containers.
+ - Fully compatible with standard docker-compose commands.
+ - Intel and Apple M1 CPU support.
+ - Easily extensible.
+ - Single docker-compose.yaml file approach with .env file to configure everything.
 ## Contents
-
 - [Pre-requirements](#pre-requirements)
 - [Installation](#installation)
+- [Supported services and tools](#supported-services-and-tools)
 - [Usage](#usage)
  - [Quick Start](#quick-start)
  - [How to install a magento](#how-install-magento)
@@ -30,62 +33,93 @@ Key features of the project:
  - [Install Docker](https://docs.docker.com/engine/installation/mac/)
  - [Install Mutagen](https://mutagen.io/documentation/introduction/installation/)
  - [Install bash completion (optional)](https://github.com/bobthecow/git-flow-completion/wiki/Install-Bash-git-completion)
- 
+
 ## Installation
 You can download archive of this project on [Release Page](https://github.com/yvoronoy/magento2docker/releases).
 
  - Clone or Download the repository ```git clone git@github.com:yvoronoy/magento2docker.git```
- - Copy or create `env/etc/composer/auth.json` and put your [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
-   - `cp env/etc/composer/auth.json.example env/etc/composer/auth.json`
-   - Edit env/etc/composer/auth.json and put your credentials [Access Keys](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/dev_install.html)
- - Update your gitconfig if needed
-   - `cp env/etc/git/gitconfig.example env/etc/git/gitconfig`
- - Update and edit Commerce Cloud CLI Token
-   - `cp env/.env.example env/.env`
- - (Optional) Copy your private ssh keys, configs to have access to resources from inside container
-    - `cp ~/.ssh/id_rsa env/etc/ssh/`
-    - `cp ~/.ssh/config env/etc/ssh/`
+ - Go to project folder
+ - Execute setup creator `./bin/m2d setup init`
+ - Optional: fine tune all setings by editing `.env` file
+
+## Supported services and tools
+### Web Servers
+- Apache with PHP: 7.3, 7.4, 8.0, 8.1, 8.2
+
+### DB Engines
+- MySQL: 5.7, 8.0, 8.0-oracle, and 5.7 as 5, 8.0.28 as 8
+- MariaDB: 10.2, 10.3, 10.4, 10.6, and 10.4 as 10
+
+### Search Engines
+- Opensearch: 1.2.4 as 1.2, 1.2.4 as 1, 2.5.0 as 2.5, 2.5.0 as 2
+- Elasticsearch: 6.8.23 as 6, 7.16.3 as 7, 7.6.2 as 7.6, 7.7.1 as 7.7, 7.9.3 as 7.9, 7.10.1 as 7.10, 7.16.3 as 7.16, 7.17.9 as 7.17, 8.4.3 as 8, 8.4.3 as 8.4
+
+### DB Cache Engines
+- Redis: 6.2, 5.0 as 5, 6.0 as 6, 7.0 as 7
+
+### Web Cache Engines
+- Varnish: 6.0, 6.2, 6.4, 6.5, 7.0, 7.1, and 7.0 as 7, 6.5 as 6
+
+### Tools
+- Blackfire: latest
+- Mailcatcher: latest
+- Selenium: 3.14.0
+
 
 ## Usage
+To work with Magento2Docker you can use `m2d` CLI command located in `bin` of Magento2Docker project.
 ### Quick Start
-Commands should be executed from _env_ directory.
-Run make command to run environment.
+With Magento2Docker v3 it is super easy to start or stop containers:
+```bash
+# Display help
+./bin/m2d --help
 
+# To start containers:
+./bin/m2d up
+
+# To stop containers:
+./bin/m2d stop
+
+# To stop and remove containers and networks:
+./bin/m2d down
+
+# To enable service e.g. mailcatcher
+./bin/m2d enable mailcatcher
+
+# To disable service e.g. elasticsearch:
+./bin/m2d disable search-engine
+
+# To edit any .env parameter (e.g. PHP version):
+./bin/m2d set M2D_WEB_SERVER_PHP_VERSION 8.1
+
+# To display any .env parameter (e.g. search engine type):
+./bin.m2d show M2D_SEARCH_ENGINE_VENDOR
+
+# To start containers after enabling or disabling services or editing parameters:
+./bin/m2d up --buld
 ```
-# Build and mount containers (default: php-7.4)
-bin/up
 
-# Login on web server container
-bin/shell
-
-# Change php version
-  - For php-7.3: make up73
-  - For php-7.4: make up74
-  - For php-8.0: make up80
-  - For php-8.1: make up81
-```
 
 ### How to install a magento inside container
-   - Login to container `make web`
+   - Login to container `./bin/m2d go web`
    - Create a directory e.g: magento2
-   - Inside the magento2 directory run `m2install.sh -s composer -v 2.3.3`
+   - Inside the magento2 directory run `m2install.sh -s composer -v 2.4.6`
    - Open browser and go to http://magento2.127.0.0.1.nip.io/
 
 ### How to deploy dumps (backups) inside container
  - Put dumps to src folder on your host machine
-   - Login to container `make web` 
+   - Login to container `./bin/m2d go web`
    - Run `m2install.sh`
 
 ## How to link Composer versions
 
-Containers for PHP 7.4, PHP 8.0, and PHP 8.1 has Composer 2 because of Magento supports Composer 2 since 2.4.2
-version.
+Containers with PHP 7.x have Composer 1 set as default, containers with PHP 8.x have Composer 2 set as default version.
 
 ### Usage:
-- Login to your container `bin/shell-root`
+- Login to container `./bin/m2d go web`
 - To use composer as default you have two commands:
-  - Run command `composer-link.sh 1` to use Composer 1 
-  - Run command `composer-link.sh 2` to use Composer 2 
+  - Run command `sudo composer-link.sh 1` to use Composer 1
+  - Run command `sudo composer-link.sh 2` to use Composer 2
 
 ## How to Enable xDebug
 
@@ -93,8 +127,8 @@ The container already includes PHP xDebug extension. The xDebug extension is dis
 it is dramatically decrease performance.
 
 ### Usage
- - Login to your container `make web`
- - Run command `xdebug-php.sh 1`
+ - Login to your container `./bin/m2d go web`
+ - Run command `sudo xdebug-php.sh 1`
  - Run IDE (PHPStorm) and press button _Start Listening for PHPDebug Connection_
 
 
@@ -110,13 +144,14 @@ it is dramatically decrease performance.
 Profiling with Blackfire is on-demand. This means that Blackfire adds no overhead for your end users, which makes it safe to use in production.
 
 ### Get your Blackfire credentials
-Blackfire provides you a free account "Hack" which allows you to run profiles on your development environment. 
+Blackfire provides you a free account "Hack" which allows you to run profiles on your development environment.
  - Create account and login here: https://blackfire.io/login
  - Install Browser Extension https://blackfire.io/docs/integrations/chrome
  - Go to the page https://blackfire.io/docs/integrations/docker
    - Define these environment variables from this page on the host system (OSX)
    - You can save them permanently by putting them into ~/.bash_profile file
- - Recreate containers by using command `make up`
+ - Enable blackfire container `./bin/m2d enable blackfire`
+ - Recreate containers by using command `./bin/m2d up --build`
 
 ## How to run PHPStorm inside container
 
@@ -130,18 +165,17 @@ Blackfire provides you a free account "Hack" which allows you to run profiles on
 Run the following command inside env directory
 
 ```
-make phpstorm
+docker-compose -f docker-compose.phpstorm.yml up -d --build
 ```
 
 ## Todo List
 
 ## Contributing
 1. Fork this repository.
-2. Create your feature branch: `git checkout -b my-new-feature`.
+2. Create your feature branch: `git checkout -b feature/my-cool-feature`.
 3. Commit your changes: `git commit -am 'Add some feature'`.
-4. Push to the branch: `git push origin my-new-feature`.
+4. Push to the branch: `git push origin feature/my-cool-feature`.
 5. Submit a pull request.
 
 ## Credits
 Special thanks to @snosov and @tshabatyn who share their ideas and inspired to build this project.
-
