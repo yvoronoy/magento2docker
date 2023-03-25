@@ -19,9 +19,9 @@ services:
       - MAGENTO_CLOUD_CLI_TOKEN
       - COMPOSER_AUTH
     ports:
-      - "80:80"
-      - "443:443"
-      - "2222:22"
+      - "${M2D_PORT_FOR_WEB_SERVER_HTTP:-80}:80"
+      - "${M2D_PORT_FOR_WEB_SERVER_HTTPS:-443}:443"
+      - "${M2D_PORT_FOR_WEB_SERVER_SSH:-2222}:22"
     volumes:
       - src-volume:/var/www/html
       - src-composer-cache-volume:/root/.composer/cache
