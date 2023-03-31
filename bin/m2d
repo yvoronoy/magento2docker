@@ -342,7 +342,6 @@ function _m2d_sync ()
     local sync_type=$(_m2d_env_get_parameter "$env_file" M2D_SOURCE_DIRECTORY_SYNC_TYPE)
     local sync_dir=$(_m2d_env_get_parameter "$env_file" M2D_SOURCE_DIRECTORY)
     local server_vendor=$(_m2d_env_get_parameter "$env_file" M2D_WEB_SERVER_VENDOR)
-    local ssh_port=$(_m2d_env_get_parameter "$env_file" M2D_PORT_FOR_WEB_SERVER_SSH)
     local project_path="$3"
 
     case $sync_type in
@@ -350,6 +349,7 @@ function _m2d_sync ()
             echo "Nothing to do for '$action' in '$sync_type' sync type"
             ;;
         'sshfs')
+            local ssh_port=$(_m2d_env_get_parameter "$env_file" M2D_PORT_FOR_WEB_SERVER_SSH)
             case $action in
                 'start')
                     local identity_file="$project_path/services/web-servers/$server_vendor/etc/ssh/magento2docker"
@@ -371,12 +371,14 @@ function _m2d_sync ()
             esac
             ;;
         'mutagen')
+            local sync_name="m2d-sync$(_m2d_env_get_parameter $env_file M2D_PROJECT_SUFFIX)"
+            local sync_web="m2d-web$(_m2d_env_get_parameter $env_file M2D_PROJECT_SUFFIX)"
             case $action in
                 'start')
-                    if [[ -n $(mutagen sync list | grep m2d-sync) ]]; then
-                        mutagen sync resume m2d-sync
+                    if [[ -n $(mutagen sync list | grep $sync_name) ]]; then
+                        mutagen sync resume $sync_name
                     else
-                        mutagen sync create --name=magento2web \
+                        mutagen sync create --name=$sync_name \
                             --default-group-beta=magento \
                             --default-owner-beta=magento \
                             --sync-mode=two-way-resolved \
@@ -394,17 +396,17 @@ function _m2d_sync ()
                             --ignore=/**/.DS_Store \
                             --symlink-mode=posix-raw \
                             "$sync_dir" \
-                            docker://magento@m2d-web/var/www/html/
+                            "docker://magento@$sync_web/var/www/html/"
                     fi
                     ;;
                 'pause')
-                    mutagen sync pause m2d-sync
+                    mutagen sync pause $sync_name
                     ;;
                 'stop')
-                    mutagen sync terminate m2d-sync
+                    mutagen sync terminate $sync_name
                     ;;
                 'status')
-                    mutagen sync monitor m2d-sync
+                    mutagen sync monitor $sync_name
                     ;;
                 'restart')
                     _m2d_sync stop "$env_file"
