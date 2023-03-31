@@ -113,10 +113,11 @@ ARG CACHEBUST=1
 
 # CUSTOM CONFIGURATIONS:
 COPY ./services/web-servers/apache/etc/apache2 /etc/apache2
-COPY ./services/web-servers/apache/etc/git/gitconfig ${_HOME_DIRECTORY}/.gitconfig
-COPY ./services/web-servers/apache/etc/composer/auth.json* /${_HOME_DIRECTORY}/.composer/
 COPY ./services/web-servers/apache/etc/fixtures /etc/fixtures
+COPY ./services/web-servers/apache/etc/git/gitconfig ${_HOME_DIRECTORY}/.gitconfig
+COPY ./services/web-servers/apache/etc/composer/auth.json* ${_HOME_DIRECTORY}/.composer/
 COPY ./services/web-servers/apache/etc/m2install/.m2install.conf* ${_HOME_DIRECTORY}/
+RUN chown -R "${_USER}:${_USER}" ${_HOME_DIRECTORY}/.gitconfig ${_HOME_DIRECTORY}/.composer ${_HOME_DIRECTORY}/.m2install.conf*
 
 # MAGENTO TOOLS:
 RUN curl -o /usr/local/bin/m2install.sh https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install.sh \
