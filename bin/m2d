@@ -420,7 +420,7 @@ function _m2d_sync ()
 
 M2D_SCRIPT_DIRECTORY=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
 M2D_PROJECT_PATH="$(realpath $M2D_SCRIPT_DIRECTORY/../)"
-M2D_ENV_FILE="$(realpath $M2D_PROJECT_PATH/.env)"
+M2D_ENV_FILE="$M2D_PROJECT_PATH/.env"
 
 case $1 in
     'set')
