@@ -65,12 +65,12 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # TOOLS:
 COPY ./services/web-servers/apache/tools/* /usr/local/bin/
 
-# SENDMAIL:
+# PHP CONFIG FILES:
+COPY ./services/web-servers/apache/etc/php/* /usr/local/etc/php/conf.d/
+
+# MAILCATCHER:
 ENV M2D_HOSTNAME_FOR_MAILCATCHER=$M2D_HOSTNAME_FOR_MAILCATCHER
-RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/mailcatcher.ini \
-    && echo "memory_limit=2G" >> /usr/local/etc/php/conf.d/custom.ini \
-    && echo "max_input_vars=10000" >> /usr/local/etc/php/conf.d/custom.ini \
-    && echo "account default" >> /etc/msmtprc \
+RUN echo "account default" >> /etc/msmtprc \
     && echo "host $M2D_HOSTNAME_FOR_MAILCATCHER" >> /etc/msmtprc \
     && echo "port 1025" >> /etc/msmtprc \
     && echo "auto_from on" >> /etc/msmtprc
