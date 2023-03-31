@@ -3,7 +3,7 @@ version: '3'
 services:
   web:
     hostname: magento2.test
-    container_name: m2d-web
+    container_name: "m2d-web${M2D_PROJECT_SUFFIX:-}"
     restart: unless-stopped
     build:
       context: .
@@ -38,7 +38,7 @@ services:
       args:
         - M2D_DB_ENGINE_VENDOR=${M2D_DB_ENGINE_VENDOR:-mariadb}
         - M2D_DB_ENGINE_VERSION=${M2D_DB_ENGINE_VERSION:-10}
-    container_name: m2d-db
+    container_name: "m2d-db${M2D_PROJECT_SUFFIX:-}"
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: magento
@@ -59,7 +59,7 @@ services:
         - M2D_ENABLE_SEARCH_ENGINE=${M2D_ENABLE_SEARCH_ENGINE:-yes}
         - M2D_SEARCH_ENGINE_VENDOR=${M2D_SEARCH_ENGINE_VENDOR:-elasticsearch}
         - M2D_SEARCH_ENGINE_VERSION=${M2D_SEARCH_ENGINE_VERSION:-7}
-    container_name: m2d-searchengine
+    container_name: "m2d-searchengine${M2D_PROJECT_SUFFIX:-}"
     environment:
       - "ES_JAVA_OPTS=-Xms128m -Xmx1g"
       - "OPENSEARCH_JAVA_OPTS=-Xms128m -Xmx1g"
@@ -75,7 +75,7 @@ services:
         - M2D_ENABLE_MESSAGE_BROKER=${M2D_ENABLE_MESSAGE_BROKER:-no}
         - M2D_MESSAGE_BROKER_VENDOR=${M2D_MESSAGE_BROKER_VENDOR:-rabbitmq}
         - M2D_MESSAGE_BROKER_VERSION=${M2D_MESSAGE_BROKER_VERSION:-3.8}
-    container_name: m2d-messagebroker
+    container_name: "m2d-messagebroker${M2D_PROJECT_SUFFIX:-}"
     restart: unless-stopped
     ports:
       - "${M2D_PORT_FOR_MESSAGE_BROKER:-15672}:15672"
@@ -89,7 +89,7 @@ services:
         - M2D_ENABLE_WEB_CACHE=${M2D_ENABLE_WEB_CACHE:-no}
         - M2D_WEB_CACHE_VENDOR=${M2D_WEB_CACHE_VENDOR:-varnish}
         - M2D_WEB_CACHE_VERSION=${M2D_WEB_CACHE_VERSION:-6}
-    container_name: m2d-webcache
+    container_name: "m2d-webcache${M2D_PROJECT_SUFFIX:-}"
     restart: unless-stopped
     ports:
       - "${M2D_PORT_FOR_WEB_CACHE:-8080}:8080"
@@ -103,7 +103,7 @@ services:
         - M2D_ENABLE_DB_CACHE=${M2D_ENABLE_DB_CACHE:-no}
         - M2D_DB_CACHE_VENDOR=${M2D_DB_CACHE_VENDOR:-redis}
         - M2D_DB_CACHE_VERSION=${M2D_DB_CACHE_VERSION:-6.0}
-    container_name: m2d-dbcache
+    container_name: "m2d-dbcache${M2D_PROJECT_SUFFIX:-}"
     restart: unless-stopped
 
   mailcatcher:
@@ -113,7 +113,7 @@ services:
       target: m2d_mailcatcher
       args:
         - M2D_ENABLE_MAILCATCHER=${M2D_ENABLE_MAILCATCHER:-no}
-    container_name: m2d-mailcatcher
+    container_name: "m2d-mailcatcher${M2D_PROJECT_SUFFIX:-}"
     ports:
       - "${M2D_PORT_FOR_MAILCATCHER:-1080}:1080"
 
@@ -124,7 +124,7 @@ services:
       target: m2d_blackfire
       args:
         - M2D_ENABLE_BLACKFIRE=${M2D_ENABLE_BLACKFIRE:-no}
-    container_name: m2d-blackfire
+    container_name: "m2d-blackfire${M2D_PROJECT_SUFFIX:-}"
     environment:
         - BLACKFIRE_SERVER_ID
         - BLACKFIRE_SERVER_TOKEN
@@ -138,7 +138,7 @@ services:
         - M2D_CPU_TYPE=${M2D_CPU_TYPE:-m1}
         - M2D_ENABLE_SELENIUM=${M2D_ENABLE_SELENIUM:-no}
         - M2D_SELENIUM_VERSION=${M2D_SELENIUM_VERSION:-'3.14.0'}
-    container_name: m2d-selenium
+    container_name: "m2d-selenium${M2D_PROJECT_SUFFIX:-}"
     volumes:
       - /dev/shm:/dev/shm
     ports:
@@ -148,7 +148,7 @@ services:
 
 networks:
   default:
-    name: m2d-network
+    name: "m2d-network${M2D_PROJECT_SUFFIX:-}"
 
 volumes:
   home-volume:

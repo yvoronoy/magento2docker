@@ -51,6 +51,7 @@ Options:
 
 Parameters:
   php      Alias for parameter M2D_WEB_SERVER_PHP_VERSION
+  suffix   Alias for parameter M2D_PROJECT_SUFFIX
   [M2D_*]  Parameter name. List of possible parameters and their values is in .env.example 
 "
 }
@@ -427,6 +428,9 @@ case $1 in
         case $2 in
             '-h'|'--help')
                 _m2d_display_help_set
+                ;;
+            'suffix')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" M2D_PROJECT_SUFFIX "$3"
                 ;;
             'php')
                 _m2d_env_set_parameter "$M2D_ENV_FILE" "M2D_WEB_SERVER_PHP_VERSION" "$3"
