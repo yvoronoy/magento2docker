@@ -1,5 +1,6 @@
 ARG M2D_WEB_SERVER_PHP_VERSION='8.1'
 ARG M2D_ENABLE_BLACKFIRE='no'
+ARG M2D_HOSTNAME_FOR_MAILCATCHER='m2d-mailcatcher'
 
 ## BASE PHP IMAGE - COMMON FOR ALL PHP VERSIONS ##
 FROM php:${M2D_WEB_SERVER_PHP_VERSION}-apache-bullseye AS m2d_web_server_apache_php_base_
@@ -64,12 +65,13 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # TOOLS:
 COPY ./services/web-servers/apache/tools/* /usr/local/bin/
 
-# SENDMAIL:
-RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/mailcatcher.ini \
-    && echo "memory_limit=2G" >> /usr/local/etc/php/conf.d/custom.ini \
-    && echo "max_input_vars=10000" >> /usr/local/etc/php/conf.d/custom.ini \
-    && echo "account default" >> /etc/msmtprc \
-    && echo "host mailcatcher" >> /etc/msmtprc \
+# PHP CONFIG FILES:
+COPY ./services/web-servers/apache/etc/php/* /usr/local/etc/php/conf.d/
+
+# MAILCATCHER:
+ENV M2D_HOSTNAME_FOR_MAILCATCHER=$M2D_HOSTNAME_FOR_MAILCATCHER
+RUN echo "account default" >> /etc/msmtprc \
+    && echo "host $M2D_HOSTNAME_FOR_MAILCATCHER" >> /etc/msmtprc \
     && echo "port 1025" >> /etc/msmtprc \
     && echo "auto_from on" >> /etc/msmtprc
 
@@ -111,10 +113,11 @@ ARG CACHEBUST=1
 
 # CUSTOM CONFIGURATIONS:
 COPY ./services/web-servers/apache/etc/apache2 /etc/apache2
-COPY ./services/web-servers/apache/etc/git/gitconfig ${_HOME_DIRECTORY}/.gitconfig
-COPY ./services/web-servers/apache/etc/composer/auth.json* /${_HOME_DIRECTORY}/.composer/
 COPY ./services/web-servers/apache/etc/fixtures /etc/fixtures
+COPY ./services/web-servers/apache/etc/git/gitconfig ${_HOME_DIRECTORY}/.gitconfig
+COPY ./services/web-servers/apache/etc/composer/auth.json* ${_HOME_DIRECTORY}/.composer/
 COPY ./services/web-servers/apache/etc/m2install/.m2install.conf* ${_HOME_DIRECTORY}/
+RUN chown -R "${_USER}:${_USER}" ${_HOME_DIRECTORY}/.gitconfig ${_HOME_DIRECTORY}/.composer ${_HOME_DIRECTORY}/.m2install.conf*
 
 # MAGENTO TOOLS:
 RUN curl -o /usr/local/bin/m2install.sh https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install.sh \

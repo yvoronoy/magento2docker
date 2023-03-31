@@ -6,6 +6,17 @@ function _m2d_display_help_main ()
     echo "
 Usage: ./bin/m2d COMMAND [OPTIONS]
 
+Examples:
+- initial setup:
+./bin/m2d setup init
+
+- build and start containers:
+./bin/m2d up --build
+
+- stop and remove containers and networks:
+./bin/m2d down
+
+
 Options:
   -h, --help Disply help for command
 
@@ -14,6 +25,7 @@ Commands:
   disable  Disable selected service or tool
   down     Stop and remove containers and networks
   enable   Enable selected service or tool
+  go       Enters a running container
   logs     View logs from containers
   set      Sets configuration value
   setup    Configure project
@@ -29,11 +41,20 @@ function _m2d_display_help_set ()
     echo "
 Usage: ./bin/m2d set [OPTIONS] PARAMETER VALUE
 
+Sets configuration value.
+
+Examples:
+./bin/m2d set M2D_XDEBUG_IDE_KEY VSCODE
+./bin/m2d set es 8.4
+
 Options:
   -h, --help Disply help for command
 
 Parameters:
+  es       Alias for setting Elasticsearch as the search engine. It will set M2D_SEARCH_ENGINE_VENDOR to 'elasticsearch',
+           and M2D_SEARCH_ENGINE_VERSION to '7' if expected version is not provided as a value
   php      Alias for parameter M2D_WEB_SERVER_PHP_VERSION
+  suffix   Alias for parameter M2D_PROJECT_SUFFIX
   [M2D_*]  Parameter name. List of possible parameters and their values is in .env.example 
 "
 }
@@ -42,6 +63,11 @@ function _m2d_display_help_show ()
 {
     echo "
 Usage: ./bin/m2d show [OPTIONS] PARAMETER
+
+Shows configuration value.
+
+Example:
+./bin/m2d show M2D_SOURCE_DIRECTORY
 
 Options:
   -h, --help Disply help for command
@@ -56,6 +82,11 @@ function _m2d_display_help_setup ()
     echo "
 Usage: ./bin/m2d setup [OPTIONS] [COMMAND] [PROJECT_ID]
 
+Configure project.
+
+Example:
+./bin/m2d setup init
+
 Options:
   -h, --help Disply help for command
 
@@ -68,27 +99,35 @@ Commands:
 
 function _m2d_display_help_enable_disable ()
 {
+    local command=$1
+    local Command=${1^}
+
     echo "
-Usage: ./bin/m2d $1 [OPTIONS] COMMAND
+Usage: ./bin/m2d $command [OPTIONS] COMMAND
+
+$Command selected service or tool.
+
+Example:
+./bin/m2d $command mailcatcher
 
 Options:
   -h, --help Disply help for command
 
 Commands:
-  blackfire       ${1^} blackfire container
-  db-cache        ${1^} db-cache container
+  blackfire       $Command blackfire container
+  db-cache        $Command db-cache container
   elastic         Alias for 'search-engine ' command
   m               Alias for 'mailcatcher' command
-  mailcatcher     ${1^} mailcatcher container
-  message-broker  ${1^} message broker container
+  mailcatcher     $Command mailcatcher container
+  message-broker  $Command message broker container
   rabbit          Alias for 'message-broker' command
   redis           Alias for 'db-cache' command
-  search-engine   ${1^} search engine container
-  selenium        ${1^} selenium container
+  search-engine   $Command search engine container
+  selenium        $Command selenium container
   varnish         Alias for 'web-cache' command
-  web-cache       ${1^} web-cache container
+  web-cache       $Command web-cache container
 
-After container is $1 it must be rebuild with: \`./bin/m2d build\` or \`./bin/m2d up --build\`
+After container is $command it must be rebuild with: \`./bin/m2d build\` or \`./bin/m2d up --build\`
 "
 }
 
@@ -96,6 +135,8 @@ function _m2d_display_help_up ()
 {
     echo "
 Usage: ./bin/m2d up [OPTIONS]
+
+Create and start containers.
 
 Options:
   -h, --help   Disply help for command
@@ -118,6 +159,11 @@ function _m2d_display_help_go ()
     echo "
 Usage: ./bin/m2d go [OPTIONS] CONTAINER_NAME
 
+Enters a running container.
+
+Example:
+./bin/m2d go web
+
 Options:
   -h, --help Disply help for command
 
@@ -134,6 +180,8 @@ function _m2d_display_help_logs ()
     echo "
 Usage: ./bin/m2d logs [OPTIONS] CONTAINER_NAME
 
+View logs from containers.
+
 Options:
   -h, --help Disply help for command
 
@@ -146,6 +194,8 @@ function _m2d_display_help_sync ()
 {
     echo "
 Usage: ./bin/m2d sync [OPTIONS] ACTION
+
+Manage data sync from between host an containers.
 
 Options:
   -h, --help Disply help for command
@@ -292,7 +342,6 @@ function _m2d_sync ()
     local sync_type=$(_m2d_env_get_parameter "$env_file" M2D_SOURCE_DIRECTORY_SYNC_TYPE)
     local sync_dir=$(_m2d_env_get_parameter "$env_file" M2D_SOURCE_DIRECTORY)
     local server_vendor=$(_m2d_env_get_parameter "$env_file" M2D_WEB_SERVER_VENDOR)
-    local ssh_port=$(_m2d_env_get_parameter "$env_file" M2D_PORT_FOR_WEB_SERVER_SSH)
     local project_path="$3"
 
     case $sync_type in
@@ -300,6 +349,7 @@ function _m2d_sync ()
             echo "Nothing to do for '$action' in '$sync_type' sync type"
             ;;
         'sshfs')
+            local ssh_port=$(_m2d_env_get_parameter "$env_file" M2D_PORT_FOR_WEB_SERVER_SSH)
             case $action in
                 'start')
                     local identity_file="$project_path/services/web-servers/$server_vendor/etc/ssh/magento2docker"
@@ -321,12 +371,14 @@ function _m2d_sync ()
             esac
             ;;
         'mutagen')
+            local sync_name="m2d-sync$(_m2d_env_get_parameter $env_file M2D_PROJECT_SUFFIX)"
+            local sync_web="m2d-web$(_m2d_env_get_parameter $env_file M2D_PROJECT_SUFFIX)"
             case $action in
                 'start')
-                    if [[ -n $(mutagen sync list | grep m2d-sync) ]]; then
-                        mutagen sync resume m2d-sync
+                    if [[ -n $(mutagen sync list | grep $sync_name) ]]; then
+                        mutagen sync resume $sync_name
                     else
-                        mutagen sync create --name=magento2web \
+                        mutagen sync create --name=$sync_name \
                             --default-group-beta=magento \
                             --default-owner-beta=magento \
                             --sync-mode=two-way-resolved \
@@ -344,17 +396,17 @@ function _m2d_sync ()
                             --ignore=/**/.DS_Store \
                             --symlink-mode=posix-raw \
                             "$sync_dir" \
-                            docker://magento@m2d-web/var/www/html/
+                            "docker://magento@$sync_web/var/www/html/"
                     fi
                     ;;
                 'pause')
-                    mutagen sync pause m2d-sync
+                    mutagen sync pause $sync_name
                     ;;
                 'stop')
-                    mutagen sync terminate m2d-sync
+                    mutagen sync terminate $sync_name
                     ;;
                 'status')
-                    mutagen sync monitor m2d-sync
+                    mutagen sync monitor $sync_name
                     ;;
                 'restart')
                     _m2d_sync stop "$env_file"
@@ -374,7 +426,7 @@ function _m2d_sync ()
 
 M2D_SCRIPT_DIRECTORY=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
 M2D_PROJECT_PATH="$(realpath $M2D_SCRIPT_DIRECTORY/../)"
-M2D_ENV_FILE="$(realpath $M2D_PROJECT_PATH/.env)"
+M2D_ENV_FILE="$M2D_PROJECT_PATH/.env"
 
 case $1 in
     'set')
@@ -382,12 +434,15 @@ case $1 in
             '-h'|'--help')
                 _m2d_display_help_set
                 ;;
+            'suffix')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" M2D_PROJECT_SUFFIX "$3"
+                ;;
             'php')
                 _m2d_env_set_parameter "$M2D_ENV_FILE" "M2D_WEB_SERVER_PHP_VERSION" "$3"
                 ;;
             'es')
                 _m2d_env_set_parameter "$M2D_ENV_FILE" "M2D_SEARCH_ENGINE_VENDOR" elasticsearch
-                _m2d_env_set_parameter "$M2D_ENV_FILE" "M2D_SEARCH_ENGINE_VERSION" "$3"
+                _m2d_env_set_parameter "$M2D_ENV_FILE" "M2D_SEARCH_ENGINE_VERSION" "${3:-7}"
                 ;;
             *)
                 _m2d_env_set_parameter "$M2D_ENV_FILE" "$2" "$3"
