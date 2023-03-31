@@ -2,7 +2,6 @@ version: '3'
 
 services:
   web:
-    hostname: magento2.test
     container_name: "m2d-web${M2D_PROJECT_SUFFIX:-}"
     restart: unless-stopped
     build:
@@ -17,7 +16,7 @@ services:
       - BLACKFIRE_CLIENT_ID
       - BLACKFIRE_CLIENT_TOKEN
       - MAGENTO_CLOUD_CLI_TOKEN
-      - COMPOSER_AUTH
+      # - COMPOSER_AUTH
     ports:
       - "${M2D_PORT_FOR_WEB_SERVER_HTTP:-80}:80"
       - "${M2D_PORT_FOR_WEB_SERVER_HTTPS:-443}:443"
