@@ -15,6 +15,8 @@ Key features of the project:
  - Single docker-compose.yaml file approach with .env file to configure everything.
 ## Contents
 - [Pre-requirements](#pre-requirements)
+ - [How to install it on Mac](#how-to-install-it-on-mac)
+ - [Directory requirements](#directory-requirements)
 - [Installation](#installation)
 - [Supported services and tools](#supported-services-and-tools)
 - [Usage](#usage)
@@ -32,7 +34,24 @@ Key features of the project:
 ## Pre-requirements
  - [Install Docker](https://docs.docker.com/engine/installation/mac/)
  - [Install Mutagen](https://mutagen.io/documentation/introduction/installation/)
- - [Install bash completion (optional)](https://github.com/bobthecow/git-flow-completion/wiki/Install-Bash-git-completion)
+ - Bash > 4.0
+ - Realpath
+
+ ### How to install it on Mac
+```bash
+# Mutagen:
+brew install mutagen-io/mutagen/mutagen
+# Bash:
+brew install bash
+# Realpath:
+brew install coreutils
+```
+
+### Directory requirements
+1. Magento2Docker as a tool can be located in any directory, e.g. ~/tools/m2d
+2. Web container will use /var/www/html as its root folder for web content.
+3. The M2D_SOURCE_DIRECTORY must point to a local path where you want to sync /var/www/html from the web container.
+4. The M2D_SOURCE_DIRECTORY must not point to symlink or it will trigger errors when Mutagen is responsible for sync process.
 
 ## Installation
 You can download archive of this project on [Release Page](https://github.com/yvoronoy/magento2docker/releases).
