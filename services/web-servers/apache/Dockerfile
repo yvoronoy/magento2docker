@@ -1,5 +1,6 @@
 ARG M2D_WEB_SERVER_PHP_VERSION='8.1'
 ARG M2D_ENABLE_BLACKFIRE='no'
+ARG M2D_HOSTNAME_FOR_MAILCATCHER='m2d-mailcatcher'
 
 ## BASE PHP IMAGE - COMMON FOR ALL PHP VERSIONS ##
 FROM php:${M2D_WEB_SERVER_PHP_VERSION}-apache-bullseye AS m2d_web_server_apache_php_base_
@@ -65,11 +66,12 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 COPY ./services/web-servers/apache/tools/* /usr/local/bin/
 
 # SENDMAIL:
+ENV M2D_HOSTNAME_FOR_MAILCATCHER=$M2D_HOSTNAME_FOR_MAILCATCHER
 RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/mailcatcher.ini \
     && echo "memory_limit=2G" >> /usr/local/etc/php/conf.d/custom.ini \
     && echo "max_input_vars=10000" >> /usr/local/etc/php/conf.d/custom.ini \
     && echo "account default" >> /etc/msmtprc \
-    && echo "host mailcatcher" >> /etc/msmtprc \
+    && echo "host $M2D_HOSTNAME_FOR_MAILCATCHER" >> /etc/msmtprc \
     && echo "port 1025" >> /etc/msmtprc \
     && echo "auto_from on" >> /etc/msmtprc
 
