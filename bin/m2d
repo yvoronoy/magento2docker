@@ -43,13 +43,16 @@ Usage: ./bin/m2d set [OPTIONS] PARAMETER VALUE
 
 Sets configuration value.
 
-Example:
+Examples:
 ./bin/m2d set M2D_XDEBUG_IDE_KEY VSCODE
+./bin/m2d set es 8.4
 
 Options:
   -h, --help Disply help for command
 
 Parameters:
+  es       Alias for setting Elasticsearch as the search engine. It will set M2D_SEARCH_ENGINE_VENDOR to 'elasticsearch',
+           and M2D_SEARCH_ENGINE_VERSION to '7' if expected version is not provided as a value
   php      Alias for parameter M2D_WEB_SERVER_PHP_VERSION
   suffix   Alias for parameter M2D_PROJECT_SUFFIX
   [M2D_*]  Parameter name. List of possible parameters and their values is in .env.example 
@@ -437,7 +440,7 @@ case $1 in
                 ;;
             'es')
                 _m2d_env_set_parameter "$M2D_ENV_FILE" "M2D_SEARCH_ENGINE_VENDOR" elasticsearch
-                _m2d_env_set_parameter "$M2D_ENV_FILE" "M2D_SEARCH_ENGINE_VERSION" "$3"
+                _m2d_env_set_parameter "$M2D_ENV_FILE" "M2D_SEARCH_ENGINE_VERSION" "${3:-7}"
                 ;;
             *)
                 _m2d_env_set_parameter "$M2D_ENV_FILE" "$2" "$3"
