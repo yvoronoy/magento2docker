@@ -277,6 +277,18 @@ function _m2d_init_env()
     if [[ -n $value ]]; then
         _m2d_env_set_parameter "$env_file" MAGENTO_CLOUD_CLI_TOKEN "$value"
     fi
+
+    value=$(_m2d_env_get_parameter "$env_file" GIT_CE_REPO_PATH)
+    read -p "Provide GIT CE Repositiry Path '$value': " value
+    if [[ -n $value ]]; then
+        _m2d_env_set_parameter "$env_file" GIT_CE_REPO_PATH "$value"
+    fi
+
+    value=$(_m2d_env_get_parameter "$env_file" GIT_EE_REPO_PATH)
+    read -p "Provide GIT EE Repositiry Path '$value': " value
+    if [[ -n $value ]]; then
+        _m2d_env_set_parameter "$env_file" GIT_EE_REPO_PATH "$value"
+    fi
 }
 
 function _m2d_env_set_parameter ()

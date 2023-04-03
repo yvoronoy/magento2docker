@@ -17,6 +17,8 @@ services:
       - BLACKFIRE_CLIENT_ID
       - BLACKFIRE_CLIENT_TOKEN
       - MAGENTO_CLOUD_CLI_TOKEN
+      - GIT_CE_REPO_PATH
+      - GIT_EE_REPO_PATH
       # - COMPOSER_AUTH
     ports:
       - "${M2D_PORT_FOR_WEB_SERVER_HTTP:-80}:80"
