@@ -68,6 +68,10 @@ COPY ./services/web-servers/apache/tools/* /usr/local/bin/
 # PHP CONFIG FILES:
 COPY ./services/web-servers/apache/etc/php/* /usr/local/etc/php/conf.d/
 
+# CUSTOM CONFIGURATIONS:
+COPY ./services/web-servers/apache/etc/apache2 /etc/apache2
+COPY ./services/web-servers/apache/etc/fixtures /etc/fixtures
+
 # MAILCATCHER:
 ENV M2D_HOSTNAME_FOR_MAILCATCHER=$M2D_HOSTNAME_FOR_MAILCATCHER
 RUN echo "account default" >> /etc/msmtprc \
@@ -97,48 +101,46 @@ RUN a2enmod ssl \
     && chown -R ${_USER}:${_USER} /var/www/html
 RUN chown -R ${_USER}:${_USER} ${_HOME_DIRECTORY}
 
-# BASH COMPLETION:
-USER magento
-RUN echo "source /etc/bash_completion" >> ${_HOME_DIRECTORY}/.bashrc
-
-# MAGENTO CLI:
-RUN curl -sS https://accounts.magento.cloud/cli/installer | php
-USER root
-
 # TUNE ENVIRONMENT:
 RUN echo "Defaults    timestamp_timeout=-1" >> /etc/sudoers
 
 # FLAG TO NOT CACHE ANYTHING FROM THIS POINT, details: https://github.com/docker/docker/issues/1996#issuecomment-185872769
 ARG CACHEBUST=1
 
-# CUSTOM CONFIGURATIONS:
-COPY ./services/web-servers/apache/etc/apache2 /etc/apache2
-COPY ./services/web-servers/apache/etc/fixtures /etc/fixtures
+# MAGENTO TOOLS:
+RUN curl -o /usr/local/bin/m2install.sh https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install.sh; \
+    curl -o /etc/bash_completion.d/m2install-bash-completion https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install-bash-completion; \
+    curl -o /usr/local/bin/n98-magerun2 https://files.magerun.net/n98-magerun2.phar; \
+    curl -o /etc/bash_completion.d/n98-magerun2.phar.bash https://raw.githubusercontent.com/netz98/n98-magerun2/master/res/autocompletion/bash/n98-magerun2.phar.bash; \
+    curl -o /usr/local/bin/m2-convert-for-composer https://raw.githubusercontent.com/isitnikov/m2-convert-patch-for-composer-install/master/convert-for-composer.php; \
+    curl -o /etc/bash_completion.d/magento2-bash-completion https://raw.githubusercontent.com/yvoronoy/magento2-bash-completion/master/magento2-bash-completion-enterprise; \
+    curl -L -o /tmp/teleport.tar.gz https://github.com/gravitational/teleport/releases/download/v1.3.2/teleport-v1.3.2-linux-amd64-bin.tar.gz \
+    && tar -xf /tmp/teleport.tar.gz -C /tmp/ \
+    && make -C /tmp/teleport/
+
+# ADOBE TOOLS:
+RUN git ls-remote git@github.com:magento-sparta/ee-support-tools.git 2>&1 | if grep -q HEAD; then git clone git@github.com:magento-sparta/ee-support-tools.git /usr/local/src/ee-support-tools; else echo; fi \
+    && if [ -d /usr/local/src/ee-support-tools ]; then ln -s /usr/local/src/ee-support-tools/cloud-teleport/cloud-teleport /usr/local/bin/cloud-teleport; else echo; fi
+RUN git ls-remote git@github.com:magento-sparta/m-it.git 2>&1 | if grep -q HEAD; then git clone git@github.com:magento-sparta/m-it.git /usr/local/src/m-it; else echo; fi \
+    && if [ -d /usr/local/src/m-it ]; then /usr/local/src/m-it/mit-installer.sh; else echo; fi
+
+# USER CONTEXT CONFIGURATION
+USER magento
+
 COPY ./services/web-servers/apache/etc/git/gitconfig ${_HOME_DIRECTORY}/.gitconfig
 COPY ./services/web-servers/apache/etc/composer/auth.json* ${_HOME_DIRECTORY}/.composer/
 COPY ./services/web-servers/apache/etc/m2install/.m2install.conf* ${_HOME_DIRECTORY}/
-RUN chown -R "${_USER}:${_USER}" ${_HOME_DIRECTORY}/.gitconfig ${_HOME_DIRECTORY}/.composer ${_HOME_DIRECTORY}/.m2install.conf*
 
-# MAGENTO TOOLS:
-RUN curl -o /usr/local/bin/m2install.sh https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install.sh \
-    && curl -o /etc/bash_completion.d/m2install-bash-completion https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install-bash-completion \
-    && curl -o /usr/local/bin/n98-magerun2 https://files.magerun.net/n98-magerun2.phar \
-    && curl -o /etc/bash_completion.d/n98-magerun2.phar.bash https://raw.githubusercontent.com/netz98/n98-magerun2/master/res/autocompletion/bash/n98-magerun2.phar.bash \
-    && curl -o /usr/local/bin/m2-convert-for-composer https://raw.githubusercontent.com/isitnikov/m2-convert-patch-for-composer-install/master/convert-for-composer.php \
-    && curl -o /etc/bash_completion.d/magento2-bash-completion https://raw.githubusercontent.com/yvoronoy/magento2-bash-completion/master/magento2-bash-completion-enterprise \
-    && curl -L -o /tmp/teleport.tar.gz https://github.com/gravitational/teleport/releases/download/v1.3.2/teleport-v1.3.2-linux-amd64-bin.tar.gz \
-    && tar -xf /tmp/teleport.tar.gz -C /tmp/ \
-    && make -C /tmp/teleport/ \
-    && git ls-remote git@github.com:magento-sparta/ee-support-tools.git 2>&1 | if grep -q HEAD; then git clone git@github.com:magento-sparta/ee-support-tools.git /usr/local/src/ee-support-tools; else echo; fi \
-    && if [ -d /usr/local/src/ee-support-tools ]; then ln -s /usr/local/src/ee-support-tools/cloud-teleport/cloud-teleport /usr/local/bin/cloud-teleport; else echo; fi \
-    && git ls-remote git@github.com:magento-sparta/m-it.git 2>&1 | if grep -q HEAD; then git clone git@github.com:magento-sparta/m-it.git /usr/local/src/m-it; else echo; fi \
-    && if [ -d /usr/local/src/m-it ]; then /usr/local/src/m-it/mit-installer.sh; else echo; fi
-
-USER magento
+# BASH COMPLETION:
+RUN echo "source /etc/bash_completion" >> ${_HOME_DIRECTORY}/.bashrc
 RUN if [ -d /usr/local/src/m-it ]; then /usr/local/src/m-it/mit-installer.sh; else echo; fi
-USER root
 
-RUN chmod +x /usr/local/bin/*
+# MAGENTO CLI:
+RUN curl -sS https://accounts.magento.cloud/cli/installer | php
+
+USER root
+RUN chown -R "${_USER}:${_USER}" ${_HOME_DIRECTORY}/.gitconfig ${_HOME_DIRECTORY}/.composer ${_HOME_DIRECTORY}/.m2install.conf*; \
+    chmod +x /usr/local/bin/*
 ## END OF BASE IMAGE ##
 
 
