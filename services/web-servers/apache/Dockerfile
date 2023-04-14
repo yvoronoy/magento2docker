@@ -1,9 +1,9 @@
 ARG M2D_WEB_SERVER_PHP_VERSION='8.1'
 ARG M2D_ENABLE_BLACKFIRE='no'
-ARG M2D_HOSTNAME_FOR_MAILCATCHER='m2d-mailcatcher'
+ARG M2D_ENABLE_MAILCATCHER='no'
 
 ## BASE PHP IMAGE - COMMON FOR ALL PHP VERSIONS ##
-FROM php:${M2D_WEB_SERVER_PHP_VERSION}-apache-bullseye AS m2d_web_server_apache_php_base_
+FROM php:${M2D_WEB_SERVER_PHP_VERSION}-apache-bullseye AS m2d_web_server_apache_php_base
 
 # SETTING UP THE SYSTEM:
 RUN apt-get update \
@@ -25,7 +25,6 @@ RUN apt-get update \
         bash-completion \
         openssh-server \
         ssl-cert \
-        msmtp \
         sudo \
         dnsutils \
         iputils-ping \
@@ -41,6 +40,7 @@ RUN apt-get update \
         libzip-dev \
         parallel \
         git \
+        mc \
     && apt-get update \
     && apt-get clean all
 
@@ -52,6 +52,11 @@ RUN useradd -m ${_USER} && echo "${_USER}:${_USER}" | chpasswd && chsh ${_USER} 
 # COMMON PHP EXTENSIONS:
 RUN docker-php-ext-install -j$(nproc) iconv soap sockets \
     && docker-php-ext-install -j$(nproc) bcmath pdo_mysql xsl intl zip
+
+# PHP CONFIG FILES:
+ARG M2D_WEB_SERVER_PHP_MEMORY_LIMIT='2G'
+ENV M2D_WEB_SERVER_PHP_MEMORY_LIMIT=${M2D_WEB_SERVER_PHP_MEMORY_LIMIT}
+COPY ./services/web-servers/apache/etc/php/* /usr/local/etc/php/conf.d/
 
 # NODEJS:
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash \
@@ -65,15 +70,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # TOOLS:
 COPY ./services/web-servers/apache/tools/* /usr/local/bin/
 
-# PHP CONFIG FILES:
-COPY ./services/web-servers/apache/etc/php/* /usr/local/etc/php/conf.d/
-
-# MAILCATCHER:
-ENV M2D_HOSTNAME_FOR_MAILCATCHER=$M2D_HOSTNAME_FOR_MAILCATCHER
-RUN echo "account default" >> /etc/msmtprc \
-    && echo "host $M2D_HOSTNAME_FOR_MAILCATCHER" >> /etc/msmtprc \
-    && echo "port 1025" >> /etc/msmtprc \
-    && echo "auto_from on" >> /etc/msmtprc
+# CUSTOM CONFIGURATIONS:
+COPY ./services/web-servers/apache/etc/apache2 /etc/apache2
+COPY ./services/web-servers/apache/etc/fixtures /etc/fixtures
 
 # SSH:
 COPY ./services/web-servers/apache/etc/ssh ${_HOME_DIRECTORY}/.ssh
@@ -97,56 +96,76 @@ RUN a2enmod ssl \
     && chown -R ${_USER}:${_USER} /var/www/html
 RUN chown -R ${_USER}:${_USER} ${_HOME_DIRECTORY}
 
-# BASH COMPLETION:
-USER magento
-RUN echo "source /etc/bash_completion" >> ${_HOME_DIRECTORY}/.bashrc
-
-# MAGENTO CLI:
-RUN curl -sS https://accounts.magento.cloud/cli/installer | php
-USER root
-
 # TUNE ENVIRONMENT:
 RUN echo "Defaults    timestamp_timeout=-1" >> /etc/sudoers
 
 # FLAG TO NOT CACHE ANYTHING FROM THIS POINT, details: https://github.com/docker/docker/issues/1996#issuecomment-185872769
 ARG CACHEBUST=1
 
-# CUSTOM CONFIGURATIONS:
-COPY ./services/web-servers/apache/etc/apache2 /etc/apache2
-COPY ./services/web-servers/apache/etc/fixtures /etc/fixtures
+# MAGENTO TOOLS:
+RUN curl -o /usr/local/bin/m2install.sh https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install.sh; \
+    curl -o /etc/bash_completion.d/m2install-bash-completion https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install-bash-completion; \
+    curl -o /usr/local/bin/n98-magerun2 https://files.magerun.net/n98-magerun2.phar; \
+    curl -o /etc/bash_completion.d/n98-magerun2.phar.bash https://raw.githubusercontent.com/netz98/n98-magerun2/master/res/autocompletion/bash/n98-magerun2.phar.bash; \
+    curl -o /usr/local/bin/m2-convert-for-composer https://raw.githubusercontent.com/isitnikov/m2-convert-patch-for-composer-install/master/convert-for-composer.php; \
+    curl -o /etc/bash_completion.d/magento2-bash-completion https://raw.githubusercontent.com/yvoronoy/magento2-bash-completion/master/magento2-bash-completion-enterprise; \
+    curl -L -o /tmp/teleport.tar.gz https://github.com/gravitational/teleport/releases/download/v1.3.2/teleport-v1.3.2-linux-amd64-bin.tar.gz \
+    && tar -xf /tmp/teleport.tar.gz -C /tmp/ \
+    && make -C /tmp/teleport/
+
+# ADOBE TOOLS:
+RUN git ls-remote git@github.com:magento-sparta/ee-support-tools.git 2>&1 | if grep -q HEAD; then git clone git@github.com:magento-sparta/ee-support-tools.git /usr/local/src/ee-support-tools; else echo; fi \
+    && if [ -d /usr/local/src/ee-support-tools ]; then ln -s /usr/local/src/ee-support-tools/cloud-teleport/cloud-teleport /usr/local/bin/cloud-teleport; else echo; fi
+RUN git ls-remote git@github.com:magento-sparta/m-it.git 2>&1 | if grep -q HEAD; then git clone git@github.com:magento-sparta/m-it.git /usr/local/src/m-it; else echo; fi \
+    && if [ -d /usr/local/src/m-it ]; then /usr/local/src/m-it/mit-installer.sh; else echo; fi
+
+# USER CONTEXT CONFIGURATION
+USER magento
+
+RUN mkdir -p ${_HOME_DIRECTORY}/.ssh \
+    && touch ${_HOME_DIRECTORY}/.ssh/known_hosts \
+    && ssh-keygen -F github.com || ssh-keyscan github.com >> ${_HOME_DIRECTORY}/.ssh/known_hosts
+
 COPY ./services/web-servers/apache/etc/git/gitconfig ${_HOME_DIRECTORY}/.gitconfig
 COPY ./services/web-servers/apache/etc/composer/auth.json* ${_HOME_DIRECTORY}/.composer/
 COPY ./services/web-servers/apache/etc/m2install/.m2install.conf* ${_HOME_DIRECTORY}/
-RUN chown -R "${_USER}:${_USER}" ${_HOME_DIRECTORY}/.gitconfig ${_HOME_DIRECTORY}/.composer ${_HOME_DIRECTORY}/.m2install.conf*
 
-# MAGENTO TOOLS:
-RUN curl -o /usr/local/bin/m2install.sh https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install.sh \
-    && curl -o /etc/bash_completion.d/m2install-bash-completion https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install-bash-completion \
-    && curl -o /usr/local/bin/n98-magerun2 https://files.magerun.net/n98-magerun2.phar \
-    && curl -o /etc/bash_completion.d/n98-magerun2.phar.bash https://raw.githubusercontent.com/netz98/n98-magerun2/master/res/autocompletion/bash/n98-magerun2.phar.bash \
-    && curl -o /usr/local/bin/m2-convert-for-composer https://raw.githubusercontent.com/isitnikov/m2-convert-patch-for-composer-install/master/convert-for-composer.php \
-    && curl -o /etc/bash_completion.d/magento2-bash-completion https://raw.githubusercontent.com/yvoronoy/magento2-bash-completion/master/magento2-bash-completion-enterprise \
-    && curl -L -o /tmp/teleport.tar.gz https://github.com/gravitational/teleport/releases/download/v1.3.2/teleport-v1.3.2-linux-amd64-bin.tar.gz \
-    && tar -xf /tmp/teleport.tar.gz -C /tmp/ \
-    && make -C /tmp/teleport/ \
-    && git ls-remote git@github.com:magento-sparta/ee-support-tools.git 2>&1 | if grep -q HEAD; then git clone git@github.com:magento-sparta/ee-support-tools.git /usr/local/src/ee-support-tools; else echo; fi \
-    && if [ -d /usr/local/src/ee-support-tools ]; then ln -s /usr/local/src/ee-support-tools/cloud-teleport/cloud-teleport /usr/local/bin/cloud-teleport; else echo; fi \
-    && git ls-remote git@github.com:magento-sparta/m-it.git 2>&1 | if grep -q HEAD; then git clone git@github.com:magento-sparta/m-it.git /usr/local/src/m-it; else echo; fi \
-    && if [ -d /usr/local/src/m-it ]; then /usr/local/src/m-it/mit-installer.sh; else echo; fi
+# BASH COMPLETION:
+RUN echo "source /etc/bash_completion" >> ${_HOME_DIRECTORY}/.bashrc
 
-USER magento
+# MAGENTO CLI:
+RUN curl -sS https://accounts.magento.cloud/cli/installer | php
+
+# ADOBE TOOLS:
 RUN if [ -d /usr/local/src/m-it ]; then /usr/local/src/m-it/mit-installer.sh; else echo; fi
-USER root
+RUN sed -i.back '/^export BASH_IT_THEME=/ s/^/# /' ${_HOME_DIRECTORY}/.bashrc
 
-RUN chmod +x /usr/local/bin/*
+USER root
+RUN chown -R "${_USER}:${_USER}" ${_HOME_DIRECTORY}/.gitconfig ${_HOME_DIRECTORY}/.composer ${_HOME_DIRECTORY}/.m2install.conf*; \
+    chmod +x /usr/local/bin/*
+
+# CRONTAB
+RUN apt-get install cron && service cron start
+
 ## END OF BASE IMAGE ##
+
+## BASE IMAGE WITHOUT MAILCATCHER ##
+FROM m2d_web_server_apache_php_base AS m2d_web_server_apache_php_base_mailcatcher_no
+
+## BASE IMAGE WITH MAILCATCHER ##
+FROM m2d_web_server_apache_php_base AS m2d_web_server_apache_php_base_mailcatcher_yes
+RUN apt-get update && apt-get install -y msmtp
+COPY ./services/web-servers/apache/etc/msmtprc /etc/msmtprc
+
+## MAILCATCHER
+FROM m2d_web_server_apache_php_base_mailcatcher_${M2D_ENABLE_MAILCATCHER} AS m2d_web_server_apache_php_base_mailcatcher
 
 
 ## BASE IMAGE WITHOUT BLACKFIRE ##
-FROM m2d_web_server_apache_php_base_ AS m2d_web_server_apache_php_base_blackfire_no
+FROM m2d_web_server_apache_php_base_mailcatcher AS m2d_web_server_apache_php_base_blackfire_no
 
 ## BASE IMAGE WITH BLACKFIRE ##
-FROM m2d_web_server_apache_php_base_ AS m2d_web_server_apache_php_base_blackfire_yes
+FROM m2d_web_server_apache_php_base_mailcatcher AS m2d_web_server_apache_php_base_blackfire_yes
 
 # BLACKFIRE:
 RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
