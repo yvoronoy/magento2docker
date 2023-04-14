@@ -3,7 +3,7 @@ ARG M2D_ENABLE_BLACKFIRE='no'
 ARG M2D_HOSTNAME_FOR_MAILCATCHER='m2d-mailcatcher'
 
 ## BASE PHP IMAGE - COMMON FOR ALL PHP VERSIONS ##
-FROM php:${M2D_WEB_SERVER_PHP_VERSION}-apache-bullseye AS m2d_web_server_apache_php_base_
+FROM php:${M2D_WEB_SERVER_PHP_VERSION}-apache-bullseye AS m2d_web_server_apache_php_base
 
 # SETTING UP THE SYSTEM:
 RUN apt-get update \
@@ -143,10 +143,10 @@ RUN chmod +x /usr/local/bin/*
 
 
 ## BASE IMAGE WITHOUT BLACKFIRE ##
-FROM m2d_web_server_apache_php_base_ AS m2d_web_server_apache_php_base_blackfire_no
+FROM m2d_web_server_apache_php_base AS m2d_web_server_apache_php_base_blackfire_no
 
 ## BASE IMAGE WITH BLACKFIRE ##
-FROM m2d_web_server_apache_php_base_ AS m2d_web_server_apache_php_base_blackfire_yes
+FROM m2d_web_server_apache_php_base AS m2d_web_server_apache_php_base_blackfire_yes
 
 # BLACKFIRE:
 RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
