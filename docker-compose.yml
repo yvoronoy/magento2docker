@@ -17,6 +17,7 @@ services:
     environment:
       - BLACKFIRE_CLIENT_ID
       - BLACKFIRE_CLIENT_TOKEN
+      - MIT_CHECK_FOR_UPDATES
       - MAGENTO_CLOUD_CLI_TOKEN
       - M2D_WEB_SERVER_PHP_MEMORY_LIMIT=${M2D_WEB_SERVER_PHP_MEMORY_LIMIT:-2G}
       - "M2INSTALL_GIT_CE_REPO=${M2INSTALL_GIT_CE_REPO:-'git@github.com:magento/magento2.git'}"

@@ -137,7 +137,6 @@ RUN curl -sS https://accounts.magento.cloud/cli/installer | php
 
 # ADOBE TOOLS:
 RUN if [ -d /usr/local/src/m-it ]; then /usr/local/src/m-it/mit-installer.sh; else echo; fi
-ENV MIT_CHECK_FOR_UPDATES=no
 
 USER root
 RUN chown -R "${_USER}:${_USER}" ${_HOME_DIRECTORY}/.gitconfig ${_HOME_DIRECTORY}/.composer ${_HOME_DIRECTORY}/.m2install.conf*; \
