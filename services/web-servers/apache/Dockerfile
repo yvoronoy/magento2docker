@@ -1,6 +1,6 @@
 ARG M2D_WEB_SERVER_PHP_VERSION='8.1'
 ARG M2D_ENABLE_BLACKFIRE='no'
-ARG M2D_HOSTNAME_FOR_MAILCATCHER='m2d-mailcatcher'
+ARG M2D_ENABLE_MAILCATCHER='no'
 
 ## BASE PHP IMAGE - COMMON FOR ALL PHP VERSIONS ##
 FROM php:${M2D_WEB_SERVER_PHP_VERSION}-apache-bullseye AS m2d_web_server_apache_php_base
@@ -25,7 +25,6 @@ RUN apt-get update \
         bash-completion \
         openssh-server \
         ssl-cert \
-        msmtp \
         sudo \
         dnsutils \
         iputils-ping \
@@ -71,13 +70,6 @@ COPY ./services/web-servers/apache/etc/php/* /usr/local/etc/php/conf.d/
 # CUSTOM CONFIGURATIONS:
 COPY ./services/web-servers/apache/etc/apache2 /etc/apache2
 COPY ./services/web-servers/apache/etc/fixtures /etc/fixtures
-
-# MAILCATCHER:
-ENV M2D_HOSTNAME_FOR_MAILCATCHER=$M2D_HOSTNAME_FOR_MAILCATCHER
-RUN echo "account default" >> /etc/msmtprc \
-    && echo "host $M2D_HOSTNAME_FOR_MAILCATCHER" >> /etc/msmtprc \
-    && echo "port 1025" >> /etc/msmtprc \
-    && echo "auto_from on" >> /etc/msmtprc
 
 # SSH:
 COPY ./services/web-servers/apache/etc/ssh ${_HOME_DIRECTORY}/.ssh
@@ -143,12 +135,23 @@ RUN chown -R "${_USER}:${_USER}" ${_HOME_DIRECTORY}/.gitconfig ${_HOME_DIRECTORY
     chmod +x /usr/local/bin/*
 ## END OF BASE IMAGE ##
 
+## BASE IMAGE WITHOUT MAILCATCHER ##
+FROM m2d_web_server_apache_php_base AS m2d_web_server_apache_php_base_mailcatcher_no
+
+## BASE IMAGE WITH MAILCATCHER ##
+FROM m2d_web_server_apache_php_base AS m2d_web_server_apache_php_base_mailcatcher_yes
+RUN apt-get update && apt-get install -y msmtp
+COPY ./services/web-servers/apache/etc/msmtprc /etc/msmtprc
+
+## MAILCATCHER
+FROM m2d_web_server_apache_php_base_mailcatcher_${M2D_ENABLE_MAILCATCHER} AS m2d_web_server_apache_php_base_mailcatcher
+
 
 ## BASE IMAGE WITHOUT BLACKFIRE ##
-FROM m2d_web_server_apache_php_base AS m2d_web_server_apache_php_base_blackfire_no
+FROM m2d_web_server_apache_php_base_mailcatcher AS m2d_web_server_apache_php_base_blackfire_no
 
 ## BASE IMAGE WITH BLACKFIRE ##
-FROM m2d_web_server_apache_php_base AS m2d_web_server_apache_php_base_blackfire_yes
+FROM m2d_web_server_apache_php_base_mailcatcher AS m2d_web_server_apache_php_base_blackfire_yes
 
 # BLACKFIRE:
 RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
