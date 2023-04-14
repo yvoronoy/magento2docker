@@ -40,6 +40,7 @@ RUN apt-get update \
         libzip-dev \
         parallel \
         git \
+        mc \
     && apt-get update \
     && apt-get clean all
 
@@ -142,6 +143,10 @@ RUN sed -i.back '/^export BASH_IT_THEME=/ s/^/# /' ${_HOME_DIRECTORY}/.bashrc
 USER root
 RUN chown -R "${_USER}:${_USER}" ${_HOME_DIRECTORY}/.gitconfig ${_HOME_DIRECTORY}/.composer ${_HOME_DIRECTORY}/.m2install.conf*; \
     chmod +x /usr/local/bin/*
+
+# CRONTAB
+RUN apt-get install cron && service cron start
+
 ## END OF BASE IMAGE ##
 
 ## BASE IMAGE WITHOUT MAILCATCHER ##
