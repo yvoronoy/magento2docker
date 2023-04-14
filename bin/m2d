@@ -605,7 +605,7 @@ case $1 in
                 _m2d_display_help_go
                 ;;
             'web')
-                docker exec -it --env COLUMNS=`tput cols` --env LINES=`tput lines` --user magento m2d-web bash
+                docker exec -it --env COLUMNS=`tput cols` --env LINES=`tput lines` --user magento "m2d-web$(_m2d_env_get_parameter $M2D_ENV_FILE M2D_PROJECT_SUFFIX)" bash
                 ;;
             *)
                 _m2d_exec_container "$2" "$3"
