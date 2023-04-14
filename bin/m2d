@@ -545,8 +545,8 @@ case $1 in
             '-b'|'--build')
                 if [[ 'bind' == $(_m2d_env_get_parameter "$M2D_ENV_FILE" M2D_SOURCE_DIRECTORY_SYNC_TYPE) ]]; then
                     docker-compose --project-directory "$M2D_PROJECT_PATH" \
-                        -f "$M2D_PROJECT_PATH/docker-compose.yaml" \
-                        -f "$M2D_PROJECT_PATH/docker-compose.bind.yaml" \
+                        -f "$M2D_PROJECT_PATH/docker-compose.yml" \
+                        -f "$M2D_PROJECT_PATH/docker-compose.bind.yml" \
                         up -d --build
                 else
                     docker-compose --project-directory "$M2D_PROJECT_PATH" up -d --build
@@ -589,8 +589,8 @@ case $1 in
             *)
                 if [[ 'bind' == $(_m2d_env_get_parameter "$M2D_ENV_FILE" M2D_SOURCE_DIRECTORY_SYNC_TYPE) ]]; then
                     docker-compose --project-directory "$M2D_PROJECT_PATH" \
-                        -f "$M2D_PROJECT_PATH/docker-compose.yaml" \
-                        -f "$M2D_PROJECT_PATH/docker-compose.bind.yaml" \
+                        -f "$M2D_PROJECT_PATH/docker-compose.yml" \
+                        -f "$M2D_PROJECT_PATH/docker-compose.bind.yml" \
                         build
                 else
                     docker-compose --project-directory "$M2D_PROJECT_PATH" build
