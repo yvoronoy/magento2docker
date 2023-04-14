@@ -18,7 +18,7 @@ Examples:
 
 
 Options:
-  -h, --help Disply help for command
+  -h, --help Display help for command
 
 Commands:
   build    Build or rebuild containers
@@ -31,7 +31,7 @@ Commands:
   setup    Configure project
   show     Shows configuration value
   stop     Stops containers
-  sync     Manage data sync from between host an containers
+  sync     Manage data sync from between host and containers
   up       Create and start containers
 "
 }
@@ -48,14 +48,14 @@ Examples:
 ./bin/m2d set es 8.4
 
 Options:
-  -h, --help Disply help for command
+  -h, --help Display help for command
 
 Parameters:
   es       Alias for setting Elasticsearch as the search engine. It will set M2D_SEARCH_ENGINE_VENDOR to 'elasticsearch',
-           and M2D_SEARCH_ENGINE_VERSION to '7' if expected version is not provided as a value
+           and M2D_SEARCH_ENGINE_VERSION to '7' if the expected version is not provided as a value
   php      Alias for parameter M2D_WEB_SERVER_PHP_VERSION
   suffix   Alias for parameter M2D_PROJECT_SUFFIX
-  [M2D_*]  Parameter name. List of possible parameters and their values is in .env.example 
+  [M2D_*]  Parameter name. A list of possible parameters and their values is in the '.env.example' file
 "
 }
 
@@ -70,10 +70,10 @@ Example:
 ./bin/m2d show M2D_SOURCE_DIRECTORY
 
 Options:
-  -h, --help Disply help for command
+  -h, --help Display help for command
 
 Parameters:
-  [M2D_*]  Parameter name. List of possible parameters is in .env.example 
+  [M2D_*]  Parameter name. A list of possible parameters is in the '.env.example' file
 "
 }
 
@@ -88,7 +88,7 @@ Example:
 ./bin/m2d setup init
 
 Options:
-  -h, --help Disply help for command
+  -h, --help Display help for command
 
 Commands:
   init        Starts creator of initial configuration for Web container and .env file
@@ -111,7 +111,7 @@ Example:
 ./bin/m2d $command mailcatcher
 
 Options:
-  -h, --help Disply help for command
+  -h, --help Display help for command
 
 Commands:
   blackfire       $Command blackfire container
@@ -139,7 +139,7 @@ Usage: ./bin/m2d up [OPTIONS]
 Create and start containers.
 
 Options:
-  -h, --help   Disply help for command
+  -h, --help   Display help for command
   -b, --build  Build images before starting containers.
 "
 }
@@ -150,7 +150,7 @@ function _m2d_display_help_commad_generic ()
 Usage: ./bin/m2d $1 [OPTIONS]
 
 Options:
-  -h, --help   Disply help for command
+  -h, --help   Display help for command
 "
 }
 
@@ -165,7 +165,7 @@ Example:
 ./bin/m2d go web
 
 Options:
-  -h, --help Disply help for command
+  -h, --help Display help for command
 
 Containers:
   web       Alias for m2d-web container
@@ -183,7 +183,7 @@ Usage: ./bin/m2d logs [OPTIONS] CONTAINER_NAME
 View logs from containers.
 
 Options:
-  -h, --help Disply help for command
+  -h, --help Display help for command
 
 Current containers:
 "
@@ -195,17 +195,17 @@ function _m2d_display_help_sync ()
     echo "
 Usage: ./bin/m2d sync [OPTIONS] ACTION
 
-Manage data sync from between host an containers.
+Manage data sync from between host and containers.
 
 Options:
-  -h, --help Disply help for command
+  -h, --help Display help for command
 
 Actions:
-  start    Starts synchronisation if applicable
-  pause    Pause synchronisation if applicable  
+  start    Starts synchronization if applicable
+  pause    Pause synchronization if applicable
   stop     Stops synchronization if applicable
   status   Display synchronization status if applicable
-  restart  Restart synchronisation if applicable
+  restart  Restart synchronization if applicable
 "
 }
 
@@ -215,7 +215,9 @@ function _m2d_init_source_folder ()
     local current_folder=$(_m2d_env_get_parameter "$env_file" M2D_SOURCE_DIRECTORY)
     local new_folder
 
-    read -p "Set the path where you want to keep Magento source files. Press enter to keep current '$current_folder': " new_folder
+    echo 'Magento2Docker, depending on the sync type, will sync or bind "/var/www/html" path in a container to a local folder on the host.'
+    echo 'Please provide a complete or relative path to the folder you want to use for this, e.g., "/Users/adam/src" or "~/src"'
+    read -p "Type the path to a folder you want to use or leave it empty to keep the current '$current_folder': " new_folder
 
     if [[ -z "$new_folder" ]]; then
         new_folder="$current_folder"
@@ -225,7 +227,7 @@ function _m2d_init_source_folder ()
 
     if [[ ! -d "$new_folder" ]]; then
         local confirm
-        read -p "Path '$new_folder' doesn't exist. Create it? [y/n]: " confirm
+        read -p "Path '$new_folder' doesn't exist. Do you want to create it? [y/n]: " confirm
         [[ $confirm == 'y' ]] && mkdir -p "$new_folder"
     fi 
 
@@ -237,8 +239,9 @@ function _m2d_init_env()
     local env_file="$1"
     local current_value value confirm
 
+    echo 'Initializing project...'
     if [[ -f "$env_file" ]]; then
-        read -p 'You already have .env file. Do you want to recreate it? [y/n]: ' confirm
+        read -p 'You already have .env settings file. You can keep it (n) or recreate it (y). Do you want to recreate it? [y/n]: ' confirm
         if [[ $confirm == 'y' ]]; then
             cp "$env_file.example" "$env_file"
         fi
@@ -246,7 +249,7 @@ function _m2d_init_env()
         cp "$env_file.example" "$env_file"
     fi
 
-    read -p 'Do you want to configure main Magento2Docker settings? [y/n]: ' confirm
+    read -p 'Do you want to provide core Magento2Docker settings (y) or do you want to use current (n)? [y/n]: ' confirm
     if [[ $confirm != 'y' ]]; then
         echo "Magento2Docker will use settings from this file: '$env_file'"
         echo 'Please verify them before further usage!'
@@ -259,7 +262,7 @@ function _m2d_init_env()
     done
     _m2d_env_set_parameter "$env_file" M2D_SOURCE_DIRECTORY "$value"
 
-    read -p 'Are you on Apple M1 chip? [y/n]: ' confirm
+    read -p 'Are you on Apple M1/M2 chip? [y/n]: ' confirm
     if [[ $confirm == 'y' ]]; then
         _m2d_env_set_parameter "$env_file" M2D_CPU_TYPE m1
     else
@@ -267,13 +270,13 @@ function _m2d_init_env()
     fi
 
     value=$(_m2d_env_get_parameter "$env_file" M2D_XDEBUG_IDE_KEY)
-    read -p "Provide IDE key for xDebug (e.g.: PHPSTORM, VSCODE). Press enter to keep current '$value': " value
+    read -p "Provide IDE key to be used by xDebug (e.g.: PHPSTORM, VSCODE) or leave it empty to keep the current '$value': " value
     if [[ -n $value ]]; then
         _m2d_env_set_parameter "$env_file" M2D_XDEBUG_IDE_KEY "$value"
     fi
 
     value=$(_m2d_env_get_parameter "$env_file" MAGENTO_CLOUD_CLI_TOKEN)
-    read -p "Provide Magento Cloud CLI authentication token. Press enter to keep current '$value': " value
+    read -p "Provide Magento Cloud CLI authentication token or leave it empty to keep the current '$value': " value
     if [[ -n $value ]]; then
         _m2d_env_set_parameter "$env_file" MAGENTO_CLOUD_CLI_TOKEN "$value"
     fi
@@ -319,7 +322,7 @@ function _m2d_exec_container ()
     if [[ -n "$allowed" ]]; then
         docker exec -it --user "$user_name" "$container_name" /bin/bash
     else
-        echo "Sorry, container '$container_name' does not exists!"
+        echo "Sorry, container '$container_name' doesn't exist!"
     fi
 }
 
@@ -331,7 +334,7 @@ function _m2d_logs_container ()
     if [[ -n "$allowed" ]]; then
         docker logs -f "$container_name"
     else
-        echo "Sorry, container '$container_name' does not exists!"
+        echo "Sorry, container '$container_name' doesn't exist!"
     fi
 }
 
@@ -346,7 +349,7 @@ function _m2d_sync ()
 
     case $sync_type in
         'bind')
-            echo "Nothing to do for '$action' in '$sync_type' sync type"
+            echo "For '$sync_type' sync type there are no sync actions to execute."
             ;;
         'sshfs')
             local ssh_port=$(_m2d_env_get_parameter "$env_file" M2D_PORT_FOR_WEB_SERVER_SSH)
@@ -365,8 +368,12 @@ function _m2d_sync ()
                 'stop'|'pause')
                     umount -f "$sync_dir"
                     ;;
+                'restart')
+                    _m2d_sync stop "$env_file"
+                    _m2d_sync start "$env_file"
+                    ;;
                 *)
-                   echo "Nothing to do for '$action' in '$sync_type' sync type"
+                   echo "For '$sync_type' sync type allowed actions are: start, stop, pause, and restart"
                     ;;
             esac
             ;;
@@ -413,7 +420,7 @@ function _m2d_sync ()
                     _m2d_sync start "$env_file"
                     ;;
                 *)
-                    echo "Nothing to do for '$action' in '$sync_type' sync type"
+                    echo "For '$sync_type' sync type allowed actions are: start, stop, pause, restart, and status"
                     ;;
             esac
             ;;
