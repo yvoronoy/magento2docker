@@ -402,6 +402,11 @@ function _m2d_sync ()
                             --ignore=/**/var/log \
                             --ignore=/**/.DS_Store \
                             --symlink-mode=posix-raw \
+                            --probe-mode=assume \
+                            --scan-mode=accelerated \
+                            --stage-mode=internal \
+                            --watch-mode=portable \
+                            --watch-polling-interval=20 \
                             "$sync_dir" \
                             "docker://magento@$sync_web/var/www/html/"
                     fi
@@ -419,8 +424,11 @@ function _m2d_sync ()
                     _m2d_sync stop "$env_file"
                     _m2d_sync start "$env_file"
                     ;;
+                'fix')
+                    mutagen sync reset $sync_name && mutagen sync flush $sync_name
+                    ;;
                 *)
-                    echo "For '$sync_type' sync type allowed actions are: start, stop, pause, restart, and status"
+                    echo "For '$sync_type' sync type allowed actions are: start, stop, pause, restart, status and fix"
                     ;;
             esac
             ;;
