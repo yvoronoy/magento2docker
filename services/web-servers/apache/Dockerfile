@@ -121,16 +121,23 @@ RUN git ls-remote git@github.com:magento-sparta/m-it.git 2>&1 | if grep -q HEAD;
 # USER CONTEXT CONFIGURATION
 USER magento
 
+RUN mkdir -p ${_HOME_DIRECTORY}/.ssh \
+    && touch ${_HOME_DIRECTORY}/.ssh/known_hosts \
+    && ssh-keygen -F github.com || ssh-keyscan github.com >> ${_HOME_DIRECTORY}/.ssh/known_hosts
+
 COPY ./services/web-servers/apache/etc/git/gitconfig ${_HOME_DIRECTORY}/.gitconfig
 COPY ./services/web-servers/apache/etc/composer/auth.json* ${_HOME_DIRECTORY}/.composer/
 COPY ./services/web-servers/apache/etc/m2install/.m2install.conf* ${_HOME_DIRECTORY}/
 
 # BASH COMPLETION:
 RUN echo "source /etc/bash_completion" >> ${_HOME_DIRECTORY}/.bashrc
-RUN if [ -d /usr/local/src/m-it ]; then /usr/local/src/m-it/mit-installer.sh; else echo; fi
 
 # MAGENTO CLI:
 RUN curl -sS https://accounts.magento.cloud/cli/installer | php
+
+# ADOBE TOOLS:
+RUN if [ -d /usr/local/src/m-it ]; then /usr/local/src/m-it/mit-installer.sh; else echo; fi
+ENV MIT_CHECK_FOR_UPDATES=no
 
 USER root
 RUN chown -R "${_USER}:${_USER}" ${_HOME_DIRECTORY}/.gitconfig ${_HOME_DIRECTORY}/.composer ${_HOME_DIRECTORY}/.m2install.conf*; \
