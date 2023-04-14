@@ -215,9 +215,11 @@ function _m2d_init_source_folder ()
     local current_folder=$(_m2d_env_get_parameter "$env_file" M2D_SOURCE_DIRECTORY)
     local new_folder
 
-    echo 'Magento2Docker, depending on the sync type, will sync or bind "/var/www/html" path in a container to a local folder on the host.'
-    echo 'Please provide a complete or relative path to the folder you want to use for this, e.g., "/Users/adam/src" or "~/src"'
-    read -p "Type the path to a folder you want to use or leave it empty to keep the current '$current_folder': " new_folder
+    local prompt="Magento2Docker, depending on the sync type, will sync or bind '/var/www/html' path in a container to a local folder on the host.
+Please provide a complete or relative path to the folder you want to use for this, e.g., '/Users/adam/src' or '~/src'
+Type the path to a folder you want to use or leave it empty to keep the current '$current_folder': "
+
+    read -p "$prompt" new_folder
 
     if [[ -z "$new_folder" ]]; then
         new_folder="$current_folder"
