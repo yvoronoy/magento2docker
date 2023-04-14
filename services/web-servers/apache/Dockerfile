@@ -52,6 +52,11 @@ RUN useradd -m ${_USER} && echo "${_USER}:${_USER}" | chpasswd && chsh ${_USER} 
 RUN docker-php-ext-install -j$(nproc) iconv soap sockets \
     && docker-php-ext-install -j$(nproc) bcmath pdo_mysql xsl intl zip
 
+# PHP CONFIG FILES:
+ARG M2D_WEB_SERVER_PHP_MEMORY_LIMIT='2G'
+ENV M2D_WEB_SERVER_PHP_MEMORY_LIMIT=${M2D_WEB_SERVER_PHP_MEMORY_LIMIT}
+COPY ./services/web-servers/apache/etc/php/* /usr/local/etc/php/conf.d/
+
 # NODEJS:
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash \
     && apt-get install -y nodejs
@@ -63,9 +68,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 # TOOLS:
 COPY ./services/web-servers/apache/tools/* /usr/local/bin/
-
-# PHP CONFIG FILES:
-COPY ./services/web-servers/apache/etc/php/* /usr/local/etc/php/conf.d/
 
 # CUSTOM CONFIGURATIONS:
 COPY ./services/web-servers/apache/etc/apache2 /etc/apache2
