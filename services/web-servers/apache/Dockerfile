@@ -145,7 +145,7 @@ RUN chown -R "${_USER}:${_USER}" ${_HOME_DIRECTORY}/.gitconfig ${_HOME_DIRECTORY
     chmod +x /usr/local/bin/*
 
 # CRONTAB
-RUN apt-get install cron && service cron start
+RUN apt-get install -y cron && service cron start
 
 ## END OF BASE IMAGE ##
 
