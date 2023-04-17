@@ -1,0 +1,657 @@
+#!/usr/bin/env bash
+# shellcheck shell=bash
+
+function _m2d_display_help_main ()
+{
+    echo "
+Usage: ./bin/m2d COMMAND [OPTIONS]
+
+Examples:
+- initial setup:
+./bin/m2d setup init
+
+- build and start containers:
+./bin/m2d up --build
+
+- stop and remove containers and networks:
+./bin/m2d down
+
+
+Options:
+  -h, --help Display help for command
+
+Commands:
+  build    Build or rebuild containers
+  disable  Disable selected service or tool
+  down     Stop and remove containers and networks
+  enable   Enable selected service or tool
+  go       Enters a running container
+  logs     View logs from containers
+  set      Sets configuration value
+  setup    Configure project
+  show     Shows configuration value
+  stop     Stops containers
+  sync     Manage data sync from between host and containers
+  up       Create and start containers
+"
+}
+
+function _m2d_display_help_set ()
+{
+    echo "
+Usage: ./bin/m2d set [OPTIONS] PARAMETER VALUE
+
+Sets configuration value.
+
+Examples:
+./bin/m2d set M2D_XDEBUG_IDE_KEY VSCODE
+./bin/m2d set es 8.4
+
+Options:
+  -h, --help Display help for command
+
+Parameters:
+  es       Alias for setting Elasticsearch as the search engine. It will set M2D_SEARCH_ENGINE_VENDOR to 'elasticsearch',
+           and M2D_SEARCH_ENGINE_VERSION to '7' if the expected version is not provided as a value
+  php      Alias for parameter M2D_WEB_SERVER_PHP_VERSION
+  suffix   Alias for parameter M2D_PROJECT_SUFFIX
+  [M2D_*]  Parameter name. A list of possible parameters and their values is in the '.env.example' file
+"
+}
+
+function _m2d_display_help_show ()
+{
+    echo "
+Usage: ./bin/m2d show [OPTIONS] PARAMETER
+
+Shows configuration value.
+
+Example:
+./bin/m2d show M2D_SOURCE_DIRECTORY
+
+Options:
+  -h, --help Display help for command
+
+Parameters:
+  [M2D_*]  Parameter name. A list of possible parameters is in the '.env.example' file
+"
+}
+
+function _m2d_display_help_setup ()
+{
+    echo "
+Usage: ./bin/m2d setup [OPTIONS] [COMMAND] [PROJECT_ID]
+
+Configure project.
+
+Example:
+./bin/m2d setup init
+
+Options:
+  -h, --help Display help for command
+
+Commands:
+  init        Starts creator of initial configuration for Web container and .env file
+  env         Starts .env file creator
+  from-cloud  Generates .env file based on provided PROJECT_ID
+"
+}
+
+function _m2d_display_help_enable_disable ()
+{
+    local command=$1
+    local Command=${1^}
+
+    echo "
+Usage: ./bin/m2d $command [OPTIONS] COMMAND
+
+$Command selected service or tool.
+
+Example:
+./bin/m2d $command mailcatcher
+
+Options:
+  -h, --help Display help for command
+
+Commands:
+  blackfire       $Command blackfire container
+  db-cache        $Command db-cache container
+  elastic         Alias for 'search-engine ' command
+  m               Alias for 'mailcatcher' command
+  mailcatcher     $Command mailcatcher container
+  message-broker  $Command message broker container
+  rabbit          Alias for 'message-broker' command
+  redis           Alias for 'db-cache' command
+  search-engine   $Command search engine container
+  selenium        $Command selenium container
+  varnish         Alias for 'web-cache' command
+  web-cache       $Command web-cache container
+
+After container is $command it must be rebuild with: \`./bin/m2d build\` or \`./bin/m2d up --build\`
+"
+}
+
+function _m2d_display_help_up ()
+{
+    echo "
+Usage: ./bin/m2d up [OPTIONS]
+
+Create and start containers.
+
+Options:
+  -h, --help   Display help for command
+  -b, --build  Build images before starting containers.
+"
+}
+
+function _m2d_display_help_commad_generic ()
+{
+    echo "
+Usage: ./bin/m2d $1 [OPTIONS]
+
+Options:
+  -h, --help   Display help for command
+"
+}
+
+function _m2d_display_help_go ()
+{
+    echo "
+Usage: ./bin/m2d go [OPTIONS] CONTAINER_NAME
+
+Enters a running container.
+
+Example:
+./bin/m2d go web
+
+Options:
+  -h, --help Display help for command
+
+Containers:
+  web       Alias for m2d-web container
+
+Current containers:
+"
+docker ps --format '{{.Names}}'
+}
+
+function _m2d_display_help_logs ()
+{
+    echo "
+Usage: ./bin/m2d logs [OPTIONS] CONTAINER_NAME
+
+View logs from containers.
+
+Options:
+  -h, --help Display help for command
+
+Current containers:
+"
+docker ps --format '{{.Names}}'
+}
+
+function _m2d_display_help_sync ()
+{
+    echo "
+Usage: ./bin/m2d sync [OPTIONS] ACTION
+
+Manage data sync from between host and containers.
+
+Options:
+  -h, --help Display help for command
+
+Actions:
+  start    Starts synchronization if applicable
+  pause    Pause synchronization if applicable
+  stop     Stops synchronization if applicable
+  status   Display synchronization status if applicable
+  restart  Restart synchronization if applicable
+"
+}
+
+function _m2d_init_source_folder ()
+{
+    local env_file="$1"
+    local current_folder=$(_m2d_env_get_parameter "$env_file" M2D_SOURCE_DIRECTORY)
+    local new_folder
+
+    local prompt="Magento2Docker, depending on the sync type, will sync or bind '/var/www/html' path in a container to a local folder on the host.
+Please provide a complete or relative path to the folder you want to use for this, e.g., '/Users/adam/src' or '~/src'
+Type the path to a folder you want to use or leave it empty to keep the current '$current_folder': "
+
+    read -p "$prompt" new_folder
+
+    if [[ -z "$new_folder" ]]; then
+        new_folder="$current_folder"
+    fi
+
+    new_folder=$(eval echo "$new_folder")
+
+    if [[ ! -d "$new_folder" ]]; then
+        local confirm
+        read -p "Path '$new_folder' doesn't exist. Do you want to create it? [y/n]: " confirm
+        [[ $confirm == 'y' ]] && mkdir -p "$new_folder"
+    fi 
+
+    echo "$new_folder"
+}
+
+function _m2d_init_env()
+{
+    local env_file="$1"
+    local current_value value confirm
+
+    echo 'Initializing project...'
+    if [[ -f "$env_file" ]]; then
+        read -p 'You already have .env settings file. You can keep it (n) or recreate it (y). Do you want to recreate it? [y/n]: ' confirm
+        if [[ $confirm == 'y' ]]; then
+            cp "$env_file.example" "$env_file"
+        fi
+    else
+        cp "$env_file.example" "$env_file"
+    fi
+
+    read -p 'Do you want to provide core Magento2Docker settings (y) or do you want to use current (n)? [y/n]: ' confirm
+    if [[ $confirm != 'y' ]]; then
+        echo "Magento2Docker will use settings from this file: '$env_file'"
+        echo 'Please verify them before further usage!'
+        return 0
+    fi
+
+    while [[ ! -d "$value" ]];
+    do
+        value=$(_m2d_init_source_folder "$env_file")
+    done
+    _m2d_env_set_parameter "$env_file" M2D_SOURCE_DIRECTORY "$value"
+
+    read -p 'Are you on Apple M1/M2 chip? [y/n]: ' confirm
+    if [[ $confirm == 'y' ]]; then
+        _m2d_env_set_parameter "$env_file" M2D_CPU_TYPE m1
+    else
+        _m2d_env_set_parameter "$env_file" M2D_CPU_TYPE intel
+    fi
+
+    value=$(_m2d_env_get_parameter "$env_file" M2D_XDEBUG_IDE_KEY)
+    read -p "Provide IDE key to be used by xDebug (e.g.: PHPSTORM, VSCODE) or leave it empty to keep the current '$value': " value
+    if [[ -n $value ]]; then
+        _m2d_env_set_parameter "$env_file" M2D_XDEBUG_IDE_KEY "$value"
+    fi
+
+    value=$(_m2d_env_get_parameter "$env_file" MAGENTO_CLOUD_CLI_TOKEN)
+    read -p "Provide Magento Cloud CLI authentication token or leave it empty to keep the current '$value': " value
+    if [[ -n $value ]]; then
+        _m2d_env_set_parameter "$env_file" MAGENTO_CLOUD_CLI_TOKEN "$value"
+    fi
+}
+
+function _m2d_env_set_parameter ()
+{
+    local env_file="$1"
+    local parameter="$2"
+    local value="$3"
+
+    if [[ ! -f "$env_file" ]]; then
+        echo "Env file '$env_file' doesn't exist! Initialize it by executing \`./bin/m2d setup env\`"
+        return 1
+    fi
+
+    sed -i.back "s|^\\(${parameter}=\\).*|\\1'$value'|" "$env_file"
+}
+
+function _m2d_env_get_parameter ()
+{
+    local env_file="$1"
+    local parameter="$2"
+    local default="${3:-}"
+
+    if [[ ! -f "$env_file" ]]; then
+        echo "Env file '$env_file' doesn't exist! Initialize it by executing \`./bin/m2d setup env\`"
+        return 1
+    fi
+
+    local value=$(grep "^$parameter=" "$env_file" | cut -d '=' -f 2 | tr -d "'")
+    value="${value:=$default}"
+
+    echo "$value"
+}
+
+function _m2d_exec_container ()
+{
+    local container_name="$1"
+    local allowed=$(docker ps --format '{{.Names}}' | grep "$container_name")
+    local user_name="${2:-root}"
+
+    if [[ -n "$allowed" ]]; then
+        docker exec -it --user "$user_name" "$container_name" /bin/bash
+    else
+        echo "Sorry, container '$container_name' doesn't exist!"
+    fi
+}
+
+function _m2d_logs_container ()
+{
+    local container_name="$1"
+    local allowed=$(docker ps --format '{{.Names}}' | grep "$container_name")
+
+    if [[ -n "$allowed" ]]; then
+        docker logs -f "$container_name"
+    else
+        echo "Sorry, container '$container_name' doesn't exist!"
+    fi
+}
+
+function _m2d_sync ()
+{
+    local action="$1"
+    local env_file="$2"
+    local sync_type=$(_m2d_env_get_parameter "$env_file" M2D_SOURCE_DIRECTORY_SYNC_TYPE)
+    local sync_dir=$(_m2d_env_get_parameter "$env_file" M2D_SOURCE_DIRECTORY)
+    local server_vendor=$(_m2d_env_get_parameter "$env_file" M2D_WEB_SERVER_VENDOR)
+    local project_path="$3"
+
+    case $sync_type in
+        'bind')
+            echo "For '$sync_type' sync type there are no sync actions to execute."
+            ;;
+        'sshfs')
+            local ssh_port=$(_m2d_env_get_parameter "$env_file" M2D_PORT_FOR_WEB_SERVER_SSH)
+            case $action in
+                'start')
+                    local identity_file="$project_path/services/web-servers/$server_vendor/etc/ssh/magento2docker"
+	                chmod 400 "$identity_file"
+	                sshfs magento@127.0.0.1:/var/www/html "$sync_dir" \
+                        -o reconnect \
+                        -o StrictHostKeyChecking=no \
+                        -o follow_symlinks \
+                        -o IdentityFile="$identity_file" \
+                        -o port="$ssh_port" \
+                        -o compression=no
+                    ;;
+                'stop'|'pause')
+                    umount -f "$sync_dir"
+                    ;;
+                'restart')
+                    _m2d_sync stop "$env_file"
+                    _m2d_sync start "$env_file"
+                    ;;
+                *)
+                   echo "For '$sync_type' sync type allowed actions are: start, stop, pause, and restart"
+                    ;;
+            esac
+            ;;
+        'mutagen')
+            local sync_name="m2d-sync$(_m2d_env_get_parameter $env_file M2D_PROJECT_SUFFIX)"
+            local sync_web="m2d-web$(_m2d_env_get_parameter $env_file M2D_PROJECT_SUFFIX)"
+            case $action in
+                'start')
+                    if [[ -n $(mutagen sync list | grep $sync_name) ]]; then
+                        mutagen sync resume $sync_name
+                    else
+                        mutagen sync create --name=$sync_name \
+                            --default-group-beta=magento \
+                            --default-owner-beta=magento \
+                            --sync-mode=two-way-resolved \
+                            --default-file-mode=0664 \
+                            --default-directory-mode=0755 \
+                            --ignore=/.idea \
+                            --ignore=/.magento \
+                            --ignore=/.docker \
+                            --ignore=/.github \
+                            --ignore-vcs \
+                            --ignore=/**/var/cache \
+                            --ignore=/**/var/page_cache \
+                            --ignore=/**/var/session \
+                            --ignore=/**/var/log \
+                            --ignore=/**/.DS_Store \
+                            --symlink-mode=posix-raw \
+                            --probe-mode=assume \
+                            --scan-mode=accelerated \
+                            --stage-mode=internal \
+                            --watch-mode=portable \
+                            --watch-polling-interval=20 \
+                            "$sync_dir" \
+                            "docker://magento@$sync_web/var/www/html/"
+                    fi
+                    ;;
+                'pause')
+                    mutagen sync pause $sync_name
+                    ;;
+                'stop')
+                    mutagen sync terminate $sync_name
+                    ;;
+                'status')
+                    mutagen sync monitor $sync_name
+                    ;;
+                'restart')
+                    _m2d_sync stop "$env_file"
+                    _m2d_sync start "$env_file"
+                    ;;
+                'fix')
+                    mutagen sync reset $sync_name && mutagen sync flush $sync_name
+                    ;;
+                *)
+                    echo "For '$sync_type' sync type allowed actions are: start, stop, pause, restart, status and fix"
+                    ;;
+            esac
+            ;;
+        *)
+            echo "Sync type '$sync_type' is not supported!"
+            ;;
+    esac
+}
+
+
+M2D_SCRIPT_DIRECTORY=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
+M2D_PROJECT_PATH="$(realpath $M2D_SCRIPT_DIRECTORY/../)"
+M2D_ENV_FILE="$M2D_PROJECT_PATH/.env"
+
+case $1 in
+    'set')
+        case $2 in
+            '-h'|'--help')
+                _m2d_display_help_set
+                ;;
+            'suffix')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" M2D_PROJECT_SUFFIX "$3"
+                ;;
+            'php')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" "M2D_WEB_SERVER_PHP_VERSION" "$3"
+                ;;
+            'es')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" "M2D_SEARCH_ENGINE_VENDOR" elasticsearch
+                _m2d_env_set_parameter "$M2D_ENV_FILE" "M2D_SEARCH_ENGINE_VERSION" "${3:-7}"
+                ;;
+            *)
+                _m2d_env_set_parameter "$M2D_ENV_FILE" "$2" "$3"
+                ;;
+        esac
+        ;;
+
+    'show')
+        case $2 in
+            '-h'|'--help')
+                _m2d_display_help_show
+                ;;
+            *)
+                _m2d_env_get_parameter "$M2D_ENV_FILE" "$2"
+                ;;
+        esac
+        ;;
+
+    'setup')
+        case $2 in
+            'init')
+                _m2d_init_env "$M2D_ENV_FILE"
+                source "$M2D_SCRIPT_DIRECTORY/../services/web-servers/apache/bin/install.sh"
+                ;;
+            'env')
+                _m2d_init_env "$M2D_ENV_FILE"
+                ;;
+            'from-cloud')
+                echo 'Not yet implemented!'
+                ;;
+            *)
+                _m2d_display_help_setup
+                ;;
+        esac
+        ;;
+
+    'enable')
+        case $2 in
+            '-h'|'--help')
+                _m2d_display_help_enable_disable "enable"
+                ;;
+            'blackfire')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" M2D_ENABLE_BLACKFIRE yes
+                ;;
+            'mailcatcher'|'m')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" M2D_ENABLE_MAILCATCHER yes
+                ;;
+            'selenium')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" M2D_ENABLE_SELENIUM yes
+                ;;
+            'web-cache'|'varnish')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" M2D_ENABLE_WEB_CACHE yes
+                ;;
+            'db-cache'|'redis')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" M2D_ENABLE_DB_CACHE yes
+                ;;
+            'message-broker'|'rabbit')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" M2D_ENABLE_MESSAGE_BROKER yes
+                ;;
+            'search-engine'|'elastic')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" M2D_ENABLE_SEARCH_ENGINE yes
+                ;;
+        esac
+        ;;
+
+    'disable')
+        case $2 in
+            '-h'|'--help')
+                _m2d_display_help_enable_disable "disable"
+                ;;
+            'blackfire')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" M2D_ENABLE_BLACKFIRE no
+                ;;
+            'mailcatcher'|'m')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" M2D_ENABLE_MAILCATCHER no
+                ;;
+            'selenium')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" M2D_ENABLE_SELENIUM no
+                ;;
+            'web-cache'|'varnish')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" M2D_ENABLE_WEB_CACHE no
+                ;;
+            'db-cache'|'redis')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" M2D_ENABLE_DB_CACHE no
+                ;;
+            'message-broker'|'rabbit')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" M2D_ENABLE_MESSAGE_BROKER no
+                ;;
+            'search-engine'|'elastic')
+                _m2d_env_set_parameter "$M2D_ENV_FILE" M2D_ENABLE_SEARCH_ENGINE no
+                ;;
+        esac
+        ;;
+
+    'up')
+        case $2 in
+            '-h'|'--help')
+                _m2d_display_help_up
+                ;;
+            '-b'|'--build')
+                if [[ 'bind' == $(_m2d_env_get_parameter "$M2D_ENV_FILE" M2D_SOURCE_DIRECTORY_SYNC_TYPE) ]]; then
+                    docker-compose --project-directory "$M2D_PROJECT_PATH" \
+                        -f "$M2D_PROJECT_PATH/docker-compose.yml" \
+                        -f "$M2D_PROJECT_PATH/docker-compose.bind.yml" \
+                        up -d --build
+                else
+                    docker-compose --project-directory "$M2D_PROJECT_PATH" up -d --build
+                fi
+                _m2d_sync start "$M2D_ENV_FILE" "$M2D_PROJECT_PATH"
+                ;;
+            *)
+                docker-compose  --project-directory "$M2D_PROJECT_PATH" up -d
+                _m2d_sync start "$M2D_ENV_FILE" "$M2D_PROJECT_PATH"
+                ;;
+        esac
+        ;;
+    'down')
+        case $2 in
+            '-h'|'--help')
+                _m2d_display_help_commad_generic "down"
+                ;;
+            *)
+                docker-compose  --project-directory "$M2D_PROJECT_PATH" down
+                _m2d_sync stop "$M2D_ENV_FILE" "$M2D_PROJECT_PATH"
+                ;;
+        esac
+        ;;
+    'stop')
+        case $2 in
+            '-h'|'--help')
+                _m2d_display_help_commad_generic "stop"
+                ;;
+            *)
+                docker-compose  --project-directory "$M2D_PROJECT_PATH" stop
+                _m2d_sync pause "$M2D_ENV_FILE" "$M2D_PROJECT_PATH"
+                ;;
+        esac
+        ;;
+    'build')
+        case $2 in
+            '-h'|'--help')
+                _m2d_display_help_commad_generic "build"
+                ;;
+            *)
+                if [[ 'bind' == $(_m2d_env_get_parameter "$M2D_ENV_FILE" M2D_SOURCE_DIRECTORY_SYNC_TYPE) ]]; then
+                    docker-compose --project-directory "$M2D_PROJECT_PATH" \
+                        -f "$M2D_PROJECT_PATH/docker-compose.yml" \
+                        -f "$M2D_PROJECT_PATH/docker-compose.bind.yml" \
+                        build
+                else
+                    docker-compose --project-directory "$M2D_PROJECT_PATH" build
+                fi
+                ;;
+        esac
+        ;;
+
+    'go')
+        case $2 in
+            '-h'|'--help')
+                _m2d_display_help_go
+                ;;
+            'web')
+                docker exec -it --env COLUMNS=`tput cols` --env LINES=`tput lines` --user magento "m2d-web$(_m2d_env_get_parameter $M2D_ENV_FILE M2D_PROJECT_SUFFIX)" bash
+                ;;
+            *)
+                _m2d_exec_container "$2" "$3"
+                ;;
+        esac
+        ;;
+
+    'logs')
+        case $2 in
+            '-h'|'--help')
+                _m2d_display_help_logs
+                ;;
+            *)
+                _m2d_logs_container "$2"
+                ;;
+        esac
+        ;;
+
+    'sync')
+        case $2 in
+            '-h'|'--help')
+                _m2d_display_help_sync
+                ;;
+            *)
+                _m2d_sync "$2" "$M2D_ENV_FILE" "$M2D_PROJECT_PATH"
+                ;;
+        esac
+        ;;
+    *)
+        _m2d_display_help_main
+        ;;
+esac

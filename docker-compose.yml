@@ -1,0 +1,163 @@
+version: '3'
+
+services:
+  web:
+    container_name: "m2d-web${M2D_PROJECT_SUFFIX:-}"
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: services/web-servers/${M2D_WEB_SERVER_VENDOR:-apache}/Dockerfile
+      target: web_server
+      args:
+        - M2D_WEB_SERVER_PHP_VERSION=${M2D_WEB_SERVER_PHP_VERSION:-8.1}
+        - M2D_ENABLE_MAILCATCHER=${M2D_ENABLE_MAILCATCHER:-no}
+        - M2D_ENABLE_BLACKFIRE=${M2D_ENABLE_BLACKFIRE:-no}
+        - M2D_XDEBUG_IDE_KEY=${M2D_XDEBUG_IDE_KEY:-PHPSTORM}
+        - M2D_WEB_SERVER_PHP_MEMORY_LIMIT=${M2D_WEB_SERVER_PHP_MEMORY_LIMIT:-2G}
+    environment:
+      - BLACKFIRE_CLIENT_ID
+      - BLACKFIRE_CLIENT_TOKEN
+      - MIT_CHECK_FOR_UPDATES
+      - BASH_IT_THEME
+      - MAGENTO_CLOUD_CLI_TOKEN
+      - M2D_WEB_SERVER_PHP_MEMORY_LIMIT=${M2D_WEB_SERVER_PHP_MEMORY_LIMIT:-2G}
+      - "M2INSTALL_GIT_CE_REPO=${M2INSTALL_GIT_CE_REPO:-'git@github.com:magento/magento2.git'}"
+      - "M2INSTALL_GIT_EE_REPO=${M2INSTALL_GIT_EE_REPO:-''}"
+    ports:
+      - "${M2D_PORT_FOR_WEB_SERVER_HTTP:-80}:80"
+      - "${M2D_PORT_FOR_WEB_SERVER_HTTPS:-443}:443"
+      - "${M2D_PORT_FOR_WEB_SERVER_SSH:-2222}:22"
+    volumes:
+      - src-volume:/var/www/html
+      - src-composer-cache-volume:/root/.composer/cache
+      - home-volume:/home
+      - root-volume:/root
+    cap_add:
+      - "SYS_PTRACE"
+
+  db:
+    build:
+      context: .
+      dockerfile: services/db-engines/Dockerfile
+      target: m2d_db_engine
+      args:
+        - M2D_DB_ENGINE_VENDOR=${M2D_DB_ENGINE_VENDOR:-mariadb}
+        - M2D_DB_ENGINE_VERSION=${M2D_DB_ENGINE_VERSION:-10}
+    container_name: "m2d-db${M2D_PROJECT_SUFFIX:-}"
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: magento
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_USER: magento
+      MYSQL_PASSWORD: magento
+    ports:
+      - "${M2D_PORT_FOR_DB_ENGINE:-3306}:3306"
+    volumes:
+      - db-volume:/var/lib/mysql
+
+  search_engine:
+    build:
+      context: .
+      dockerfile: services/search-engines/Dockerfile
+      target: m2d_search_engine
+      args:
+        - M2D_ENABLE_SEARCH_ENGINE=${M2D_ENABLE_SEARCH_ENGINE:-yes}
+        - M2D_SEARCH_ENGINE_VENDOR=${M2D_SEARCH_ENGINE_VENDOR:-elasticsearch}
+        - M2D_SEARCH_ENGINE_VERSION=${M2D_SEARCH_ENGINE_VERSION:-7}
+    container_name: "m2d-searchengine${M2D_PROJECT_SUFFIX:-}"
+    environment:
+      - "ES_JAVA_OPTS=-Xms128m -Xmx1g"
+      - "OPENSEARCH_JAVA_OPTS=-Xms128m -Xmx1g"
+    ports:
+      - "${M2D_PORT_FOR_SEARCH_ENGINE:-9200}:9200"
+
+  message_broker:
+    build:
+      context: .
+      dockerfile: services/message-brokers/Dockerfile
+      target: m2d_message_broker
+      args:
+        - M2D_ENABLE_MESSAGE_BROKER=${M2D_ENABLE_MESSAGE_BROKER:-no}
+        - M2D_MESSAGE_BROKER_VENDOR=${M2D_MESSAGE_BROKER_VENDOR:-rabbitmq}
+        - M2D_MESSAGE_BROKER_VERSION=${M2D_MESSAGE_BROKER_VERSION:-3.8}
+    container_name: "m2d-messagebroker${M2D_PROJECT_SUFFIX:-}"
+    restart: unless-stopped
+    ports:
+      - "${M2D_PORT_FOR_MESSAGE_BROKER:-15672}:15672"
+
+  web_cache:
+    build:
+      context: .
+      dockerfile: services/web-cache/Dockerfile
+      target: m2d_web_cache
+      args:
+        - M2D_ENABLE_WEB_CACHE=${M2D_ENABLE_WEB_CACHE:-no}
+        - M2D_WEB_CACHE_VENDOR=${M2D_WEB_CACHE_VENDOR:-varnish}
+        - M2D_WEB_CACHE_VERSION=${M2D_WEB_CACHE_VERSION:-6}
+    container_name: "m2d-webcache${M2D_PROJECT_SUFFIX:-}"
+    restart: unless-stopped
+    ports:
+      - "${M2D_PORT_FOR_WEB_CACHE:-8080}:8080"
+
+  db_cache:
+    build:
+      context: .
+      dockerfile: services/db-cache/Dockerfile
+      target: m2d_db_cache
+      args:
+        - M2D_ENABLE_DB_CACHE=${M2D_ENABLE_DB_CACHE:-no}
+        - M2D_DB_CACHE_VENDOR=${M2D_DB_CACHE_VENDOR:-redis}
+        - M2D_DB_CACHE_VERSION=${M2D_DB_CACHE_VERSION:-6.0}
+    container_name: "m2d-dbcache${M2D_PROJECT_SUFFIX:-}"
+    restart: unless-stopped
+
+  mailcatcher:
+    build:
+      context: .
+      dockerfile: tools/mailcatcher/Dockerfile
+      target: m2d_mailcatcher
+      args:
+        - M2D_ENABLE_MAILCATCHER=${M2D_ENABLE_MAILCATCHER:-no}
+    container_name: "m2d-mailcatcher${M2D_PROJECT_SUFFIX:-}"
+    ports:
+      - "${M2D_PORT_FOR_MAILCATCHER:-1080}:1080"
+
+  blackfire:
+    build:
+      context: .
+      dockerfile: tools/blackfire/Dockerfile
+      target: m2d_blackfire
+      args:
+        - M2D_ENABLE_BLACKFIRE=${M2D_ENABLE_BLACKFIRE:-no}
+    container_name: "m2d-blackfire${M2D_PROJECT_SUFFIX:-}"
+    environment:
+        - BLACKFIRE_SERVER_ID
+        - BLACKFIRE_SERVER_TOKEN
+
+  selenium:
+    build:
+      context: .
+      dockerfile: tools/selenium/Dockerfile
+      target: m2d_selenium
+      args:
+        - M2D_CPU_TYPE=${M2D_CPU_TYPE:-m1}
+        - M2D_ENABLE_SELENIUM=${M2D_ENABLE_SELENIUM:-no}
+        - M2D_SELENIUM_VERSION=${M2D_SELENIUM_VERSION:-'3.14.0'}
+    container_name: "m2d-selenium${M2D_PROJECT_SUFFIX:-}"
+    volumes:
+      - /dev/shm:/dev/shm
+    ports:
+     - "${M2D_PORT_FOR_SELENIUM_HUB:-4444}:4444"
+     - "${M2D_PORT_FOR_SELENIUM_VNC:-5900}:5900"
+    shm_size: '2gb'
+
+networks:
+  default:
+    name: "m2d-network${M2D_PROJECT_SUFFIX:-}"
+
+volumes:
+  home-volume:
+  root-volume:
+  src-volume:
+  db-volume:
+  src-composer-cache-volume:
