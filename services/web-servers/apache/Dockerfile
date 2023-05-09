@@ -104,15 +104,23 @@ RUN echo "Defaults    timestamp_timeout=-1" >> /etc/sudoers
 ARG CACHEBUST=1
 
 # MAGENTO TOOLS:
-RUN curl -o /usr/local/bin/m2install.sh https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install.sh; \
-    curl -o /etc/bash_completion.d/m2install-bash-completion https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install-bash-completion; \
-    curl -o /usr/local/bin/n98-magerun2 https://files.magerun.net/n98-magerun2.phar; \
+RUN curl -o /usr/local/bin/n98-magerun2 https://files.magerun.net/n98-magerun2.phar; \
     curl -o /etc/bash_completion.d/n98-magerun2.phar.bash https://raw.githubusercontent.com/netz98/n98-magerun2/master/res/autocompletion/bash/n98-magerun2.phar.bash; \
     curl -o /usr/local/bin/m2-convert-for-composer https://raw.githubusercontent.com/isitnikov/m2-convert-patch-for-composer-install/master/convert-for-composer.php; \
     curl -o /etc/bash_completion.d/magento2-bash-completion https://raw.githubusercontent.com/yvoronoy/magento2-bash-completion/master/magento2-bash-completion-enterprise; \
     curl -L -o /tmp/teleport.tar.gz https://github.com/gravitational/teleport/releases/download/v1.3.2/teleport-v1.3.2-linux-amd64-bin.tar.gz \
     && tar -xf /tmp/teleport.tar.gz -C /tmp/ \
     && make -C /tmp/teleport/
+
+# ADOBE TOOLS (as root):
+## Internally we are using m2install from sparta:
+RUN curl -o /usr/local/bin/m2install.sh https://raw.githubusercontent.com/magento-sparta/m2install/master/m2install.sh; \
+    curl -o /etc/bash_completion.d/m2install-bash-completion https://raw.githubusercontent.com/magento-sparta/m2install/master/m2install-bash-completion;
+
+RUN git ls-remote git@git.corp.adobe.com:magento-support/ee-support-tools.git 2>&1 | if grep -q HEAD; then git clone git@git.corp.adobe.com:magento-support/ee-support-tools.git /usr/local/src/ee-support-tools; else echo; fi \
+    && if [ -d /usr/local/src/ee-support-tools ]; then ln -s /usr/local/src/ee-support-tools/cloud-teleport/cloud-teleport /usr/local/bin/cloud-teleport; else echo; fi
+RUN git ls-remote git@github.com:magento-sparta/m-it.git 2>&1 | if grep -q HEAD; then git clone git@github.com:magento-sparta/m-it.git /usr/local/src/m-it; else echo; fi \
+    && if [ -d /usr/local/src/m-it ]; then /usr/local/src/m-it/mit-installer.sh; else echo; fi
 
 # USER CONTEXT CONFIGURATION
 USER magento
@@ -130,6 +138,10 @@ RUN echo "source /etc/bash_completion" >> ${_HOME_DIRECTORY}/.bashrc
 
 # MAGENTO CLI:
 RUN curl -sS https://accounts.magento.cloud/cli/installer | php
+
+# ADOBE TOOLS (as magento):
+RUN if [ -d /usr/local/src/m-it ]; then /usr/local/src/m-it/mit-installer.sh; else echo; fi
+RUN sed -i.back '/^export BASH_IT_THEME=/ s/^/# /' ${_HOME_DIRECTORY}/.bashrc
 
 USER root
 RUN chown -R "${_USER}:${_USER}" ${_HOME_DIRECTORY}/.gitconfig ${_HOME_DIRECTORY}/.composer ${_HOME_DIRECTORY}/.m2install.conf*; \

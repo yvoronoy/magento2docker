@@ -37,6 +37,12 @@ Key features of the project:
  - Bash > 4.0
  - Realpath
 
+ ## Internal repositories
+Make sure you have access to the below internal repoositories:
+  - https://git.corp.adobe.com/magento-support/ee-support-tools
+  - https://github.com/magento-sparta/m2install
+  - https://github.com/magento-sparta/m-it
+
  ### How to install it on Mac
 ```bash
 # Mutagen:
