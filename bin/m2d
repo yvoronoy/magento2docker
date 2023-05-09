@@ -73,6 +73,8 @@ Options:
   -h, --help Display help for command
 
 Parameters:
+  home     Display path to the directory where Magento2Docker is installed
+  src      Display path to the source directory [M2D_SOURCE_DIRECTORY]
   [M2D_*]  Parameter name. A list of possible parameters is in the '.env.example' file
 "
 }
@@ -471,6 +473,12 @@ case $1 in
         case $2 in
             '-h'|'--help')
                 _m2d_display_help_show
+                ;;
+            'home')
+                echo "$M2D_PROJECT_PATH"
+                ;;
+            'src')
+                _m2d_env_get_parameter "$M2D_ENV_FILE" M2D_SOURCE_DIRECTORY
                 ;;
             *)
                 _m2d_env_get_parameter "$M2D_ENV_FILE" "$2"
