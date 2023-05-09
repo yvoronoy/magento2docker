@@ -41,6 +41,7 @@ RUN apt-get update \
         parallel \
         git \
         mc \
+        rsync \
     && apt-get update \
     && apt-get clean all
 
