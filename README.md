@@ -84,6 +84,19 @@ You can download archive of this project on [Release Page](https://github.com/yv
 - Mailcatcher: latest
 - Selenium: 3.14.0
 
+### Domains
+With the default setup, Magento2Docker will use nip.io in this way:
+`http://{LEVEL_2}.{LEVEL_1}.127.0.0.1.nip.io`
+where:
+- LEVEL_1 is a name of a folder inside /var/www/html
+- LEVEL_2 is a subdomain that can be used to simulate multi-website Magento setup
+
+Assume you have a multi-website Magento setup in the m246 folder; your domains can look like this:
+- http://m246.127.0.0.1.nip.io
+- http://website1.m246.127.0.0.1.nip.io
+- http://website2.m246.127.0.0.1.nip.io
+All the above will point to /var/www/html/m246 in your container.
+
 
 ## Usage
 To work with Magento2Docker you can use `m2d` CLI command located in `bin` of Magento2Docker project.
