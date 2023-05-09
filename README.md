@@ -115,7 +115,7 @@ With Magento2Docker v3 it is super easy to start or stop containers:
 ./bin.m2d show M2D_SEARCH_ENGINE_VENDOR
 
 # To start containers after enabling or disabling services or editing parameters:
-./bin/m2d up --buld
+./bin/m2d up --build
 ```
 
 
