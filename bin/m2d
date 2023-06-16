@@ -386,7 +386,7 @@ function _m2d_sync ()
             local sync_web="m2d-web$(_m2d_env_get_parameter $env_file M2D_PROJECT_SUFFIX)"
             case $action in
                 'start')
-                    if [[ -n $(mutagen sync list | grep $sync_name) ]]; then
+                    if [[ -n $(mutagen sync list | grep "^Name: $sync_name$") ]]; then
                         mutagen sync resume $sync_name
                     else
                         mutagen sync create --name=$sync_name \
