@@ -1,5 +1,6 @@
 version: '3'
 
+name: "m2d${M2D_PROJECT_SUFFIX:-}"
 services:
   web:
     container_name: "m2d-web${M2D_PROJECT_SUFFIX:-}"
