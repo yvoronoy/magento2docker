@@ -51,5 +51,5 @@ docker-composer up -d --build
 ## Need more?
 If you need a dummy container that is doing something (e.g., displaying hello world), you can modify the source code and recompile it with the following:
 ```bash
-gcc -o tools/dummy/dummy tools/dummy/dummy.c
+gcc -o tools/dummy/dummy tools/dummy/dummy.c -static
 ```
