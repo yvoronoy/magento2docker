@@ -125,7 +125,7 @@ With Magento2Docker v3 it is super easy to start or stop containers:
 ./bin/m2d set M2D_WEB_SERVER_PHP_VERSION 8.1
 
 # To display any .env parameter (e.g. search engine type):
-./bin.m2d show M2D_SEARCH_ENGINE_VENDOR
+./bin/m2d show M2D_SEARCH_ENGINE_VENDOR
 
 # To start containers after enabling or disabling services or editing parameters:
 ./bin/m2d up --build
